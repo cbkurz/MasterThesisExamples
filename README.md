@@ -2,7 +2,7 @@
 Different Examples which are required to develop and run my master thesis.
 
 The following picture gives a short overview what is expected in my thesis:
-![Masterarbeit.drawio.png](documentation%2Fimages%2FMasterarbeit.drawio.png)
+![Masterarbeit.drawio.png](documentation/images/Masterarbeit.drawio.png)
 
 The dotted lines are the contributions which are inteded by me, 
 other parts have already been implemented.
