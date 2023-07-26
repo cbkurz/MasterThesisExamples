@@ -1,0 +1,67 @@
+# The services provided here will we exposed only to 127.0.0.1:8080
+#
+services:
+  registry:
+    image: descartesresearch/teastore-registry
+    environment:
+      HOST_NAME: "registry"
+      LOG_TO_FILE: true
+
+  db:
+    image: descartesresearch/teastore-db
+    ports:
+      - "127.0.0.1:3306:3306"
+    environment:
+      LOG_TO_FILE: true
+
+  persistence:
+    image: descartesresearch/teastore-persistence
+    volumes:
+      - ../kieker-monitoring/teastore-persistence:/kieker/logs/
+    environment:
+      HOST_NAME: "persistence"
+      REGISTRY_HOST: "registry"
+      DB_HOST: "db"
+      DB_PORT: "3306"
+      LOG_TO_FILE: true
+
+  auth:
+    image: descartesresearch/teastore-auth
+    volumes:
+      - ../kieker-monitoring/teastore-auth:/kieker/logs/
+    environment:
+      HOST_NAME: "auth"
+      REGISTRY_HOST: "registry"
+      #      RABBITMQ_HOST: "rabbitmq"
+      LOG_TO_FILE: true
+
+  image:
+    image: descartesresearch/teastore-image
+    ports:
+      - "127.0.0.1:4444:8080"
+    volumes:
+      - ../kieker-monitoring/teastore-image:/kieker/logs/
+    environment:
+      HOST_NAME: "image"
+      REGISTRY_HOST: "registry"
+      LOG_TO_FILE: true
+
+  recommender:
+    image: descartesresearch/teastore-recommender
+    volumes:
+      - ../kieker-monitoring/teastore-recommender:/kieker/logs/
+    environment:
+      HOST_NAME: "recommender"
+      REGISTRY_HOST: "registry"
+      LOG_TO_FILE: true
+
+  webui:
+    image: descartesresearch/teastore-webui
+    volumes:
+      - ../kieker-monitoring/teastore-webui:/kieker/logs/
+    environment:
+      HOST_NAME: "webui"
+      REGISTRY_HOST: "registry"
+      LOG_TO_FILE: true
+    ports:
+      - "127.0.0.1:8080:8080"
