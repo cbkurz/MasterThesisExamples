@@ -1,38 +1,125 @@
 #!/bin/bash
 
-echo "Processing directories: "
 
-inputdirs="./kieker-monitoring/teastore-*/kieker*"
+base_dir=`pwd`
+
+# Initialize the Logfile
+echo "Start KiekerAll" > KiekerAll.log
+# Get the logfile absolute path
+log="${base_dir}/KiekerAll.log"
+date >> $log
+
+# Get the required variables
+# Input
+inputdirs_string="./kieker-monitoring/teastore-*/kieker*"
+case $inputdirs_string in
+  /*) echo "inputdirs are absolute paths" >> $log;;
+  *) echo "inputdirs are relative paths" >> $log;
+    inputdirs_string="${base_dir}/${inputdirs_string}";;
+esac
+inputdirs=($inputdirs_string)
+
+# Output
 out="./output"
+case $out in
+  /*) echo "outputdir is absolute path" >> $log;;
+  *) echo "outputdir is relative path" >> $log;
+    out="${base_dir}/${out}";;
+esac
 
-count=0
-for directory in ${inputdirs}; do
-    if [ -d "$directory" ]; then
-        count=$((count+1))
-        echo "$count $directory"
-    fi
-done
 
-if [ $count -eq 0 ]; then
-  echo "No Directories in the exporession ${inputdirs} present, please check if monitoring data has been collected."
-  exit 1;
-fi
+# Log variables
+echo "Base Directory:" >> $log
+echo "Input Directory: $inputdirs_string" >> $log
+echo "Output Directory: $out" >> $log
+mkdir --parents $out || exit 1
+pwd >> $log
+echo "Processing directories: " >> $log
 
-echo $(mkdir --parents ./output/AggregatedAssemblyCallTree ./output/AggregatedDeploymentCallTree ./output/AssemblyComponetDependencyGraph ./output/AssemblyOperationDependencyGraph ./output/AssemlySequenceDiagrams ./output/CallTrees ./output/ContainerDependencyGraph ./output/DeploymentComponentDependencyGraph ./output/DeploymentOperationDependencyGraph ./output/DeploymentSequenceDiagrams)
+check_input_directories() {
+  count=0
+  for directory in "${inputdirs[@]}"; do
+      if [ -d "$directory" ]; then
+          count=$((count+1))
+          echo "$count $directory" >> $log
+      fi
+  done
 
-echo " " > ./output/KiekerAll.log
+  if [ $count -eq 0 ]; then
+    echo "No Directories in the expression ${inputdirs_string} present, please check if monitoring data has been collected."
+    exit 1;
+  fi
+}
 
-trace-analysis --inputdirs $inputdirs -o $out/AggregatedAssemblyCallTree --plot-Aggregated-Assembly-Call-Tree >> ./output/KiekerAll.log
-trace-analysis --inputdirs $inputdirs -o $out/AggregatedDeploymentCallTree --plot-Aggregated-Deployment-Call-Tree >> ./output/KiekerAll.log
-trace-analysis --inputdirs $inputdirs -o $out/AssemblyComponetDependencyGraph --plot-Assembly-Component-Dependency-Graph true >> ./output/KiekerAll.log
-trace-analysis --inputdirs $inputdirs -o $out/AssemblyOperationDependencyGraph --plot-Assembly-Operation-Dependency-Graph true >> ./output/KiekerAll.log
-trace-analysis --inputdirs $inputdirs -o $out/AssemlySequenceDiagrams --plot-Assembly-Sequence-Diagrams >> ./output/KiekerAll.log
-trace-analysis --inputdirs $inputdirs -o $out/CallTrees --plot-Call-Trees >> ./output/KiekerAll.log
-trace-analysis --inputdirs $inputdirs -o $out/ContainerDependencyGraph --plot-Container-Dependency-Graph >> ./output/KiekerAll.log
-trace-analysis --inputdirs $inputdirs -o $out/DeploymentComponentDependencyGraph  --plot-Deployment-Component-Dependency-Graph true >> ./output/KiekerAll.log
-trace-analysis --inputdirs $inputdirs -o $out/DeploymentOperationDependencyGraph  --plot-Deployment-Operation-Dependency-Graph true >> ./output/KiekerAll.log
-trace-analysis --inputdirs $inputdirs -o $out/DeploymentSequenceDiagrams  --plot-Deployment-Sequence-Diagrams >> ./output/KiekerAll.log
-#trace-analysis --inputdirs $inputdirs -o $out  --print-Assembly-Equivalence-Classes true >> ./output/KiekerAll.log
-#trace-analysis --inputdirs $inputdirs -o $out  --print-Deployment-Equivalence-Classes true >> ./output/KiekerAll.log
-#trace-analysis --inputdirs $inputdirs -o $out  --print-Execution-Traces true >> ./output/KiekerAll.log
-#trace-analysis --inputdirs $inputdirs -o $out  --print-Message-Traces true >> ./output/KiekerAll.log
+do_trace_analysis() {
+  cd ${base_dir} || exit 1
+  echo "---" >> $log
+  echo "Start trace-analysis" >> $log
+  echo "---" >> $log
+
+  mkdir --parents $out/trace-analysis
+  cd $out/trace-analysis || exit 1
+  pwd >> $log
+  mkdir --parents AggregatedAssemblyCallTree AggregatedDeploymentCallTree AssemblyComponetDependencyGraph AssemblyOperationDependencyGraph AssemlySequenceDiagrams CallTrees ContainerDependencyGraph DeploymentComponentDependencyGraph DeploymentOperationDependencyGraph DeploymentSequenceDiagrams
+
+
+  trace-analysis --inputdirs "${inputdirs[@]}" -o AggregatedAssemblyCallTree --plot-Aggregated-Assembly-Call-Tree >> $log
+  trace-analysis --inputdirs "${inputdirs[@]}" -o AggregatedDeploymentCallTree --plot-Aggregated-Deployment-Call-Tree >> $log
+  trace-analysis --inputdirs "${inputdirs[@]}" -o AssemblyComponetDependencyGraph --plot-Assembly-Component-Dependency-Graph true >> $log
+  trace-analysis --inputdirs "${inputdirs[@]}" -o AssemblyOperationDependencyGraph --plot-Assembly-Operation-Dependency-Graph true >> $log
+  trace-analysis --inputdirs "${inputdirs[@]}" -o AssemlySequenceDiagrams --plot-Assembly-Sequence-Diagrams >> $log
+  trace-analysis --inputdirs "${inputdirs[@]}" -o CallTrees --plot-Call-Trees >> $log
+  trace-analysis --inputdirs "${inputdirs[@]}" -o ContainerDependencyGraph --plot-Container-Dependency-Graph >> $log
+  trace-analysis --inputdirs "${inputdirs[@]}" -o DeploymentComponentDependencyGraph  --plot-Deployment-Component-Dependency-Graph true >> $log
+  trace-analysis --inputdirs "${inputdirs[@]}" -o DeploymentOperationDependencyGraph  --plot-Deployment-Operation-Dependency-Graph true >> $log
+  trace-analysis --inputdirs "${inputdirs[@]}" -o DeploymentSequenceDiagrams  --plot-Deployment-Sequence-Diagrams >> $log
+
+  #trace-analysis --inputdirs "${inputdirs[@]}" -o .  --print-Assembly-Equivalence-Classes true >> $log
+  #trace-analysis --inputdirs "${inputdirs[@]}" -o .  --print-Deployment-Equivalence-Classes true >> $log
+  #trace-analysis --inputdirs "${inputdirs[@]}" -o .  --print-Execution-Traces true >> $log
+  #trace-analysis --inputdirs "${inputdirs[@]}" -o .  --print-Message-Traces true >> $log
+  echo "---" >> $log
+  echo "Finished trace-analysis" >> $log
+  echo "---" >> $log
+  cd ${base_dir} || exit 1
+}
+
+do_dot_transformation() {
+    cd ${base_dir} || exit 1
+    mkdir --parents $out/dot
+    cd ${out}/dot || exit 1
+    echo "---" >> $log
+    echo "Start dot" >> $log
+    echo "---" >> $log
+
+    # Create dot search string
+    dot_search_string="${out}/trace-analysis/*/*.dot"
+    echo "dot search string: ${dot_search_string}" >> $log
+    dot_files=($dot_search_string)
+
+    for file in "${dot_files[@]}"; do
+        echo "Processing Dot File: $file" >> $log
+        if [ -f "$file" ]; then
+
+            # Get required variables
+            filename="${file##*/}"
+            foldername=`dirname ${file}`
+            foldername="${foldername##*/}"
+            mkdir "${foldername}" >> $log
+            echo "output file: ${out}/dot/${foldername}/${filename}.svg" >> $log
+
+            # Actual call to dot
+            dot -Tsvg "$file" -o "${out}/dot/${foldername}/${filename}.svg" >> $log
+        fi
+    done
+    echo "---" >> $log
+    echo "End dot" >> $log
+    echo "---" >> $log
+    cd ${base_dir} || exit 1
+}
+
+check_input_directories
+do_trace_analysis
+do_dot_transformation
+
+
