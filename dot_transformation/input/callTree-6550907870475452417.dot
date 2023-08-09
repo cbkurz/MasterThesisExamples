@@ -1,0 +1,55 @@
+digraph G {
+0[label ="'Entry'",shape=none];
+1[label ="c7c469a7f8fc::\n@22:tools.descartes.teastore.webui.servlet.IndexServlet\n.handleGETRequest(..)",shape=none];
+2[label ="c7c469a7f8fc::\n@3:tools.descartes.teastore.registryclient.rest.LoadBalancedCRUDOperations\n.getEntities(..)",shape=none];
+3[label ="0e379ce6b5dd::\n@2:tools.descartes.teastore.persistence.rest.CategoryEndpoint\n.listAllEntities(..)",shape=none];
+4[label ="0e379ce6b5dd::\n@1:tools.descartes.teastore.persistence.domain.PersistenceCategory\n.getId()",shape=none];
+5[label ="0e379ce6b5dd::\n@1:tools.descartes.teastore.persistence.domain.PersistenceCategory\n.getId()",shape=none];
+6[label ="0e379ce6b5dd::\n@1:tools.descartes.teastore.persistence.domain.PersistenceCategory\n.getId()",shape=none];
+7[label ="0e379ce6b5dd::\n@1:tools.descartes.teastore.persistence.domain.PersistenceCategory\n.getId()",shape=none];
+8[label ="0e379ce6b5dd::\n@1:tools.descartes.teastore.persistence.domain.PersistenceCategory\n.getId()",shape=none];
+9[label ="c7c469a7f8fc::\n@13:tools.descartes.teastore.registryclient.rest.LoadBalancedStoreOperations\n.isLoggedIn(..)",shape=none];
+10[label ="07454e0b1982::\n@12:tools.descartes.teastore.auth.rest.AuthUserActionsRest\n.isLoggedIn(..)",shape=none];
+11[label ="07454e0b1982::\n@11:tools.descartes.teastore.auth.security.ShaSecurityProvider\n.validate(..)",shape=none];
+12[label ="c7c469a7f8fc::\n@21:tools.descartes.teastore.registryclient.rest.LoadBalancedImageOperations\n.getWebImages(..)",shape=none];
+13[label ="203b795dd534::\n@20:tools.descartes.teastore.image.rest.ImageProviderEndpoint\n.getWebUIImages(..)",shape=none];
+14[label ="203b795dd534::\n@19:tools.descartes.teastore.image.ImageProvider\n.getImageFor(..)",shape=none];
+15[label ="203b795dd534::\n@18:tools.descartes.teastore.image.cache.AbstractCache\n.loadData(..)",shape=none];
+16[label ="203b795dd534::\n@17:tools.descartes.teastore.image.storage.DriveStorage\n.loadData(..)",shape=none];
+17[label ="203b795dd534::\n@19:tools.descartes.teastore.image.ImageProvider\n.scaleAndRegisterImg(..)",shape=none];
+
+0->1[style=solid,arrowhead=none,label="1." ]
+
+1->2[style=solid,arrowhead=none,label="2." ]
+
+2->3[style=solid,arrowhead=none,label="3." ]
+
+3->4[style=solid,arrowhead=none,label="4." ]
+
+3->5[style=solid,arrowhead=none,label="5." ]
+
+3->6[style=solid,arrowhead=none,label="6." ]
+
+3->7[style=solid,arrowhead=none,label="7." ]
+
+3->8[style=solid,arrowhead=none,label="8." ]
+
+1->9[style=solid,arrowhead=none,label="9." ]
+
+9->10[style=solid,arrowhead=none,label="10." ]
+
+10->11[style=solid,arrowhead=none,label="11." ]
+
+1->12[style=solid,arrowhead=none,label="12." ]
+
+12->13[style=solid,arrowhead=none,label="13." ]
+
+13->14[style=solid,arrowhead=none,label="14." ]
+
+14->15[style=solid,arrowhead=none,label="15." ]
+
+15->16[style=solid,arrowhead=none,label="16." ]
+
+14->17[style=solid,arrowhead=none,label="17." ]
+
+}

@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/DotToXML.iml" filepath="$PROJECT_DIR$/DotToXML.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DotToXML.main.iml" filepath="$PROJECT_DIR$/.idea/modules/DotToXML.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DotToXML.test.iml" filepath="$PROJECT_DIR$/.idea/modules/DotToXML.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/MasterThesisExamples.iml" filepath="$PROJECT_DIR$/.idea/MasterThesisExamples.iml" />
       <module fileurl="file://$PROJECT_DIR$/TeaStore.iml" filepath="$PROJECT_DIR$/TeaStore.iml" />
     </modules>
