@@ -6,10 +6,14 @@ import de.kurz.ma.examples.callTree.CallTreeCreator;
 import de.kurz.ma.examples.callTree.model.CallTree;
 import de.kurz.ma.examples.cli.Commands;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Optional;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
+import static java.util.Objects.requireNonNull;
 
 public class DotToXML {
 
@@ -27,20 +31,33 @@ public class DotToXML {
             throw new ParameterException("At least one of the '--file' or '--directory' is required. Given was non.");
         }
 
-        System.out.println("File: " + COMMANDS.getInputFiles().get(0));
+        // handle Files
+        COMMANDS.getInputFiles().forEach(DotToXML::doWriteXml);
 
-        final CallTree callTree = getCallTree(args);
+        // handle directories
+        for (Path d : COMMANDS.getInputDirectories()) {
+            final File[] files = requireNonNull(d.toFile().listFiles());
+            Arrays.stream(files)
+                    .filter(File::isFile)
+                    .filter(f -> f.getName().endsWith(".dot"))
+                    .map(File::toPath).collect(Collectors.toList())
+                    .forEach(DotToXML::doWriteXml);
+        }
 
-        writeXml(args, callTree);
 
         System.out.println("Dot to XML toolkit has successfully finished.");
     }
 
-    private static void writeXml(final String[] args, final CallTree callTree) {
-        final Path inputPath = getInputPath(args);
-        final Path output = getArgument(args, "-o")
-                .map(Paths::get)
-                .orElseGet(() -> Paths.get(""));
+    private static void doWriteXml(final Path f) {
+        try {
+            final CallTree callTree = getCallTree(f);
+            writeXml(callTree, f, COMMANDS.getOutputDirectory());
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    private static void writeXml(final CallTree callTree, final Path inputPath, final Path output) {
         if (output.toFile().isFile()) {
             throw new IllegalArgumentException("Output must be a folder but was a file: " + output);
         }
@@ -51,32 +68,9 @@ public class DotToXML {
         XmlSupport.writeXml(target, callTree);
     }
 
-    private static CallTree getCallTree(final String[] args) throws IOException {
-        final Path inputPath = getInputPath(args);
+    private static CallTree getCallTree(final Path inputPath) throws IOException {
         System.out.println("Reading from File: " + inputPath);
         return CallTreeCreator.createCallTree(inputPath);
     }
 
-    private static Path getInputPath(final String[] args) {
-        final String input = getArgument(args, "-i").orElseThrow();
-        if (!input.endsWith(".dot")) {
-            throw new IllegalArgumentException("Please provide a '.dot' file for the conversion to XML.");
-        }
-
-        final Path inputPath = Paths.get(input);
-        if (!inputPath.toFile().isFile()) {
-            throw new IllegalArgumentException(String.format("The given input '%s' is not a file.", inputPath.toAbsolutePath()));
-        }
-        return inputPath;
-    }
-
-    private static Optional<String> getArgument(final String[] args, final String argumentName) {
-        for (int i = 0; i < args.length; i++) {
-            final String arg = args[i];
-            if (arg.equals(argumentName)) {
-                return Optional.of(args[i + 1]);
-            }
-        }
-        return Optional.empty();
-    }
 }

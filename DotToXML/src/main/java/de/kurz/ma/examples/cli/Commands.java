@@ -3,6 +3,8 @@ package de.kurz.ma.examples.cli;
 import com.beust.jcommander.Parameter;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Commands {
@@ -13,7 +15,7 @@ public class Commands {
             converter = PathConverter.class,
             validateWith = FileIsPresentValidator.class
     )
-    private List<Path> inputFiles;
+    private List<Path> inputFiles = new ArrayList<>();
 
     @Parameter(names = {"-d", "--directory"},
             variableArity = true,
@@ -21,13 +23,14 @@ public class Commands {
             converter = PathConverter.class,
             validateWith = FileIsPresentValidator.class
     )
-    private List<Path> inputDirectories;
+    private List<Path> inputDirectories = new ArrayList<>();
 
     @Parameter(names = {"-o", "--output"},
             description = "The directory to which the output is written. If this is not set, the output will be written to the current directory.",
-            converter = PathConverter.class
+            converter = PathConverter.class,
+            validateWith = OutputDirectoryValidator.class
     )
-    private Path outputDirectory;
+    private Path outputDirectory = Paths.get("");
 
     @Parameter(names = "--help", help = true)
     private boolean help;
