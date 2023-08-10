@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ASCII"?>
+<Graph xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns="de.clemens-kurz.CallTree" xmi:id="_9CFdkDayEe6kzPm_ieeZqw">
+  <nodes xmi:id="_-QM2gDayEe6kzPm_ieeZqw" label="handleGETRequest(..)" incoming="_UCRbsDazEe6kzPm_ieeZqw" outgoing="_a7G7wDazEe6kzPm_ieeZqw"/>
+  <nodes xmi:id="_M6cdYDazEe6kzPm_ieeZqw" label="getEntities(..)" number="1" incoming="_a7G7wDazEe6kzPm_ieeZqw"/>
+  <nodes xmi:id="_R1eM8DazEe6kzPm_ieeZqw" label="Entry" number="-2" outgoing="_UCRbsDazEe6kzPm_ieeZqw _GnDDUDbMEe6kzPm_ieeZqw"/>
+  <nodes xmi:id="_9w_TgDbJEe6kzPm_ieeZqw" label="NotARoot" number="1"/>
+  <nodes xmi:id="_19gowDbMEe6kzPm_ieeZqw"/>
+  <edges xmi:id="_UCRbsDazEe6kzPm_ieeZqw" label="1." from="_R1eM8DazEe6kzPm_ieeZqw" to="_-QM2gDayEe6kzPm_ieeZqw"/>
+  <edges xmi:id="_a7G7wDazEe6kzPm_ieeZqw" label="2." from="_-QM2gDayEe6kzPm_ieeZqw" to="_M6cdYDazEe6kzPm_ieeZqw"/>
+  <edges xmi:id="_GnDDUDbMEe6kzPm_ieeZqw" from="_R1eM8DazEe6kzPm_ieeZqw"/>
+  <edges xmi:id="_20Ay8DbMEe6kzPm_ieeZqw"/>
+</Graph>
