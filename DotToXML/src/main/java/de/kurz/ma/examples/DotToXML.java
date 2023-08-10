@@ -1,7 +1,10 @@
 package de.kurz.ma.examples;
 
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.ParameterException;
 import de.kurz.ma.examples.callTree.CallTreeCreator;
 import de.kurz.ma.examples.callTree.model.CallTree;
+import de.kurz.ma.examples.cli.Commands;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -9,8 +12,22 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 public class DotToXML {
+
+    public static final Commands COMMANDS = new Commands();
+
     public static void main(String[] args) throws IOException {
         System.out.println("Starting Dot to XML toolkit.");
+
+        JCommander.newBuilder()
+                .addObject(COMMANDS)
+                .args(args)
+                .build();
+
+        if (COMMANDS.getInputFiles().isEmpty() && COMMANDS.getInputDirectories().isEmpty()) {
+            throw new ParameterException("At least one of the '--file' or '--directory' is required. Given was non.");
+        }
+
+        System.out.println("File: " + COMMANDS.getInputFiles().get(0));
 
         final CallTree callTree = getCallTree(args);
 
