@@ -1,4 +1,4 @@
-package de.kurz.ma.examples.cli;
+package de.kurz.ma.dotToXml.cli;
 
 import com.beust.jcommander.Parameter;
 

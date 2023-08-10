@@ -1,4 +1,4 @@
-package de.kurz.ma.examples;
+package de.kurz.ma.dotToXml.xml;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;

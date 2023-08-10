@@ -1,10 +1,11 @@
-package de.kurz.ma.examples;
+package de.kurz.ma.dotToXml;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
-import de.kurz.ma.examples.callTree.CallTreeCreator;
-import de.kurz.ma.examples.callTree.model.CallTree;
-import de.kurz.ma.examples.cli.CliParameters;
+import de.kurz.ma.dotToXml.callTree.CallTreeCreator;
+import de.kurz.ma.dotToXml.callTree.model.CallTree;
+import de.kurz.ma.dotToXml.cli.CliParameters;
+import de.kurz.ma.dotToXml.xml.XmlSupport;
 
 import java.io.File;
 import java.io.IOException;

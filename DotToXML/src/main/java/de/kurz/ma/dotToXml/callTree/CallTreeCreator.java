@@ -1,8 +1,8 @@
-package de.kurz.ma.examples.callTree;
+package de.kurz.ma.dotToXml.callTree;
 
-import de.kurz.ma.examples.callTree.model.CallTree;
-import de.kurz.ma.examples.callTree.model.Node;
-import de.kurz.ma.examples.callTree.model.Edge;
+import de.kurz.ma.dotToXml.callTree.model.CallTree;
+import de.kurz.ma.dotToXml.callTree.model.Node;
+import de.kurz.ma.dotToXml.callTree.model.Edge;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

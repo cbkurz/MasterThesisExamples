@@ -1,6 +1,6 @@
-package de.kurz.ma.examples.callTree.model;
+package de.kurz.ma.dotToXml.callTree.model;
 
-import de.kurz.ma.examples.XmlSupport;
+import de.kurz.ma.dotToXml.xml.XmlSupport;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
