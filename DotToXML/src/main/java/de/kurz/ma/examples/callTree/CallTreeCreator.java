@@ -16,7 +16,7 @@ import static java.util.Objects.isNull;
 
 public class CallTreeCreator {
 
-    public static final Pattern PATTERN_LABEL = Pattern.compile("label.*=.*\\\"(.*)\\\"");
+    public static final Pattern PATTERN_LABEL = Pattern.compile("label.*=.*\"(.*)\"");
     public static final Pattern PATTERN_FROM_TO = Pattern.compile("(\\d+)->(\\d+)(\\[.*])?");
     public static final Pattern PATTERN_NODE = Pattern.compile("(\\d+)(\\[.*])?");
 
