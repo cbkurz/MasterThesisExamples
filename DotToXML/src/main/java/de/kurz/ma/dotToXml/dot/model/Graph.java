@@ -1,5 +1,6 @@
 package de.kurz.ma.dotToXml.dot.model;
 
+import de.kurz.ma.dotToXml.dot.GraphFactory;
 import de.kurz.ma.dotToXml.xml.XmlSupport;
 
 import javax.xml.stream.XMLStreamException;
@@ -11,8 +12,6 @@ import java.util.UUID;
 public class Graph implements XmlSupport.ElementWriter {
     final private Set<Node> nodes;
     final private Set<Edge> edges;
-
-    final static public String NAMESPACE = "de.kurz.ma.model.CallTree";
 
     final private String ID = UUID.randomUUID().toString();
 
@@ -35,9 +34,9 @@ public class Graph implements XmlSupport.ElementWriter {
 
     @Override
     public void writeToXml(final XMLStreamWriter xsw) throws XMLStreamException {
-        xsw.setDefaultNamespace(NAMESPACE);
-        xsw.writeStartElement(NAMESPACE, "Graph");
-        xsw.writeAttribute("xmlns", NAMESPACE);
+        xsw.setDefaultNamespace(GraphFactory.NAMESPACE_CALL_TREE);
+        xsw.writeStartElement(GraphFactory.NAMESPACE_CALL_TREE, "Graph");
+        xsw.writeAttribute("xmlns", GraphFactory.NAMESPACE_CALL_TREE);
         XmlSupport.writeXmiAttributes(xsw);
         XmlSupport.writeIdAttribute(xsw, ID);
         edges.forEach(e -> {

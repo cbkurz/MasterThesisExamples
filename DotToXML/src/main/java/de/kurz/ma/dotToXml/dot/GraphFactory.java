@@ -1,13 +1,15 @@
 package de.kurz.ma.dotToXml.dot;
 
+import de.kurz.ma.dotToXml.dot.model.Edge;
 import de.kurz.ma.dotToXml.dot.model.Graph;
 import de.kurz.ma.dotToXml.dot.model.Node;
-import de.kurz.ma.dotToXml.dot.model.Edge;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,6 +21,7 @@ public class GraphFactory {
     public static final Pattern PATTERN_LABEL = Pattern.compile("label.*=.*\"(.*)\"");
     public static final Pattern PATTERN_FROM_TO = Pattern.compile("(\\d+)->(\\d+)(\\[.*])?");
     public static final Pattern PATTERN_NODE = Pattern.compile("(\\d+)(\\[.*])?");
+    final static public String NAMESPACE_CALL_TREE = "de.kurz.ma.model.CallTree";
 
     public static Graph createGraph(final Path inputPath) throws IOException {
         final Graph graph = new Graph();
@@ -45,10 +48,10 @@ public class GraphFactory {
     }
 
     private static Edge createEdge(final Set<Node> nodes, final String line) {
-        final String label = getLabel(line);
         final Node from = getFrom(nodes, line);
         final Node to = getTo(nodes, line);
-        return new Edge(label, from, to);
+        final Map<String, String> attributes = getAttributes(line);
+        return new Edge(attributes, from, to);
     }
 
     private static Node getFrom(final Set<Node> nodes, final String line) {
@@ -82,7 +85,26 @@ public class GraphFactory {
     private static Node createNode(final String line) {
         final Integer number = getNumberForNode(line);
         final String label = getLabel(line);
-        return new Node(number, label);
+        Map<String, String> attributes = getAttributes(line);
+        return new Node(number, attributes);
+    }
+
+    private static Map<String, String> getAttributes(final String line) {
+        final HashMap<String, String> m = new HashMap<>();
+        final Pattern PATTERN_ATTRIBUTES = Pattern.compile("\\[(.*)]");
+        final Matcher attributesMatcher = PATTERN_ATTRIBUTES.matcher(line);
+        if (!attributesMatcher.find()) { // No attributes found.
+            return new HashMap<>();
+        }
+
+        final String[] attributes = attributesMatcher.group(1).split(",");
+        for (final String attribute : attributes) {
+            final String[] split = attribute.split("=");
+            final String key = split[0].trim();
+            final String value = split[1].trim().replace("\"", "");
+            m.put(key, value);
+        }
+        return m;
     }
 
     private static Integer getNumberForNode(final String line) {
