@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -39,16 +40,51 @@ public class DotToXML {
         }
 
         // handle Files
-        PARAMETERS.getInputFiles().forEach(DotToXML::doWriteXml);
+        PARAMETERS.getInputFiles().forEach(f -> dotToXml(f, PARAMETERS.getOutputDirectory()));
 
         // handle directories
         for (Path d : PARAMETERS.getInputDirectories()) {
             final List<Path> paths = getFilesInDirectory(d);
-            paths.forEach(DotToXML::doWriteXml);
+            paths.forEach(f -> {
+                final Path o = getOutputDir(PARAMETERS.getOutputDirectory(), d, f);
+                dotToXml(f, o);
+            });
         }
 
 
         System.out.println("Dot to XML toolkit has successfully finished.");
+    }
+
+    /**
+     * Builds the tree substructure from the file under the inputDirectory under the outputDirectory if recursive == true.
+     *
+     * @param outputDirectory - the directory to which the target will be written.
+     * @param inputDirectory  - the directory under which the file is found.
+     * @param file            - the file which is under the input directory.
+     * @return If recursive == false the outputDirectory is returned
+     * else the outputDirectory including the tree substructure of the file from input directory.
+     */
+    private static Path getOutputDir(final Path outputDirectory, final Path inputDirectory, final Path file) {
+        if (!PARAMETERS.isRecursive()) {
+            return outputDirectory;
+        }
+
+        final String name = inputDirectory.toFile().getName();
+        List<String> names = new ArrayList<>();
+        Path currentDir = file.getParent();
+
+        // get all the folder names in an ordered list.
+        while (!name.equals(currentDir.toFile().getName())) {
+            names.add(currentDir.toFile().getName());
+            currentDir = currentDir.getParent();
+        }
+
+        // walk through the list backwards.
+        Path outputWithSubtree = outputDirectory;
+        for (int i = names.size() - 1; i >= 0; i--) {
+            outputWithSubtree = outputWithSubtree.resolve(names.get(i));
+        }
+        return outputWithSubtree;
     }
 
     private static List<Path> getFilesInDirectory(final Path d) {
@@ -62,7 +98,7 @@ public class DotToXML {
             final List<Path> directoryPaths = Arrays.stream(files)
                     .filter(File::isDirectory)
                     .map(File::toPath)
-                    .map(DotToXML::getFilesInDirectory)
+                    .map(DotToXML::getFilesInDirectory) // recursion
                     .flatMap(Collection::stream)
                     .collect(Collectors.toList());
             paths.addAll(directoryPaths);
@@ -70,10 +106,10 @@ public class DotToXML {
         return paths;
     }
 
-    private static void doWriteXml(final Path f) {
+    private static void dotToXml(final Path f, final Path outputDirectory) {
         try {
             final CallTree callTree = getCallTree(f);
-            writeXml(callTree, f, PARAMETERS.getOutputDirectory());
+            writeXml(callTree, f, outputDirectory);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -83,6 +119,12 @@ public class DotToXML {
         if (output.toFile().isFile()) {
             throw new IllegalArgumentException("Output must be a folder but was a file: " + output);
         }
+        if (!output.toFile().exists()) {
+            if (!output.toFile().mkdirs()) {
+                throw new IllegalArgumentException("Output does not exist and cannot be created: " + output);
+            }
+        }
+
         final String fileName = inputPath.getFileName().toString() + ".model";
 
         final Path target = output.resolve(fileName);
