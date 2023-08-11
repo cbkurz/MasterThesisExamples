@@ -2,9 +2,10 @@ package de.kurz.ma.dotToXml;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+import de.kurz.ma.dotToXml.cli.CliParameters;
 import de.kurz.ma.dotToXml.dot.GraphFactory;
 import de.kurz.ma.dotToXml.dot.model.Graph;
-import de.kurz.ma.dotToXml.cli.CliParameters;
+import de.kurz.ma.dotToXml.xml.CallTreeConverter;
 import de.kurz.ma.dotToXml.xml.XmlSupport;
 
 import java.io.File;
@@ -25,6 +26,9 @@ public class DotToXML {
 
     public static void main(String[] args) throws IOException {
         System.out.println("Starting Dot to XML toolkit.");
+        System.out.println("This tool is intended to convert .dot files created by the kieker 'trace-analysis' tool.\n" +
+                "Therefore, the dot language is not fully supported.\n" +
+                "You can find the full documentation at: https://www.graphviz.org/doc/info/lang.html");
 
         final JCommander jc = JCommander.newBuilder()
                 .addObject(PARAMETERS)
@@ -129,7 +133,7 @@ public class DotToXML {
 
         final Path target = output.resolve(fileName);
         System.out.println("Writing to File: " + target);
-        XmlSupport.writeXml(target, graph);
+        XmlSupport.writeXml(target, new CallTreeConverter(graph)); // here other converters can be implemented.
     }
 
     private static Graph getCallTree(final Path inputPath) throws IOException {

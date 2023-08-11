@@ -1,15 +1,13 @@
 package de.kurz.ma.dotToXml.dot.model;
 
-import de.kurz.ma.dotToXml.xml.XmlSupport;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static java.util.Objects.nonNull;
 
-public class Node implements XmlSupport.ElementWriter {
+public class Node {
 
     final private Integer number;
     final private Map<String, String> attributes;
@@ -43,17 +41,16 @@ public class Node implements XmlSupport.ElementWriter {
         return ID;
     }
 
-    @Override
-    public void writeToXml(final XMLStreamWriter xsw) throws XMLStreamException {
-        xsw.writeEmptyElement("nodes");
-        XmlSupport.writeIdAttribute(xsw, ID);
-        xsw.writeAttribute("label", this.attributes.get("label"));
-        xsw.writeAttribute("number", this.number.toString());
-        if (nonNull(this.incoming)) {
-            xsw.writeAttribute("incoming", this.incoming.getID());
-        }
-        if (!this.outgoing.isEmpty()) {
-            xsw.writeAttribute("outgoing", this.outgoing.stream().map(Edge::getID).collect(Collectors.joining(" ")));
-        }
+    public Map<String, String> getAttributes() {
+        return attributes;
     }
+
+    public Edge getIncoming() {
+        return incoming;
+    }
+
+    public List<Edge> getOutgoing() {
+        return outgoing;
+    }
+
 }

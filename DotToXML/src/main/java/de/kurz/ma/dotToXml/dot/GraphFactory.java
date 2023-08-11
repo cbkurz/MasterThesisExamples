@@ -18,10 +18,10 @@ import static java.util.Objects.isNull;
 
 public class GraphFactory {
 
-    public static final Pattern PATTERN_LABEL = Pattern.compile("label.*=.*\"(.*)\"");
     public static final Pattern PATTERN_FROM_TO = Pattern.compile("(\\d+)->(\\d+)(\\[.*])?");
     public static final Pattern PATTERN_NODE = Pattern.compile("(\\d+)(\\[.*])?");
     final static public String NAMESPACE_CALL_TREE = "de.kurz.ma.model.CallTree";
+    public static final Pattern PATTERN_ATTRIBUTES = Pattern.compile("\\[(.*)]");
 
     public static Graph createGraph(final Path inputPath) throws IOException {
         final Graph graph = new Graph();
@@ -84,17 +84,15 @@ public class GraphFactory {
 
     private static Node createNode(final String line) {
         final Integer number = getNumberForNode(line);
-        final String label = getLabel(line);
         Map<String, String> attributes = getAttributes(line);
         return new Node(number, attributes);
     }
 
     private static Map<String, String> getAttributes(final String line) {
         final HashMap<String, String> m = new HashMap<>();
-        final Pattern PATTERN_ATTRIBUTES = Pattern.compile("\\[(.*)]");
         final Matcher attributesMatcher = PATTERN_ATTRIBUTES.matcher(line);
         if (!attributesMatcher.find()) { // No attributes found.
-            return new HashMap<>();
+            return m;
         }
 
         final String[] attributes = attributesMatcher.group(1).split(",");
@@ -113,14 +111,6 @@ public class GraphFactory {
             throw new IllegalArgumentException("Node could not be found in line: " + line);
         }
         return Integer.valueOf(matcher.group(1));
-    }
-
-    private static String getLabel(final String line) {
-        final Matcher matcher = PATTERN_LABEL.matcher(line);
-        if (!matcher.find()) {
-            throw new IllegalArgumentException("Attribute 'label' not found in line: " + line);
-        }
-        return matcher.group(1);
     }
 
     private static boolean isNode(final String line) {

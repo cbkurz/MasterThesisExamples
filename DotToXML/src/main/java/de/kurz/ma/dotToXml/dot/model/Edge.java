@@ -1,15 +1,13 @@
 package de.kurz.ma.dotToXml.dot.model;
 
-import de.kurz.ma.dotToXml.xml.XmlSupport;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import java.util.Map;
 import java.util.UUID;
 
-public class Edge implements XmlSupport.ElementWriter {
+public class Edge {
 
     final private Map<String , String > attributes;
+
+
     final private Node from;
     final private Node to;
 
@@ -27,12 +25,16 @@ public class Edge implements XmlSupport.ElementWriter {
         return ID;
     }
 
-    @Override
-    public void writeToXml(final XMLStreamWriter xsw) throws XMLStreamException {
-        xsw.writeEmptyElement("edges");
-        XmlSupport.writeIdAttribute(xsw, ID);
-        xsw.writeAttribute("label", this.attributes.get("label"));
-        xsw.writeAttribute("from", this.from.getID());
-        xsw.writeAttribute("to", this.to.getID());
+    public Map<String, String> getAttributes() {
+        return attributes;
     }
+
+    public Node getFrom() {
+        return from;
+    }
+
+    public Node getTo() {
+        return to;
+    }
+
 }
