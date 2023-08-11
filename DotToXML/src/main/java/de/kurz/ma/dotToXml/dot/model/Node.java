@@ -1,4 +1,4 @@
-package de.kurz.ma.dotToXml.callTree.model;
+package de.kurz.ma.dotToXml.dot.model;
 
 import de.kurz.ma.dotToXml.xml.XmlSupport;
 

@@ -2,8 +2,8 @@ package de.kurz.ma.dotToXml;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
-import de.kurz.ma.dotToXml.callTree.CallTreeCreator;
-import de.kurz.ma.dotToXml.callTree.model.CallTree;
+import de.kurz.ma.dotToXml.dot.GraphFactory;
+import de.kurz.ma.dotToXml.dot.model.Graph;
 import de.kurz.ma.dotToXml.cli.CliParameters;
 import de.kurz.ma.dotToXml.xml.XmlSupport;
 
@@ -108,14 +108,14 @@ public class DotToXML {
 
     private static void dotToXml(final Path f, final Path outputDirectory) {
         try {
-            final CallTree callTree = getCallTree(f);
-            writeXml(callTree, f, outputDirectory);
+            final Graph graph = getCallTree(f);
+            writeXml(graph, f, outputDirectory);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
     }
 
-    private static void writeXml(final CallTree callTree, final Path inputPath, final Path output) {
+    private static void writeXml(final Graph graph, final Path inputPath, final Path output) {
         if (output.toFile().isFile()) {
             throw new IllegalArgumentException("Output must be a folder but was a file: " + output);
         }
@@ -129,12 +129,12 @@ public class DotToXML {
 
         final Path target = output.resolve(fileName);
         System.out.println("Writing to File: " + target);
-        XmlSupport.writeXml(target, callTree);
+        XmlSupport.writeXml(target, graph);
     }
 
-    private static CallTree getCallTree(final Path inputPath) throws IOException {
+    private static Graph getCallTree(final Path inputPath) throws IOException {
         System.out.println("Reading from File: " + inputPath);
-        return CallTreeCreator.createCallTree(inputPath);
+        return GraphFactory.createGraph(inputPath);
     }
 
 }

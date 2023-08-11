@@ -1,4 +1,4 @@
-package de.kurz.ma.dotToXml.callTree.model;
+package de.kurz.ma.dotToXml.dot.model;
 
 import de.kurz.ma.dotToXml.xml.XmlSupport;
 
@@ -8,15 +8,15 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-public class CallTree implements XmlSupport.ElementWriter {
+public class Graph implements XmlSupport.ElementWriter {
     final private Set<Node> nodes;
     final private Set<Edge> edges;
 
-    final static public String NAMESPACE = "de.clemens-kurz.CallTree";
+    final static public String NAMESPACE = "de.kurz.ma.model.CallTree";
 
     final private String ID = UUID.randomUUID().toString();
 
-    public CallTree() {
+    public Graph() {
         this.nodes = new HashSet<>();
         this.edges = new HashSet<>();
     }

@@ -1,8 +1,8 @@
-package de.kurz.ma.dotToXml.callTree;
+package de.kurz.ma.dotToXml.dot;
 
-import de.kurz.ma.dotToXml.callTree.model.CallTree;
-import de.kurz.ma.dotToXml.callTree.model.Node;
-import de.kurz.ma.dotToXml.callTree.model.Edge;
+import de.kurz.ma.dotToXml.dot.model.Graph;
+import de.kurz.ma.dotToXml.dot.model.Node;
+import de.kurz.ma.dotToXml.dot.model.Edge;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -14,14 +14,14 @@ import java.util.regex.Pattern;
 
 import static java.util.Objects.isNull;
 
-public class CallTreeCreator {
+public class GraphFactory {
 
     public static final Pattern PATTERN_LABEL = Pattern.compile("label.*=.*\"(.*)\"");
     public static final Pattern PATTERN_FROM_TO = Pattern.compile("(\\d+)->(\\d+)(\\[.*])?");
     public static final Pattern PATTERN_NODE = Pattern.compile("(\\d+)(\\[.*])?");
 
-    public static CallTree createCallTree(final Path inputPath) throws IOException {
-        final CallTree callTree = new CallTree();
+    public static Graph createGraph(final Path inputPath) throws IOException {
+        final Graph graph = new Graph();
 
         try (final BufferedReader br = new BufferedReader(new FileReader(inputPath.toFile()))){
             String line = br.readLine();
@@ -31,17 +31,17 @@ public class CallTreeCreator {
             line = br.readLine();
             while(!isNull(line)) {
                 if (isNode(line)) {
-                    callTree.addNode(createNode(line));
+                    graph.addNode(createNode(line));
                 }
                 if (isEdge(line)) {
-                    callTree.addEdge(createEdge(callTree.getNodes(), line));
+                    graph.addEdge(createEdge(graph.getNodes(), line));
                 }
 
                 line = br.readLine();
             }
         }
 
-        return callTree;
+        return graph;
     }
 
     private static Edge createEdge(final Set<Node> nodes, final String line) {
