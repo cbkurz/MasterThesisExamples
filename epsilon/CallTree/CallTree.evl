@@ -1,0 +1,75 @@
+pre {
+   var numEdges = Edge.all.size();
+   var numNodes = Node.all.size();
+}
+
+context Graph {
+	
+	constraint HasEdges {
+		check : numEdges > 0
+	}
+	
+	constraint HasNodes {
+		check : numNodes > 0
+	}
+	
+	// The number of nodes and Edges has a relation.
+	// Number of Edges must be one less than the number of Nodes
+	constraint NumberOfNodesAndEdges {
+		check : (numEdges == numNodes - 1)
+		message {
+			return "Number of Edges must be one less than the number of Nodes.\n"
+					+ "Number of Edges: " + numEdges + "\n"
+					+ "Number of Nodes: " + numNodes;
+		}
+	}
+	
+	constraint HasExactlyOneRootNode {
+		check : (self.nodes.select(n | not n.incoming.isDefined() ).size() == 1)
+		message { 
+			var nodes = self.nodes.select( n | not n.incoming.isDefined() );
+			return "There are " + nodes.size() + " root nodes in Graph: " +  nodes
+					+ "\n Allowed is exactly one.";
+		}
+	}
+}
+
+operation isRootNode(n : Node) : Boolean {
+	return not n.incoming.isDefined();
+}
+
+
+context Node {
+	
+	constraint NumberMustBeGreaterThanZero {
+		guard : self.number.isDefined()
+		check : self.number >= 0
+		message : "Number must be greater than or equal to zero."
+	}
+
+	constraint NumberMustBeUnique {
+		guard : self.number.isDefined()
+		check : Node.all.select( n | n.number == self.number).size() == 1
+		message {
+			return "Number attribute must be unique but is not.\n" 
+					+ "The number " + self.number + " was found " 
+					+ Node.all.select( n | n.number == self.number).size()
+					+ " times." ;
+			}
+	}
+}
+
+
+context Edge {
+	
+	constraint FromIsSet {
+		check : self.from.isDefined()
+		message : "From is not defined."
+	}
+	
+	constraint ToIsSet {
+		check : self.to.isDefined()
+		message : "To is not defined."
+	}
+	
+}

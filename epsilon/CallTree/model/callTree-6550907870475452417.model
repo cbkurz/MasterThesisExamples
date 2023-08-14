@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ASCII"?>
+<Graph xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns="de.clemens-kurz.CallTree" xmi:id="c49bce5b-b9ba-417f-bf0e-8a30227f0c92">
+  <nodes xmi:id="afa260b3-0bcb-4541-a228-79014e59a80a" label="203b795dd534::\n@20:tools.descartes.teastore.image.rest.ImageProviderEndpoint\n.getWebUIImages(..)" number="13" incoming="b0eaad3d-7026-4b0c-83c4-82eea0db1931" outgoing="bd7f2c28-7c18-4126-bb06-b3bbf4d1a54f"/>
+  <nodes xmi:id="f48b9137-aef5-4eda-b449-acf947724aa9" label="07454e0b1982::\n@11:tools.descartes.teastore.auth.security.ShaSecurityProvider\n.validate(..)" number="11" incoming="e4d89661-ce1a-45f8-9beb-56962cce9d48"/>
+  <nodes xmi:id="6c6d98ac-6dc1-41e9-bc10-59d97b205ec4" label="c7c469a7f8fc::\n@21:tools.descartes.teastore.registryclient.rest.LoadBalancedImageOperations\n.getWebImages(..)" number="12" incoming="31a791f9-df4b-4cf5-b63e-6ac9f92c49b6" outgoing="b0eaad3d-7026-4b0c-83c4-82eea0db1931"/>
+  <nodes xmi:id="fb315976-9b2f-4ec5-b9e6-a3522615a65b" label="203b795dd534::\n@17:tools.descartes.teastore.image.storage.DriveStorage\n.loadData(..)" number="16" incoming="998f4ef7-c8c9-422c-9342-167b9f9224be"/>
+  <nodes xmi:id="8b9b44c8-815e-492b-9a29-aad72213c939" label="0e379ce6b5dd::\n@1:tools.descartes.teastore.persistence.domain.PersistenceCategory\n.getId()" number="5" incoming="cff355b1-fc4e-49c2-9dbf-6195aa8c821d"/>
+  <nodes xmi:id="61ac19fc-be00-40f0-996c-b0ee79c141c1" label="'Entry'" number="0" outgoing="e175e045-475c-4a10-b9e8-a515e4c8541a"/>
+  <nodes xmi:id="114ae8c2-acf1-4f5a-9bf0-c6eeb8ad801a" label="c7c469a7f8fc::\n@22:tools.descartes.teastore.webui.servlet.IndexServlet\n.handleGETRequest(..)" number="1" incoming="e175e045-475c-4a10-b9e8-a515e4c8541a" outgoing="33a356eb-ee26-489d-9afb-384470ec3b69 5a04b7d4-d112-446c-a303-9cb6cb65be83 31a791f9-df4b-4cf5-b63e-6ac9f92c49b6"/>
+  <nodes xmi:id="1f93a56a-1e40-4b9f-a299-9eb4fa1c60a9" label="0e379ce6b5dd::\n@1:tools.descartes.teastore.persistence.domain.PersistenceCategory\n.getId()" number="6" incoming="4411957b-37c4-4812-bec2-1c8ca7312ede"/>
+  <nodes xmi:id="3b34c6ef-87da-4fac-9cea-e2c879bd7c92" label="c7c469a7f8fc::\n@13:tools.descartes.teastore.registryclient.rest.LoadBalancedStoreOperations\n.isLoggedIn(..)" number="9" incoming="5a04b7d4-d112-446c-a303-9cb6cb65be83" outgoing="d739a720-cd6e-4a3f-9b15-eb1343ff77bd"/>
+  <nodes xmi:id="a18a737c-e677-4adf-96a7-8770888ba593" label="203b795dd534::\n@19:tools.descartes.teastore.image.ImageProvider\n.scaleAndRegisterImg(..)" number="17" incoming="8de40b5a-306d-4135-820c-c10eb6b5b86a"/>
+  <nodes xmi:id="b3306ec7-da07-4bca-9a87-cf54c7669dc0" label="c7c469a7f8fc::\n@3:tools.descartes.teastore.registryclient.rest.LoadBalancedCRUDOperations\n.getEntities(..)" number="2" incoming="33a356eb-ee26-489d-9afb-384470ec3b69" outgoing="7ea50e2a-bdd6-42f9-90d5-6260921f6ee6"/>
+  <nodes xmi:id="35401773-1dec-4b1a-9959-2cfae04eb5d2" label="0e379ce6b5dd::\n@1:tools.descartes.teastore.persistence.domain.PersistenceCategory\n.getId()" number="7" incoming="0f988d61-dfb5-4f60-8591-64bf394a6122"/>
+  <nodes xmi:id="db96da2d-1ae5-4c39-a990-f48a992ff0b2" label="0e379ce6b5dd::\n@1:tools.descartes.teastore.persistence.domain.PersistenceCategory\n.getId()" number="8" incoming="1a86617b-1ba3-4c6e-b604-fea6c62e26d2"/>
+  <nodes xmi:id="8a1b4972-c9bd-445d-9564-01aaac6ac868" label="07454e0b1982::\n@12:tools.descartes.teastore.auth.rest.AuthUserActionsRest\n.isLoggedIn(..)" number="10" incoming="d739a720-cd6e-4a3f-9b15-eb1343ff77bd" outgoing="e4d89661-ce1a-45f8-9beb-56962cce9d48"/>
+  <nodes xmi:id="5a236fc2-c7ff-4266-a12a-7cc261c14248" label="203b795dd534::\n@18:tools.descartes.teastore.image.cache.AbstractCache\n.loadData(..)" number="15" incoming="a83afdb4-50a8-4b63-bb3e-6de0e15d51b3" outgoing="998f4ef7-c8c9-422c-9342-167b9f9224be"/>
+  <nodes xmi:id="9100f96d-d3df-4a0d-8e3d-1e63f1ac8ca9" label="0e379ce6b5dd::\n@1:tools.descartes.teastore.persistence.domain.PersistenceCategory\n.getId()" number="4" incoming="1760664b-08e5-4671-a573-574cd6f8290f"/>
+  <nodes xmi:id="3f0726ab-6a65-4398-93fc-5388af2f4d06" label="0e379ce6b5dd::\n@2:tools.descartes.teastore.persistence.rest.CategoryEndpoint\n.listAllEntities(..)" number="3" incoming="7ea50e2a-bdd6-42f9-90d5-6260921f6ee6" outgoing="1760664b-08e5-4671-a573-574cd6f8290f cff355b1-fc4e-49c2-9dbf-6195aa8c821d 4411957b-37c4-4812-bec2-1c8ca7312ede 0f988d61-dfb5-4f60-8591-64bf394a6122 1a86617b-1ba3-4c6e-b604-fea6c62e26d2"/>
+  <nodes xmi:id="ce59eeef-9433-492b-a015-1d48a672067a" label="203b795dd534::\n@19:tools.descartes.teastore.image.ImageProvider\n.getImageFor(..)" number="14" incoming="bd7f2c28-7c18-4126-bb06-b3bbf4d1a54f" outgoing="a83afdb4-50a8-4b63-bb3e-6de0e15d51b3 8de40b5a-306d-4135-820c-c10eb6b5b86a"/>
+  <edges xmi:id="a83afdb4-50a8-4b63-bb3e-6de0e15d51b3" label="15." from="ce59eeef-9433-492b-a015-1d48a672067a" to="5a236fc2-c7ff-4266-a12a-7cc261c14248"/>
+  <edges xmi:id="d739a720-cd6e-4a3f-9b15-eb1343ff77bd" label="10." from="3b34c6ef-87da-4fac-9cea-e2c879bd7c92" to="8a1b4972-c9bd-445d-9564-01aaac6ac868"/>
+  <edges xmi:id="4411957b-37c4-4812-bec2-1c8ca7312ede" label="6." from="3f0726ab-6a65-4398-93fc-5388af2f4d06" to="1f93a56a-1e40-4b9f-a299-9eb4fa1c60a9"/>
+  <edges xmi:id="5a04b7d4-d112-446c-a303-9cb6cb65be83" label="9." from="114ae8c2-acf1-4f5a-9bf0-c6eeb8ad801a" to="3b34c6ef-87da-4fac-9cea-e2c879bd7c92"/>
+  <edges xmi:id="1760664b-08e5-4671-a573-574cd6f8290f" label="4." from="3f0726ab-6a65-4398-93fc-5388af2f4d06" to="9100f96d-d3df-4a0d-8e3d-1e63f1ac8ca9"/>
+  <edges xmi:id="0f988d61-dfb5-4f60-8591-64bf394a6122" label="7." from="3f0726ab-6a65-4398-93fc-5388af2f4d06" to="35401773-1dec-4b1a-9959-2cfae04eb5d2"/>
+  <edges xmi:id="7ea50e2a-bdd6-42f9-90d5-6260921f6ee6" label="3." from="b3306ec7-da07-4bca-9a87-cf54c7669dc0" to="3f0726ab-6a65-4398-93fc-5388af2f4d06"/>
+  <edges xmi:id="998f4ef7-c8c9-422c-9342-167b9f9224be" label="16." from="5a236fc2-c7ff-4266-a12a-7cc261c14248" to="fb315976-9b2f-4ec5-b9e6-a3522615a65b"/>
+  <edges xmi:id="31a791f9-df4b-4cf5-b63e-6ac9f92c49b6" label="12." from="114ae8c2-acf1-4f5a-9bf0-c6eeb8ad801a" to="6c6d98ac-6dc1-41e9-bc10-59d97b205ec4"/>
+  <edges xmi:id="33a356eb-ee26-489d-9afb-384470ec3b69" label="2." from="114ae8c2-acf1-4f5a-9bf0-c6eeb8ad801a" to="b3306ec7-da07-4bca-9a87-cf54c7669dc0"/>
+  <edges xmi:id="1a86617b-1ba3-4c6e-b604-fea6c62e26d2" label="8." from="3f0726ab-6a65-4398-93fc-5388af2f4d06" to="db96da2d-1ae5-4c39-a990-f48a992ff0b2"/>
+  <edges xmi:id="bd7f2c28-7c18-4126-bb06-b3bbf4d1a54f" label="14." from="afa260b3-0bcb-4541-a228-79014e59a80a" to="ce59eeef-9433-492b-a015-1d48a672067a"/>
+  <edges xmi:id="b0eaad3d-7026-4b0c-83c4-82eea0db1931" label="13." from="6c6d98ac-6dc1-41e9-bc10-59d97b205ec4" to="afa260b3-0bcb-4541-a228-79014e59a80a"/>
+  <edges xmi:id="e175e045-475c-4a10-b9e8-a515e4c8541a" label="1." from="61ac19fc-be00-40f0-996c-b0ee79c141c1" to="114ae8c2-acf1-4f5a-9bf0-c6eeb8ad801a"/>
+  <edges xmi:id="e4d89661-ce1a-45f8-9beb-56962cce9d48" label="11." from="8a1b4972-c9bd-445d-9564-01aaac6ac868" to="f48b9137-aef5-4eda-b449-acf947724aa9"/>
+  <edges xmi:id="8de40b5a-306d-4135-820c-c10eb6b5b86a" label="17." from="ce59eeef-9433-492b-a015-1d48a672067a" to="a18a737c-e677-4adf-96a7-8770888ba593"/>
+  <edges xmi:id="cff355b1-fc4e-49c2-9dbf-6195aa8c821d" label="5." from="3f0726ab-6a65-4398-93fc-5388af2f4d06" to="8b9b44c8-815e-492b-9a29-aad72213c939"/>
+</Graph>

@@ -1,0 +1,30 @@
+@namespace(uri="de.kurz.ma.model.CallTree", prefix="")
+package CallTree;
+
+// Even tough CallTrees are in the dot language, this model does not represent the dot language.
+// This is a deliberate decision to be more specific with the elements represented in the CallTree.
+// CallTree is an output format of the trace-analysis tool in the kieker project, it is produced with "--plot-Call-Trees":
+//   https://kieker-monitoring.readthedocs.io/en/latest/kieker-tools/Trace-Analysis-Tool.html#kieker-tools-trace-analysis-tool
+// The dot language can be found here: https://graphviz.org/doc/info/lang.html
+
+// Model Root Node
+class Graph {
+	val Node[*] nodes; // First node in the graph must always have the name "'Entry'" and the number 
+	val Edge[*] edges;
+}
+
+
+class Node {
+	attr String label; // This represents the name of the Class and Method-Call which is represented 
+	attr Integer number; // This number mus be > 0 and unique
+	ref Edge#to incoming; // There can always be only one callee to a Node (exception is the Root-Node
+	ref Edge[*]#from outgoing; // One Node can have many children.
+
+	op boolean isLeaf(); // This operation shall inform if there are outgoing Edges
+}
+
+class Edge {
+	attr String label; // This attribute counts the edges within the graph in the way kieker gives it numbers and must be unique
+	ref Node#outgoing from;
+	ref Node#incmoing to;
+}
