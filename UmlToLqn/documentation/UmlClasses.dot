@@ -1,0 +1,40 @@
+digraph G {
+    0[label ="Model",shape=box];
+    1[label ="Node",shape=box];
+    2[label ="Actor",shape=box];
+    3[label ="Interaction",shape=box];
+    4[label ="Component",shape=box];
+    5[label ="Lifeline",shape=box];
+    6[label ="Artifacts",shape=box];
+    7[label ="Messages",shape=box];
+
+    // Attributes
+    10[label ="<<BehaviorExecutionSpecification>>"];
+    11[label ="<<MessageOccurrenceSpecification>>"];
+    12[label ="<<Deployment>>"];
+
+    // MARTE
+    20[label ="<<GAWorkload>>"];
+    21[label ="<<GAStep>>"];
+    22[label ="<<GAExecHost>>"];
+
+    // Edges
+    edge[arrowhead=none]
+    // Classes
+    0->{1,2}
+    2->3
+    3->5[dir=back,arrowtail=diamond]
+    5->10
+    5->20
+    10->11
+    10->7
+    7->21
+
+    1->12
+    12->5
+
+    3->4 // Component is defined by itself but relates to an interaction, and therefore all Lifelines within it are in the component
+
+    // Edges: Attributes / MARTE
+    1->22
+}
