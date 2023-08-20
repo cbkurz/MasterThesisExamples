@@ -1,0 +1,25 @@
+digraph G {
+// Transformation rules
+    0[label ="Model2Schema"];
+    1[label ="Node2Processor"];
+    2[label ="Component2Task"];
+    3[label ="Actor2Processor"];
+    4[label ="UseCase2Task"];
+    5[label ="BES2Entry"];
+    6[label ="Message2Activity"];
+    7[label ="Message2Request"];
+
+
+// transformation rules edges
+    0->1
+// Node
+    0->3
+    1->2
+// Actor
+    3->4
+    2->5
+// Same for both node and actor
+    4->5
+    5->6
+    6->7
+}
