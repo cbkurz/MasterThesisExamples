@@ -11,15 +11,17 @@ digraph G {
 
 
 // transformation rules edges
-    0->1
-// Node
-    0->3
+    0->{1,3}
+
+    // Node
     1->2
-// Actor
     3->4
+
+    // Actor
     2->5
-// Same for both node and actor
     4->5
+
+    // Same for both node and actor
     5->6
     6->7
 }
