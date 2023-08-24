@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 base_dir=`pwd`
 
 # Initialize the Logfile
@@ -52,36 +51,46 @@ check_input_directories() {
 }
 
 check_required_tools() {
-  # Check if dot is present
+
+  echo "---" >> $log
+  echo "Start to check for required tools" >> $log
+  echo "---" >> $log
+
+  echo "Check if dot is installed" >> $log
   if ! command -v dot &> /dev/null
   then
-    echo "dot could not be found" > $log
-    echo "please install the dot tool with 'apt install graphviz' or the respective package manager from your distribution." > $log
+    echo "dot could not be found" >> $log
+    echo "please install the dot tool with 'apt install graphviz' or the respective package manager from your distribution." >> $log
     exit
   else
     echo "dot is installed!" >> $log
   fi
 
-  # Check if dot is present
+  echo "Check if pic2plot is installed" >> $log
   if ! command -v pic2plot &> /dev/null
   then
-    echo "pic2plot could not be found" > $log
-    echo "pic2plot is part of the plotutils package" > $log
-    echo "please install the pic2plot tool with 'apt install plotutils' or the respective package manager from your distribution." > $log
+    echo "pic2plot could not be found" >> $log
+    echo "pic2plot is part of the plotutils package" >> $log
+    echo "please install the pic2plot tool with 'apt install plotutils' or the respective package manager from your distribution." >> $log
     exit
   else
     echo "pic2plot is installed!" >> $log
   fi
 
-  # Check if dot is present
+  echo "Check if trace-analysis is installed" >> $log
   if ! command -v trace-analysis &> /dev/null
   then
-    echo "trace-analysis could not be found" > $log
-    echo "please install the trace-analysis tool with " > $log
+    echo "trace-analysis could not be found" >> $log
+    echo "please install the trace-analysis tool with providing a symbolic link from '~/bin/trace-analysis' to '<kieker-dir>/tools/trace-analysis-<version>/bin/trace-analysis'." >> $log
     exit
   else
     echo "trace-analysis is installed!" >> $log
   fi
+
+  echo "---" >> $log
+  echo "All required tools are present" >> $log
+  echo "---" >> $log
+
 }
 
 do_trace_analysis() {
@@ -186,7 +195,7 @@ do_pic_transformation() {
     cd ${base_dir} || exit 1
 }
 
-
+check_required_tools
 check_input_directories
 do_trace_analysis
 do_dot_transformation
