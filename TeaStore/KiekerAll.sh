@@ -51,23 +51,56 @@ check_input_directories() {
   fi
 }
 
+check_required_tools() {
+  # Check if dot is present
+  if ! command -v dot &> /dev/null
+  then
+    echo "dot could not be found" > $log
+    echo "please install the dot tool with 'apt install graphviz' or the respective package manager from your distribution." > $log
+    exit
+  else
+    echo "dot is installed!" >> $log
+  fi
+
+  # Check if dot is present
+  if ! command -v pic2plot &> /dev/null
+  then
+    echo "pic2plot could not be found" > $log
+    echo "pic2plot is part of the plotutils package" > $log
+    echo "please install the pic2plot tool with 'apt install plotutils' or the respective package manager from your distribution." > $log
+    exit
+  else
+    echo "pic2plot is installed!" >> $log
+  fi
+
+  # Check if dot is present
+  if ! command -v trace-analysis &> /dev/null
+  then
+    echo "trace-analysis could not be found" > $log
+    echo "please install the trace-analysis tool with " > $log
+    exit
+  else
+    echo "trace-analysis is installed!" >> $log
+  fi
+}
+
 do_trace_analysis() {
   cd ${base_dir} || exit 1
   echo "---" >> $log
   echo "Start trace-analysis" >> $log
   echo "---" >> $log
 
-  mkdir --parents $out/trace-analysis
+  mkdir --parents $out/trace-analysis >> $log
   cd $out/trace-analysis || exit 1
   pwd >> $log
-  mkdir --parents AggregatedAssemblyCallTree AggregatedDeploymentCallTree AssemblyComponetDependencyGraph AssemblyOperationDependencyGraph AssemlySequenceDiagrams CallTrees ContainerDependencyGraph DeploymentComponentDependencyGraph DeploymentOperationDependencyGraph DeploymentSequenceDiagrams
+  mkdir --parents AggregatedAssemblyCallTree AggregatedDeploymentCallTree AssemblyComponetDependencyGraph AssemblyOperationDependencyGraph AssemblySequenceDiagrams CallTrees ContainerDependencyGraph DeploymentComponentDependencyGraph DeploymentOperationDependencyGraph DeploymentSequenceDiagrams >> $log
 
 
   trace-analysis --inputdirs "${inputdirs[@]}" -o AggregatedAssemblyCallTree --plot-Aggregated-Assembly-Call-Tree >> $log
   trace-analysis --inputdirs "${inputdirs[@]}" -o AggregatedDeploymentCallTree --plot-Aggregated-Deployment-Call-Tree >> $log
   trace-analysis --inputdirs "${inputdirs[@]}" -o AssemblyComponetDependencyGraph --plot-Assembly-Component-Dependency-Graph true >> $log
   trace-analysis --inputdirs "${inputdirs[@]}" -o AssemblyOperationDependencyGraph --plot-Assembly-Operation-Dependency-Graph true >> $log
-  trace-analysis --inputdirs "${inputdirs[@]}" -o AssemlySequenceDiagrams --plot-Assembly-Sequence-Diagrams >> $log
+  trace-analysis --inputdirs "${inputdirs[@]}" -o AssemblySequenceDiagrams --plot-Assembly-Sequence-Diagrams >> $log
   trace-analysis --inputdirs "${inputdirs[@]}" -o CallTrees --plot-Call-Trees >> $log
   trace-analysis --inputdirs "${inputdirs[@]}" -o ContainerDependencyGraph --plot-Container-Dependency-Graph >> $log
   trace-analysis --inputdirs "${inputdirs[@]}" -o DeploymentComponentDependencyGraph  --plot-Deployment-Component-Dependency-Graph true >> $log
@@ -86,7 +119,7 @@ do_trace_analysis() {
 
 do_dot_transformation() {
     cd ${base_dir} || exit 1
-    mkdir --parents $out/dot
+    mkdir --parents $out/dot >> $log
     cd ${out}/dot || exit 1
     echo "---" >> $log
     echo "Start dot" >> $log
@@ -95,9 +128,9 @@ do_dot_transformation() {
     # Create dot search string
     dot_search_string="${out}/trace-analysis/*/*.dot"
     echo "dot search string: ${dot_search_string}" >> $log
-    dot_files=($dot_search_string)
+    pic_files=($dot_search_string)
 
-    for file in "${dot_files[@]}"; do
+    for file in "${pic_files[@]}"; do
         echo "Processing Dot File: $file" >> $log
         if [ -f "$file" ]; then
 
@@ -118,8 +151,45 @@ do_dot_transformation() {
     cd ${base_dir} || exit 1
 }
 
+
+do_pic_transformation() {
+    cd ${base_dir} || exit 1
+    mkdir --parents $out/pic >> $log
+    cd ${out}/pic || exit 1
+    echo "---" >> $log
+    echo "Start pic2plot" >> $log
+    echo "---" >> $log
+
+    # Create pic search string
+    pic_search_string="${out}/trace-analysis/*/*.pic"
+    echo "pic search string: ${pic_search_string}" >> $log
+    pic_files=($pic_search_string)
+
+    for file in "${pic_files[@]}"; do
+        echo "Processing Pic File: $file" >> $log
+        if [ -f "$file" ]; then
+
+            # Get required variables
+            filename="${file##*/}"
+            foldername=`dirname ${file}`
+            foldername="${foldername##*/}"
+            mkdir "${foldername}" >> $log
+            echo "output file: ${out}/pic/${foldername}/${filename}.svg" >> $log
+
+            # Actual call to pic
+            pic2plot "$file" -T svg > "${out}/pic/${foldername}/${filename}.svg"
+        fi
+    done
+    echo "---" >> $log
+    echo "End pic2plot" >> $log
+    echo "---" >> $log
+    cd ${base_dir} || exit 1
+}
+
+
 check_input_directories
 do_trace_analysis
 do_dot_transformation
+do_pic_transformation
 
 

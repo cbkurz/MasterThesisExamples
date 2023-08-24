@@ -44,6 +44,8 @@ They can easily be viewed with virtually any editor and manipulated with the `tr
 
 #### Analysis
 
+Further information about the trace-analysis tool can be found [here](../documentation/TraceAnalysis.md).
+
 Create call tree `.dot` files out of traces:
 ```bash
 trace-analysis --inputdirs ./kieker-monitoring/teastore-*/kieker* -o ./output/dot --plot-Call-Trees
