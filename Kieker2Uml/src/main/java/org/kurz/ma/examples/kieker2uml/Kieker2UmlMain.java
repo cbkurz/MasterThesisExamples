@@ -8,11 +8,12 @@ import kieker.tools.common.AbstractService;
 import kieker.tools.source.LogsReaderCompositeStage;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Kieker2UmlMain extends AbstractService<TeeTimeConfiguration, Kieker2UmlMain> {
 
     // Depending on the input, you have to change the input path and the reader configuration (commented with ALTERNATIVE)
-    private static final String INPUT_MONITORING_LOG_OER = "./input-data/operation-execution-log/";
+    private static final String INPUT_MONITORING_LOG_OER = "TeaStore/kieker-monitoring/teastore-auth/kieker-20230726-195044-42028674758-UTC--KIEKER";
     // ALTERNATIVE
     // private static final String INPUT_MONITORING_LOG_TE = "./input-data/trace-event-log/";
 
@@ -52,6 +53,9 @@ public class Kieker2UmlMain extends AbstractService<TeeTimeConfiguration, Kieker
     @Override
     protected kieker.common.configuration.Configuration readConfiguration() {
         Configuration configuration = ConfigurationFactory.createDefaultConfiguration();
+        if (!Paths.get(INPUT_MONITORING_LOG_OER).toFile().exists()) {
+            throw new RuntimeException("File does not exist: " + INPUT_MONITORING_LOG_OER);
+        }
         configuration.setProperty(LogsReaderCompositeStage.LOG_DIRECTORIES, INPUT_MONITORING_LOG_OER);
 
         return configuration;

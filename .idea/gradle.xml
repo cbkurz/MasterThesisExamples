@@ -14,12 +14,11 @@
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/KiekerTraces2UmlSequenceDiagrams" />
-        <option name="gradleHome" value="$PROJECT_DIR$/../../../../Gradle/gradle-7.6" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/Kieker2Uml" />
         <option name="gradleJvm" value="#JAVA_HOME" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/KiekerTraces2UmlSequenceDiagrams" />
+            <option value="$PROJECT_DIR$/Kieker2Uml" />
           </set>
         </option>
       </GradleProjectSettings>

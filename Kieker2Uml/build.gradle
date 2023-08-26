@@ -43,7 +43,7 @@ jar {
     }
 }
 
-task runAnalysis(type: JavaExec) {
+tasks.register('runAnalysis', JavaExec) {
     main = mainClassName
     classpath = sourceSets.main.runtimeClasspath
 }
