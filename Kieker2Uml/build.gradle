@@ -6,6 +6,10 @@ plugins {
 group = 'org.kurz.ma.examples.kieker2uml'
 version = '1.0-SNAPSHOT'
 
+// Simplify the JAR's file name
+archivesBaseName = 'Kieker2Uml'
+version = '0.0.1'
+
 repositories {
     mavenLocal()
     mavenCentral()
@@ -13,27 +17,24 @@ repositories {
 }
 
 dependencies {
-    implementation "ch.qos.logback:logback-classic:1.1.7"
+    // logging
+    implementation 'ch.qos.logback:logback-classic:1.2.9'
     implementation 'org.slf4j:slf4j-api:1.7.30'
-    implementation 'org.codehaus.groovy:groovy-all:3.0.2'
-    implementation "com.beust:jcommander:1.72"
 
+    // cli
+// https://mvnrepository.com/artifact/com.beust/jcommander
+    implementation group: 'com.beust', name: 'jcommander', version: '1.82'
+
+    // architecture
     implementation 'de.cau.cs.se.teetime:teetime:3.1.0'
+
+    // kieker
     implementation "net.kieker-monitoring:kieker:2.0.0-SNAPSHOT"
 
-
+    // test
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }
-
-distTar.enabled=false
-
-// Simplify the JAR's file name
-archivesBaseName = 'TraceAnalysis'
-version = ''
-
-//sourceSets.main.java.srcDirs = ['src']
-//sourceSets.main.resources.srcDirs = [ '../../resources' ]
 
 mainClassName = 'org.kurz.ma.examples.kieker2uml.Kieker2UmlMain'
 
@@ -41,11 +42,6 @@ jar {
     manifest {
         attributes 'Main-Class': mainClassName
     }
-}
-
-tasks.register('runAnalysis', JavaExec) {
-    main = mainClassName
-    classpath = sourceSets.main.runtimeClasspath
 }
 
 
