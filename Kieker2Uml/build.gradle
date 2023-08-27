@@ -21,8 +21,7 @@ dependencies {
     implementation 'ch.qos.logback:logback-classic:1.2.9'
     implementation 'org.slf4j:slf4j-api:1.7.30'
 
-    // cli
-// https://mvnrepository.com/artifact/com.beust/jcommander
+    // cli - https://jcommander.org/
     implementation group: 'com.beust', name: 'jcommander', version: '1.82'
 
     // architecture
@@ -30,6 +29,11 @@ dependencies {
 
     // kieker
     implementation "net.kieker-monitoring:kieker:2.0.0-SNAPSHOT"
+
+    // utility
+    // https://mvnrepository.com/artifact/io.vavr/vavr
+    implementation group: 'io.vavr', name: 'vavr', version: '0.10.4'
+
 
     // test
     testImplementation platform('org.junit:junit-bom:5.9.1')

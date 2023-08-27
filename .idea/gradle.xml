@@ -32,11 +32,6 @@
           </set>
         </option>
       </GradleProjectSettings>
-      <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/untitled" />
-        <option name="gradleHome" value="$PROJECT_DIR$/../../../../Gradle/gradle-7.6" />
-        <option name="gradleJvm" value="#JAVA_HOME" />
-      </GradleProjectSettings>
     </option>
   </component>
 </project>

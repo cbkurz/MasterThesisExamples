@@ -1,4 +1,4 @@
-package org.kurz.ma.examples.kieker2uml;
+package org.kurz.ma.examples.kieker2uml.teetime;
 
 import kieker.analysis.architecture.trace.TraceEventRecords2ExecutionAndMessageTraceStage;
 import kieker.analysis.architecture.trace.execution.ExecutionRecordTransformationStage;
@@ -14,6 +14,7 @@ import kieker.common.record.flow.trace.AbstractTraceEvent;
 import kieker.model.repository.SystemModelRepository;
 import kieker.model.system.model.AbstractTrace;
 import kieker.tools.source.LogsReaderCompositeStage;
+import org.kurz.ma.examples.kieker2uml.PrintOutputStage;
 import teetime.framework.Configuration;
 import teetime.framework.InputPort;
 import teetime.stage.basic.merger.Merger;
