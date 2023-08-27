@@ -15,30 +15,24 @@ import kieker.model.repository.SystemModelRepository;
 import kieker.model.system.model.AbstractTrace;
 import kieker.tools.source.LogsReaderCompositeStage;
 import org.kurz.ma.examples.kieker2uml.PrintOutputStage;
+import org.kurz.ma.examples.kieker2uml.cli.CliParameters;
 import teetime.framework.Configuration;
 import teetime.framework.InputPort;
 import teetime.stage.basic.merger.Merger;
 
+import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
 public class TeeTimeConfiguration extends Configuration {
 
-    /**
-     * Configure analysis.
-     *
-     * @param configuration
-     *            configuration for the collector
-     * @throws ConfigurationException
-     *             on configuration error
-     */
-    public TeeTimeConfiguration(final kieker.common.configuration.Configuration configuration)
+    public TeeTimeConfiguration(final CliParameters parameters)
             throws ConfigurationException {
-        SystemModelRepository systemModelRepository = new SystemModelRepository();
+        final SystemModelRepository systemModelRepository = new SystemModelRepository();
 
-        LogsReaderCompositeStage reader = new LogsReaderCompositeStage(configuration);
+        final LogsReaderCompositeStage reader = new LogsReaderCompositeStage(parameters.getInputDirectories().stream().map(Path::toFile).toList(), false, null);
 
-        IEventMatcher<? extends AbstractTraceEvent> traceEventMatcher = new ImplementsEventMatcher<>(AbstractTraceEvent.class, null);
-        IEventMatcher<? extends OperationExecutionRecord> operationExecutionEventMatcher = new ImplementsEventMatcher<>(OperationExecutionRecord.class, null);
+        final IEventMatcher<? extends AbstractTraceEvent> traceEventMatcher = new ImplementsEventMatcher<>(AbstractTraceEvent.class, null);
+        final IEventMatcher<? extends OperationExecutionRecord> operationExecutionEventMatcher = new ImplementsEventMatcher<>(OperationExecutionRecord.class, null);
 
         DynamicEventDispatcher dispatcher = new DynamicEventDispatcher(operationExecutionEventMatcher, true, false, false);
 
@@ -72,7 +66,7 @@ public class TeeTimeConfiguration extends Configuration {
 
         int maxNumberOfEntries = 10000;
         // output
-        ListCollectionFilter<AbstractTrace> listCollectionStage = new ListCollectionFilter<AbstractTrace>(maxNumberOfEntries,
+        ListCollectionFilter<AbstractTrace> listCollectionStage = new ListCollectionFilter<>(maxNumberOfEntries,
                 ListCollectionFilter.ListFullBehavior.DROP_OLDEST);
 
         PrintOutputStage printOutputStage = new PrintOutputStage();
