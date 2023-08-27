@@ -25,8 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 public class TeeTimeConfiguration extends Configuration {
 
-    public TeeTimeConfiguration(final CliParameters parameters)
-            throws ConfigurationException {
+    public TeeTimeConfiguration(final CliParameters parameters) {
         final SystemModelRepository systemModelRepository = new SystemModelRepository();
 
         final LogsReaderCompositeStage reader = new LogsReaderCompositeStage(parameters.getInputDirectories().stream().map(Path::toFile).toList(), false, null);
