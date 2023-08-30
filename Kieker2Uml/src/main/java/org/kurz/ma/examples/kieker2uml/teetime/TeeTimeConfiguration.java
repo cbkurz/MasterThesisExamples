@@ -35,8 +35,6 @@ public class TeeTimeConfiguration extends Configuration {
         this.connectPorts(operationExecutionDispatcherOutput.getOutputPort(), this.executionRecordTransformationStage.getInputPort());
         this.connectPorts(this.executionRecordTransformationStage.getOutputPort(), this.traceReconstructionStage.getInputPort());
         this.connectPorts(this.traceReconstructionStage.getMessageTraceOutputPort(), sequenceDiagramFilter.getInputPort());
-
-
     }
 
     private void setup(final CliParameters parameters) {
@@ -48,7 +46,7 @@ public class TeeTimeConfiguration extends Configuration {
         this.operationExecutionDispatcherOutput = new ImplementsEventMatcher<>(OperationExecutionRecord.class, null);
         dispatcher.registerOutput(operationExecutionDispatcherOutput);
 
-        this.traceReconstructionStage = new TraceReconstructionStage(this.systemModelRepository, TimeUnit.MILLISECONDS,true, Long.MAX_VALUE);
+        this.traceReconstructionStage = new TraceReconstructionStage(this.systemModelRepository, TimeUnit.MILLISECONDS, true, Long.MAX_VALUE);
 
         this.executionRecordTransformationStage = new ExecutionRecordTransformationStage(this.systemModelRepository);
         executionRecordTransformationStage.declareActive();
