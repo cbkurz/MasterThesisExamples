@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter {
 
-    private static final Logger log = LoggerFactory.getLogger(SequenceDiagrammFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SequenceDiagrammFilter.class);
 
     /**
      * Creates a new instance of this class using the given parameters.

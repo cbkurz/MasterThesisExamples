@@ -26,16 +26,15 @@ public class Kieker2UmlTeeTimeService extends AbstractService<TeeTimeConfigurati
         return new TeeTimeConfiguration(this.cliParameters);
     }
 
-    @SuppressWarnings("DanglingJavadoc")
+    /**
+     * This method shall check the parameters to their correctness.
+     * However, this is not necessary since this can be implemented directly into JCommander
+     * For details check the {@link org.kurz.ma.examples.kieker2uml.cli.CliParameters} class.
+     * </p>
+     * the help parameter has to be read out and is handled by {@link kieker.tools.common.AbstractLegacyTool#run(String, String, String[], Object)} correctly.
+     */
     @Override
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
-        /**
-         * This method shall check the parameters to their correctness.
-         * However, this is not necessary since this can be implemented directly into JCommander
-         * For details check the {@link org.kurz.ma.examples.kieker2uml.cli.CliParameters} class.
-         * </p>
-         * the help parameter has to be read out and is handled by {@link kieker.tools.common.AbstractLegacyTool#run(String, String, String[], Object)} correctly.
-         */
         this.help = Try.ofSupplier(cliParameters::isHelp).getOrElseGet((t) -> FALSE);
         return true;
     }
