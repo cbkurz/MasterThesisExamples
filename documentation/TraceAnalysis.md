@@ -33,7 +33,7 @@ There are two general output formats `.dot` and `.pic`.
 The [dot dsl](https://www.graphviz.org/doc/info/lang.html) is there to model graphs.
 With the [pic dsl](https://en.wikipedia.org/wiki/PIC_(markup_language)) line diagrams can be depicted like sequence diagrams.
 
-The ``dot`` tool is described [here](../dot_langiage/DotLanguage.md) and is able to transform `.dot` files into human-readable outputs.
+The ``dot`` tool is described [here](../dot_language/DotLanguage.md) and is able to transform `.dot` files into human-readable outputs.
 
 The ``pic2plot`` tool is described [here](https://www.gnu.org/software/plotutils/manual/en/html_node/pic2plot-Introduction.html)
 is part of the gnu ``plotutils`` and is able to transform `.pic` files into human-readable outputs.
