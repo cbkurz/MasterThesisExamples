@@ -13,12 +13,17 @@ import org.apache.commons.io.FileUtils;
 import org.kurz.ma.examples.kieker2uml.uml.Lifeline;
 import org.kurz.ma.examples.kieker2uml.uml.Lifeline.LifelineType;
 import org.kurz.ma.examples.kieker2uml.uml.Message;
+import org.kurz.ma.examples.kieker2uml.xml.SimpleSequenceDiagramWriter;
+import org.kurz.ma.examples.kieker2uml.xml.XmlSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -53,7 +58,8 @@ public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter
 
         final List<AbstractMessage> messages = mt.getSequenceAsVector();
 
-        final Set<Lifeline> lifelines = getLifelines(messages);
+        final Set<Lifeline> lifelines = getLifelines(mt.getTraceId(), messages);
+        liflinesToXml(mt.getTraceId(), lifelines);
 
         toFile("TraceId: " + mt.getTraceId());
         toFile(format("Total number of messages: %s", messages.size()));
@@ -64,11 +70,21 @@ public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter
         toFile("\n");
     }
 
-    private Set<Lifeline> getLifelines(final List<AbstractMessage> messages) {
+    private void liflinesToXml(final Long traceId, final Set<Lifeline> lifelines) {
+        final Path pathToFile = Paths.get("output/" + traceId.toString() + "-sequencediagram.xml");
+        try {
+            FileUtils.createParentDirectories(pathToFile.toFile());
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+        XmlSupport.writeXml(pathToFile, new SimpleSequenceDiagramWriter(lifelines));;
+    }
+
+    private Set<Lifeline> getLifelines(final long traceId, final List<AbstractMessage> messages) {
         final Set<Lifeline> lifelines = new TreeSet<>();
 
         final AllocationComponent root = ROOT_ALLOCATION_COMPONENT;
-        final Lifeline actor = new Lifeline((long) root.getId(), LifelineType.ACTOR, root.getIdentifier());
+        final Lifeline actor = new Lifeline(traceId, LifelineType.ACTOR, root.getIdentifier());
         lifelines.add(actor);
 
         Lifeline lastReceiver = null;
