@@ -4,7 +4,6 @@ import kieker.analysis.plugin.trace.AbstractMessageTraceProcessingFilter;
 import kieker.common.util.signature.Signature;
 import kieker.model.repository.SystemModelRepository;
 import kieker.model.system.model.AbstractMessage;
-import kieker.model.system.model.AllocationComponent;
 import kieker.model.system.model.AssemblyComponent;
 import kieker.model.system.model.MessageTrace;
 import kieker.model.system.model.SynchronousCallMessage;
@@ -77,14 +76,13 @@ public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        XmlSupport.writeXml(pathToFile, new SimpleSequenceDiagramWriter(lifelines));;
+        XmlSupport.writeXml(pathToFile, new SimpleSequenceDiagramWriter(lifelines));
     }
 
     private Set<Lifeline> getLifelines(final long traceId, final List<AbstractMessage> messages) {
         final Set<Lifeline> lifelines = new TreeSet<>();
 
-        final AllocationComponent root = ROOT_ALLOCATION_COMPONENT;
-        final Lifeline actor = new Lifeline(traceId, LifelineType.ACTOR, root.getIdentifier());
+        final Lifeline actor = new Lifeline(traceId, LifelineType.ACTOR, ROOT_ALLOCATION_COMPONENT.getIdentifier());
         lifelines.add(actor);
 
         Lifeline lastReceiver = null;
@@ -128,7 +126,7 @@ public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter
     }
 
     private static Lifeline getLifeline(final Set<Lifeline> lifelines, final AssemblyComponent component) {
-        final Lifeline lifeline = new Lifeline((long) component.getId(), LifelineType.OBJECT, component.getIdentifier());
+        final Lifeline lifeline = new Lifeline((long) component.getId(), LifelineType.OBJECT, assemblyComponentLabel(component)); // TODO: braucht man wirklich den Namen oder reicht auch .getIdentifier() ?
         if (lifelines.contains(lifeline)) {
             return lifelines.stream().filter(l -> l.compareTo(lifeline) == 0).findFirst().get();
         }
@@ -136,15 +134,15 @@ public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter
         return lifeline;
     }
 
-    private String assemblyComponentLabel(final AssemblyComponent component) {
+    private static String assemblyComponentLabel(final AssemblyComponent component) {
         final String assemblyComponentName = component.getName();
         final String componentTypePackagePrefx = component.getType().getPackageName();
         final String componentTypeIdentifier = component.getType().getTypeName();
 
-        final StringBuilder strBuild = new StringBuilder(assemblyComponentName).append(':');
-        strBuild.append(componentTypePackagePrefx).append('.');
-        strBuild.append(componentTypeIdentifier);
-        return strBuild.toString();
+        final String strBuild = assemblyComponentName + ':' +
+                componentTypePackagePrefx + '.' +
+                componentTypeIdentifier;
+        return strBuild;
     }
 
     private void toFile(final String data) {
