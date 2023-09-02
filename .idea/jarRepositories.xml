@@ -41,5 +41,35 @@
       <option name="name" value="MavenLocal" />
       <option name="url" value="file:/$PROJECT_DIR$/../../../Clemens%20Kurz/.m2/repository/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven2" />
+      <option name="name" value="maven2" />
+      <option name="url" value="https://repo.eclipse.org/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven" />
+      <option name="name" value="maven" />
+      <option name="url" value="https://repo.eclipse.org/service/local/repositories/acceleo-releases/content/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven2" />
+      <option name="name" value="maven2" />
+      <option name="url" value="https://repo.eclipse.org/service/local/repositories/maven_central/content" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven3" />
+      <option name="name" value="maven3" />
+      <option name="url" value="https://repo.eclipse.org/content/repositories/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven" />
+      <option name="name" value="maven" />
+      <option name="url" value="https://repo.eclipse.org/content/repositories/releases/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven2" />
+      <option name="name" value="maven2" />
+      <option name="url" value="https://repo.eclipse.org/content/repositories/snapshots/" />
+    </remote-repository>
   </component>
 </project>

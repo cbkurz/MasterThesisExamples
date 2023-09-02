@@ -3,6 +3,7 @@
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$/DotToXML" />
+    <file type="web" url="file://$PROJECT_DIR$/EclipseEcoreUml2" />
     <file type="web" url="file://$PROJECT_DIR$/Kieker2Uml" />
     <file type="web" url="file://$PROJECT_DIR$/SimpleEpsilonUMLExample" />
     <file type="web" url="file://$PROJECT_DIR$/TeaStore" />

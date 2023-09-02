@@ -14,6 +14,7 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    maven { url "https://repo.eclipse.org/" }
 }
 
 dependencies {
@@ -26,6 +27,23 @@ dependencies {
 
     // architecture
     implementation 'de.cau.cs.se.teetime:teetime:3.1.0'
+
+
+    // emf
+    // https://mvnrepository.com/artifact/org.eclipse.emf/org.eclipse.emf.common
+    implementation 'org.eclipse.emf:org.eclipse.emf.common:2.29.0'
+    // https://mvnrepository.com/artifact/org.eclipse.emf/org.eclipse.emf.ecore
+    implementation 'org.eclipse.emf:org.eclipse.emf.mapping.ecore2xml:2.12.0'
+    // https://mvnrepository.com/artifact/org.eclipse.emf/org.eclipse.emf.ecore.xmi
+    implementation 'org.eclipse.emf:org.eclipse.emf.ecore.xmi:2.9.0-v20130528-0742'
+    // https://mvnrepository.com/artifact/org.eclipse.uml2/uml
+    implementation 'org.eclipse.uml2:uml:5.0.0-v20140602-0749'
+    // https://mvnrepository.com/artifact/org.eclipse.uml2/common
+    implementation 'org.eclipse.uml2:common:2.0.0-v20140602-0749'
+    // https://mvnrepository.com/artifact/org.eclipse.emf/org.eclipse.emf.mapping.ecore2xml
+    implementation 'org.eclipse.emf:org.eclipse.emf.mapping.ecore2xml:2.12.0'
+
+
 
     // kieker
     implementation "net.kieker-monitoring:kieker:2.0.0-SNAPSHOT"
