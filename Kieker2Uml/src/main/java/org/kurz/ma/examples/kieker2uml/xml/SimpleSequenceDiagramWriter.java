@@ -1,7 +1,7 @@
 package org.kurz.ma.examples.kieker2uml.xml;
 
-import org.kurz.ma.examples.kieker2uml.uml.Lifeline;
-import org.kurz.ma.examples.kieker2uml.uml.Message;
+import org.kurz.ma.examples.kieker2uml.model.Lifeline;
+import org.kurz.ma.examples.kieker2uml.model.Message;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;

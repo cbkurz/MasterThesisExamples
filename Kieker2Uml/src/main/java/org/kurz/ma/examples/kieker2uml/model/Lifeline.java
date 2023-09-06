@@ -1,9 +1,9 @@
-package org.kurz.ma.examples.kieker2uml.uml;
+package org.kurz.ma.examples.kieker2uml.model;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.kurz.ma.examples.kieker2uml.uml.Message.MessageType;
+import static org.kurz.ma.examples.kieker2uml.model.Message.MessageType;
 
 public class Lifeline implements Comparable<Lifeline> {
 

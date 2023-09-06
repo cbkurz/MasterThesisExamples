@@ -1,4 +1,4 @@
-package org.kurz.ma.examples.kieker2uml.uml;
+package org.kurz.ma.examples.kieker2uml.model;
 
 import java.util.UUID;
 
