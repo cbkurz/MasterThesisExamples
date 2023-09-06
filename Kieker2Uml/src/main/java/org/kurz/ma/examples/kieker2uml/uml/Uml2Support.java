@@ -8,21 +8,24 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.UMLPackage;
 import org.eclipse.uml2.uml.resource.UMLResource;
+import org.eclipse.uml2.uml.resources.util.UMLResourcesUtil;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Uml2Support {
 
-    private URI typesUri = null;
-
     public static void main(String[] args) {
-        Model m = new Uml2Support().getModel(Paths.get("Kieker2Uml/input-data/uml/SequenceDiagrams.uml").toAbsolutePath().toString());
+        Model m = loadModel(Paths.get("Kieker2Uml/input-data/uml/SequenceDiagrams.uml"));
         System.out.println(m.getName());
+        saveModel(m, Paths.get("Kieker2Uml/input-data/uml/SequenceDiagrams2.uml"));
     }
 
-    public Model getModel(String pathToModel) {
+    public static Model loadModel(Path pathToModel) {
 
-        typesUri = URI.createFileURI(pathToModel);
+        URI typesUri = URI.createFileURI(pathToModel.toString());
         ResourceSet set = new ResourceSetImpl();
 
         set.getPackageRegistry().put(UMLPackage.eNS_URI, UMLPackage.eINSTANCE);
@@ -30,8 +33,23 @@ public class Uml2Support {
         set.createResource(typesUri);
         Resource r = set.getResource(typesUri, true);
 
-        Model m = (Model) EcoreUtil.getObjectByType(r.getContents(), UMLPackage.Literals.MODEL);
+        return (Model) EcoreUtil.getObjectByType(r.getContents(), UMLPackage.Literals.MODEL);
+    }
 
-        return m;
+    public static Path saveModel(Model model, Path path) {
+        final ResourceSet resourceSet = new ResourceSetImpl();
+
+        UMLResourcesUtil.init(resourceSet);
+
+        Resource resource = resourceSet.createResource(URI.createURI(path.toString()));
+        resource.getContents().add(model);
+
+        // And save
+        try {
+            resource.save(null); // no save options needed
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+        return path;
     }
 }
