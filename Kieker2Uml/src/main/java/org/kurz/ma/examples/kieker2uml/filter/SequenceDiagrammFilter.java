@@ -9,6 +9,7 @@ import kieker.model.system.model.MessageTrace;
 import kieker.model.system.model.SynchronousCallMessage;
 import kieker.model.system.model.SynchronousReplyMessage;
 import org.apache.commons.io.FileUtils;
+import org.eclipse.uml2.uml.Model;
 import org.kurz.ma.examples.kieker2uml.model.Lifeline;
 import org.kurz.ma.examples.kieker2uml.model.Lifeline.LifelineType;
 import org.kurz.ma.examples.kieker2uml.model.Message;
@@ -30,6 +31,9 @@ import java.util.TreeSet;
 
 import static java.lang.String.format;
 import static kieker.model.repository.AllocationRepository.ROOT_ALLOCATION_COMPONENT;
+import static org.kurz.ma.examples.kieker2uml.uml.Uml2Support.addInteractionToModel;
+import static org.kurz.ma.examples.kieker2uml.uml.Uml2Support.createModel;
+import static org.kurz.ma.examples.kieker2uml.uml.Uml2Support.saveModel;
 
 public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter {
 
@@ -58,6 +62,9 @@ public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter
         final List<AbstractMessage> messages = mt.getSequenceAsVector();
 
         final Set<Lifeline> lifelines = getLifelines(mt.getTraceId(), messages);
+        final Model model = createModel(String.valueOf(mt.getTraceId()));
+        addInteractionToModel(model, "Interaction " + mt.getTraceId(), lifelines);
+        saveModel(model, Paths.get("output") );
         liflinesToXml(mt.getTraceId(), lifelines);
 
         toFile("TraceId: " + mt.getTraceId());
@@ -70,7 +77,7 @@ public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter
     }
 
     private void liflinesToXml(final Long traceId, final Set<Lifeline> lifelines) {
-        final Path pathToFile = Paths.get("output/" + traceId.toString() + "-sequencediagram.xml");
+        final Path pathToFile = Paths.get("output").resolve(traceId.toString() + "-sequencediagram.xml");
         try {
             FileUtils.createParentDirectories(pathToFile.toFile());
         } catch (IOException e) {
@@ -86,17 +93,11 @@ public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter
         lifelines.add(actor);
 
         Lifeline lastReceiver = null;
-        boolean first = true;
         for (final AbstractMessage message : messages) {
             final Lifeline senderLifeline = getLifeline(lifelines, message.getSendingExecution().getAllocationComponent().getAssemblyComponent());
             final Lifeline receiverLifeline = getLifeline(lifelines, message.getReceivingExecution().getAllocationComponent().getAssemblyComponent());
 
-            if (first) {
-                actor.messageOutgoing(senderLifeline, Message.MessageType.ASYNCHRONOUS, "'Entry'");
-                first = false;
-            }
-
-            final Message.MessageType messageType = getMessageType(message, first);
+            final Message.MessageType messageType = getMessageType(message);
             senderLifeline.messageOutgoing(receiverLifeline, messageType, getMessageLabel(message));
             lastReceiver = receiverLifeline;
         }
@@ -112,10 +113,7 @@ public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter
         return sig.getName() + '(' + params + ')';
     }
 
-    private Message.MessageType getMessageType(final AbstractMessage message, final boolean first) {
-        if (first) {
-            return Message.MessageType.ASYNCHRONOUS;
-        }
+    private Message.MessageType getMessageType(final AbstractMessage message) {
         if (message instanceof SynchronousCallMessage) {
             return Message.MessageType.SYNCHRONOUS;
         }

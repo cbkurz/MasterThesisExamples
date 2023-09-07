@@ -2,11 +2,6 @@ package org.kurz.ma.examples.eclipse.ecore.uml2;
 
 import org.eclipse.uml2.uml.Interaction;
 import org.eclipse.uml2.uml.Lifeline;
-import org.eclipse.uml2.uml.Model;
-import org.eclipse.uml2.uml.PrimitiveType;
-import org.eclipse.uml2.uml.Property;
-import org.eclipse.uml2.uml.Type;
-import org.eclipse.uml2.uml.UMLFactory;
 import org.eclipse.uml2.uml.VisibilityKind;
 import org.kurz.ma.examples.eclipse.ecore.uml2.utils.ModelManagement;
 import org.kurz.ma.examples.eclipse.ecore.uml2.utils.UmlModelRepository;
@@ -31,9 +26,9 @@ public class UmlMain {
         final ModelManagement model = repository.createModel("ModelWithInteractions");
 
         model.importPrimitivesProfile();
-        model.importMarteProfile();
+//        model.importMarteProfile();
 
-        final Interaction interaction = UMLFactory.eINSTANCE.createInteraction();
+        final Interaction interaction = model.createInteraction("Interaction");
 
         final Lifeline myLifeline = interaction.createLifeline("myLifeline");
         myLifeline.setVisibility(VisibilityKind.PUBLIC_LITERAL);
@@ -49,16 +44,6 @@ public class UmlMain {
 
         model.save(Paths.get("model-output"));
         LOGGER.info("--- Finnished ---");
-    }
-
-    private static PrimitiveType getIntPrimitive(final Model model) {
-        return (PrimitiveType) model.getOwnedType("Integer");
-    }
-
-    protected static Property createAttribute(org.eclipse.uml2.uml.Class clazz, String name, Type type, int lowerBound, int upperBound) {
-
-        return clazz.createOwnedAttribute(name, type,
-                lowerBound, upperBound);
     }
 
 
