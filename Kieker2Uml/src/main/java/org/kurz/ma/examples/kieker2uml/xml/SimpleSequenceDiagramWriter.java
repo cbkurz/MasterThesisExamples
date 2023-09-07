@@ -24,12 +24,6 @@ public class SimpleSequenceDiagramWriter implements XmlSupport.ElementWriter {
         xsw.writeStartElement(MY_SEQUENCE_DIAGRAM_NAMESPACE, "Model");
         xsw.writeAttribute("xmlns", MY_SEQUENCE_DIAGRAM_NAMESPACE);
         XmlSupport.writeXmiAttributes(xsw);
-        XmlSupport.writeIdAttribute(xsw, lifelines.stream()
-                .filter(l -> Lifeline.LifelineType.ACTOR.equals(l.getType()))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Expected at least one Lifeline with the type " + Lifeline.LifelineType.ACTOR))
-                .getId()
-                .toString());
         lifelines.forEach(l -> writeLifeline(xsw, l));
         lifelines.stream().flatMap(l -> l.getMessagesOutgoing().stream()).toList().forEach(m -> writeMessage(xsw, m));
         lifelines.stream().flatMap(l -> l.getMessagesIncoming().stream()).toList().forEach(m -> writeMessage(xsw, m));

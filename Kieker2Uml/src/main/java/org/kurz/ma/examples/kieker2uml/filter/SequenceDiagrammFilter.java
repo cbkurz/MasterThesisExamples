@@ -25,12 +25,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
 import static java.lang.String.format;
-import static kieker.model.repository.AllocationRepository.ROOT_ALLOCATION_COMPONENT;
 import static org.kurz.ma.examples.kieker2uml.uml.Uml2Support.addInteractionToModel;
 import static org.kurz.ma.examples.kieker2uml.uml.Uml2Support.createModel;
 import static org.kurz.ma.examples.kieker2uml.uml.Uml2Support.saveModel;
@@ -89,21 +87,14 @@ public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter
     private Set<Lifeline> getLifelines(final long traceId, final List<AbstractMessage> messages) {
         final Set<Lifeline> lifelines = new TreeSet<>();
 
-        final Lifeline actor = new Lifeline(traceId, LifelineType.ACTOR, ROOT_ALLOCATION_COMPONENT.getIdentifier());
-        lifelines.add(actor);
-
-        Lifeline lastReceiver = null;
         for (final AbstractMessage message : messages) {
             final Lifeline senderLifeline = getLifeline(lifelines, message.getSendingExecution().getAllocationComponent().getAssemblyComponent());
             final Lifeline receiverLifeline = getLifeline(lifelines, message.getReceivingExecution().getAllocationComponent().getAssemblyComponent());
 
             final Message.MessageType messageType = getMessageType(message);
             senderLifeline.messageOutgoing(receiverLifeline, messageType, getMessageLabel(message));
-            lastReceiver = receiverLifeline;
         }
-        if (Objects.nonNull(lastReceiver)) {
-            lastReceiver.messageOutgoing(actor, Message.MessageType.ASYNCHRONOUS_REPLY, "Finished");
-        }
+
         return lifelines;
     }
 
