@@ -59,12 +59,17 @@ public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter
 
         final List<AbstractMessage> messages = mt.getSequenceAsVector();
 
-        final Set<Lifeline> lifelines = getLifelines(mt.getTraceId(), messages);
+        final Set<Lifeline> lifelines = getLifelines(messages);
+
+        // UML
         final Model model = createModel(String.valueOf(mt.getTraceId()));
         addInteractionToModel(model, "Interaction " + mt.getTraceId(), lifelines);
         saveModel(model, Paths.get("output") );
+
+        // simplified Model
         liflinesToXml(mt.getTraceId(), lifelines);
 
+        // logging
         toFile("TraceId: " + mt.getTraceId());
         toFile(format("Total number of messages: %s", messages.size()));
 //        toFile(format("Total elapsed time for Trace Id %s: %s", mt.getTraceId(), (mt.getEndTimestamp() - mt.getStartTimestamp()) / 1000.0));
@@ -75,7 +80,7 @@ public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter
     }
 
     private void liflinesToXml(final Long traceId, final Set<Lifeline> lifelines) {
-        final Path pathToFile = Paths.get("output").resolve(traceId.toString() + "-sequencediagram.xml");
+        final Path pathToFile = Paths.get("output").resolve(String.format("sequencediagram-%s.xml", traceId.toString()));
         try {
             FileUtils.createParentDirectories(pathToFile.toFile());
         } catch (IOException e) {
@@ -84,7 +89,7 @@ public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter
         XmlSupport.writeXml(pathToFile, new SimpleSequenceDiagramWriter(lifelines));
     }
 
-    private Set<Lifeline> getLifelines(final long traceId, final List<AbstractMessage> messages) {
+    private Set<Lifeline> getLifelines(final List<AbstractMessage> messages) {
         final Set<Lifeline> lifelines = new TreeSet<>();
 
         for (final AbstractMessage message : messages) {
@@ -117,6 +122,7 @@ public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter
     private static Lifeline getLifeline(final Set<Lifeline> lifelines, final AssemblyComponent component) {
         final Lifeline lifeline = new Lifeline((long) component.getId(), LifelineType.OBJECT, assemblyComponentLabel(component)); // TODO: braucht man wirklich den Namen oder reicht auch .getIdentifier() ?
         if (lifelines.contains(lifeline)) {
+            // A simple "return lifeline" is not possible the returned object has to be the original one and not the newly created one
             return lifelines.stream().filter(l -> l.compareTo(lifeline) == 0).findFirst().get();
         }
         lifelines.add(lifeline);
