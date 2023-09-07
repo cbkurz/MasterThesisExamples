@@ -23,6 +23,7 @@ public class Lifeline implements Comparable<Lifeline> {
     public void messageOutgoing(final Lifeline to, final MessageType type, final String label) {
         messagesOutgoing.add(new Message(this, to, type, label));
     }
+
     protected void messageIncoming(final Message message) {
         messagesIncoming.add(message);
     }
@@ -61,6 +62,13 @@ public class Lifeline implements Comparable<Lifeline> {
         return label;
     }
 
+    public Message getFirstMessage() {
+        return messagesOutgoing.get(0);
+    }
+
+    public Message getLastMessage() {
+        return messagesIncoming.get(messagesIncoming.size() - 1);
+    }
 
     public enum LifelineType {
         ACTOR, OBJECT
