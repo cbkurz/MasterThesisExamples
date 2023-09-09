@@ -4,8 +4,18 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/Bookstore" />
+        <option name="gradleHome" value="$PROJECT_DIR$/../../../../Gradle/gradle-7.5.1" />
+        <option name="gradleJvm" value="corretto-11" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/Bookstore" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/DotToXML" />
-        <option name="gradleHome" value="$PROJECT_DIR$/../../../../Gradle/gradle-7.6" />
+        <option name="gradleHome" value="$PROJECT_DIR$/../../../../Gradle/gradle-7.5.1" />
         <option name="gradleJvm" value="#JAVA_HOME" />
         <option name="modules">
           <set>
@@ -25,6 +35,7 @@
       </GradleProjectSettings>
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/Kieker2Uml" />
+        <option name="gradleHome" value="$PROJECT_DIR$/../../../../Gradle/gradle-7.5.1" />
         <option name="gradleJvm" value="#JAVA_HOME" />
         <option name="modules">
           <set>
@@ -34,7 +45,7 @@
       </GradleProjectSettings>
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/SimpleEpsilonUMLExample" />
-        <option name="gradleHome" value="$PROJECT_DIR$/../../../../Gradle/gradle-7.6" />
+        <option name="gradleHome" value="$PROJECT_DIR$/../../../../Gradle/gradle-7.5.1" />
         <option name="gradleJvm" value="#JAVA_HOME" />
         <option name="modules">
           <set>

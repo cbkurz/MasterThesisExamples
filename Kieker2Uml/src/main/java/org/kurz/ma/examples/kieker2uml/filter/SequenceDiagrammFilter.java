@@ -64,7 +64,7 @@ public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter
 
         // UML
         final Model model = createModel(String.valueOf(mt.getTraceId()));
-        addInteractionToModel(model, "Interaction " + mt.getTraceId(), lifelines);
+        addInteractionToModel(model, mt);
         saveModel(model, Paths.get("output") );
 
         // simplified Model
@@ -83,6 +83,7 @@ public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter
         toFile(format("UML - Total number of Messages found: %s", interaction.getMessages().size()));
         toFile("\n");
     }
+
 
     private void liflinesToXml(final Long traceId, final Set<Lifeline> lifelines) {
         final Path pathToFile = Paths.get("output").resolve(String.format("sequencediagram-%s.xml", traceId.toString()));

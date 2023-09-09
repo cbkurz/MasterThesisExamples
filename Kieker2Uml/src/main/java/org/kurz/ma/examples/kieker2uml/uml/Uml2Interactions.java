@@ -30,7 +30,7 @@ class Uml2Interactions {
         final List<org.eclipse.uml2.uml.Lifeline> umlLifelines = addLifelines(lifelines, interaction);
 
         lifelines.stream().flatMap(l -> l.getMessagesOutgoing().stream()).toList().forEach(m -> createMessage(interaction, umlLifelines, m));
-//        lifelines.forEach(l -> createBehaviourOccurrence(interaction, l));
+        lifelines.forEach(l -> createBehaviourOccurrence(interaction, l));
     }
 
     private static void createBehaviourOccurrence(final Interaction interaction, final Lifeline lifeline) {

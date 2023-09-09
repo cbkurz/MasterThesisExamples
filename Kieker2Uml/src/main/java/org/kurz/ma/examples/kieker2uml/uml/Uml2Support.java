@@ -1,5 +1,6 @@
 package org.kurz.ma.examples.kieker2uml.uml;
 
+import kieker.model.system.model.MessageTrace;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -10,13 +11,11 @@ import org.eclipse.uml2.uml.UMLFactory;
 import org.eclipse.uml2.uml.UMLPackage;
 import org.eclipse.uml2.uml.resource.UMLResource;
 import org.eclipse.uml2.uml.resources.util.UMLResourcesUtil;
-import org.kurz.ma.examples.kieker2uml.model.Lifeline;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Set;
 
 public class Uml2Support {
 
@@ -62,7 +61,7 @@ public class Uml2Support {
         return model;
     }
 
-    public static void addInteractionToModel(final Model model, final String interactionName, final Set<Lifeline> lifelines) {
-        Uml2Interactions.addInteractionToModel(model, interactionName, lifelines);
+    public static void addInteractionToModel(final Model model, final MessageTrace messageTrace) {
+        Uml2Interactions2.addInteractionToModel(model, messageTrace);
     }
 }
