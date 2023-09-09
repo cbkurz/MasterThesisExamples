@@ -14,24 +14,24 @@
  * limitations under the License.
  ***************************************************************************/
 
-package kieker.examples.monitoring.aspectj;
+package kieker.examples.monitoring.application;
 
 import java.util.concurrent.CountDownLatch;
 
-public final class BookstoreStarter {
+public final class Main {
 
 	private static final int NUM_REQUESTS_DEFAULT = 1;
 
-	private BookstoreStarter() {}
+	private Main() {}
 
 	public static void main(final String[] args) throws InterruptedException {
 		final Bookstore bookstore = new Bookstore();
-		final int numTraces = BookstoreStarter.extractNumRequestsFromArgs(args);
+		final int numTraces = Main.extractNumRequestsFromArgs(args);
 		final CountDownLatch latch = new CountDownLatch(numTraces);
 
 		for (int i = 0; i < numTraces; i++) {
 			System.out.println("Bookstore.main: Starting request " + i);
-			BookstoreStarter.spawnAsyncRequest(bookstore, latch);
+			Main.spawnAsyncRequest(bookstore, latch);
 		}
 		// Now, wait for all threads requests to complete
 		latch.await();
@@ -72,15 +72,15 @@ public final class BookstoreStarter {
 	 */
 	private static int extractNumRequestsFromArgs(final String[] args) {
 		if ((args == null) || (args.length == 0)) {
-			return BookstoreStarter.NUM_REQUESTS_DEFAULT;
+			return Main.NUM_REQUESTS_DEFAULT;
 		}
 
 		try {
 			return Integer.parseInt(args[0]);
 		} catch (final NumberFormatException exc) {
 			System.out.println("Couldn't extract number from argument value " + args[0]);
-			System.out.println("Will use the default value " + BookstoreStarter.NUM_REQUESTS_DEFAULT);
-			return BookstoreStarter.NUM_REQUESTS_DEFAULT;
+			System.out.println("Will use the default value " + Main.NUM_REQUESTS_DEFAULT);
+			return Main.NUM_REQUESTS_DEFAULT;
 		}
 	}
 }

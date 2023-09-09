@@ -14,18 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-package kieker.examples.monitoring.aspectj;
+package kieker.examples.monitoring.application;
 
-public class CRM {
+public class Bookstore {
 
-	private final Catalog catalog;
+	private final Catalog catalog = new Catalog();
+	private final CRM crm = new CRM(this.catalog);
 
-	public CRM(final Catalog catalog) {
-		this.catalog = catalog;
-	}
-
-	public void getOffers() {
+	public void searchBook() {
 		this.catalog.getBook(false);
+		this.crm.getOffers();
 	}
 
 }
