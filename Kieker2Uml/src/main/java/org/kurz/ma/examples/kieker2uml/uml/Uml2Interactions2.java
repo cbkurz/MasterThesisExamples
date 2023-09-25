@@ -77,15 +77,15 @@ class Uml2Interactions2 {
         final boolean senderAndReceiverAreEqual = senderLifeline.equals(receiverLifeline); // this might happen if an object/class calls itself.
 
         if (messageSort.equals(MessageSort.SYNCH_CALL_LITERAL) && !senderAndReceiverAreEqual) {
-            openBehaviourOccurrence(interaction, receiverLifeline, messageOccurrenceReceive);
+            openBehaviourSpecification(interaction, receiverLifeline, messageOccurrenceReceive);
         }
         if (messageSort.equals(MessageSort.REPLY_LITERAL) && !senderAndReceiverAreEqual) {
-            closeBehaviourOccurrence(senderLifeline, messageOccurrenceSend);
+            closeBehaviourSpecification(senderLifeline, messageOccurrenceSend);
         }
 
     }
 
-    private static void closeBehaviourOccurrence(final org.eclipse.uml2.uml.Lifeline senderLifeline, final MessageOccurrenceSpecification messageOccurrenceSend) {
+    private static void closeBehaviourSpecification(final org.eclipse.uml2.uml.Lifeline senderLifeline, final MessageOccurrenceSpecification messageOccurrenceSend) {
         final List<BehaviorExecutionSpecification> list = senderLifeline.getCoveredBys().stream()
                 .filter(cb -> cb instanceof BehaviorExecutionSpecification)
                 .map(cb -> (BehaviorExecutionSpecification) cb)
@@ -121,7 +121,7 @@ class Uml2Interactions2 {
     }
 
 
-    private static void openBehaviourOccurrence(final Interaction interaction, final org.eclipse.uml2.uml.Lifeline umlLifeline, final MessageOccurrenceSpecification messageOccurrenceReceive) {
+    private static void openBehaviourSpecification(final Interaction interaction, final org.eclipse.uml2.uml.Lifeline umlLifeline, final MessageOccurrenceSpecification messageOccurrenceReceive) {
         final BehaviorExecutionSpecification behaviour = (BehaviorExecutionSpecification) interaction.createFragment("BehaviorExecutionSpecification" + umlLifeline.getLabel(), E_CLASS_BEHAVIOUR_EXECUTION);
         behaviour.getCovereds().add(umlLifeline);
 
