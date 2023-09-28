@@ -33,6 +33,8 @@ public class UmlProfileMain {
 
     public static void main(String[] args) throws IOException {
         final Model model = createModel("ModelWithMarteImport");
+
+        // Create Model Items
         final Profile profile = importProfile(model, UMLMarte.getGqamUri());
         final EClass deploymentEClass = UMLFactory.eINSTANCE.createDeployment().eClass();
         final Node node = UMLFactory.eINSTANCE.createNode();
@@ -43,13 +45,10 @@ public class UmlProfileMain {
         final Node myNode = (Node) model.createPackagedElement("myNode", nodeEClass);
         deployment.createDependency(myNode);
 
+        // Apply Stereotype - does not work and fails (?) silently
+        // Meaning of "does not work" is, that after saving there is no stereotype attached to the node.
         final Stereotype gaExecHost = getGaExecHost(profile);
         final EObject eObject = myNode.applyStereotype(gaExecHost);
-
-//        final GaExecHost eObject = (GaExecHost) myNode.applyStereotype(gaExecHost);
-//        eObject.setClockOvh("wat");
-//        model.getOwnedStereotypes().add(gaExecHost);
-
 
         save(model);
     }
@@ -83,4 +82,14 @@ public class UmlProfileMain {
         resource.getContents().add(package_);
         resource.save(null);
     }
+
+    private static Model loadModel(final String modelPath) {
+        final Resource model = RESOURCE_SET.getResource(URI.createURI(modelPath), true);
+        if (model == null) {
+            throw new RuntimeException("Could not load Model: " + modelPath);
+        }
+
+        return (Model) model.getContents().get(0);
+    }
+
 }
