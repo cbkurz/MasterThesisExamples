@@ -39,10 +39,6 @@ dependencies {
     implementation ("io.vavr", "vavr", "0.10.4")
     // https://mvnrepository.com/artifact/commons-io/commons-io
     implementation ("commons-io", "commons-io", "2.13.0")
-
-    // test
-    platform("org.junit:junit-bom:5.9.1")
-    testImplementation ("org.junit.jupiter:junit-jupiter")
 }
 
 var mainClassName = "org.kurz.ma.examples.kieker2uml.Kieker2UmlMain"

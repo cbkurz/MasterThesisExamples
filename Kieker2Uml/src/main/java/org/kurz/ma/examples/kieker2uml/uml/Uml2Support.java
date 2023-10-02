@@ -17,7 +17,18 @@ import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.requireNonNull;
+
 public class Uml2Support {
+
+    private static final ResourceSet RESOURCE_SET = new ResourceSetImpl();
+
+    static {
+        UMLResourcesUtil.init(RESOURCE_SET);
+        RESOURCE_SET.getPackageRegistry().put(UMLPackage.eNS_URI, UMLPackage.eINSTANCE);
+        RESOURCE_SET.getResourceFactoryRegistry().getExtensionToFactoryMap().put(UMLResource.FILE_EXTENSION, UMLResource.Factory.INSTANCE);
+    }
 
     public static void main(String[] args) {
         Model m = loadModel(Paths.get("Kieker2Uml/input-data/uml/SequenceDiagrams.uml"));
@@ -27,6 +38,9 @@ public class Uml2Support {
 
     public static Model loadModel(Path pathToModel) {
 
+        // unclear why this is necessary,
+        // however if this isn't initialized here again,
+        // the program fails since the model will not be loaded when it is created by the InputModelValidator.class.
         URI typesUri = URI.createFileURI(pathToModel.toString());
         ResourceSet set = new ResourceSetImpl();
 
@@ -35,15 +49,22 @@ public class Uml2Support {
         set.createResource(typesUri);
         Resource r = set.getResource(typesUri, true);
 
-        return (Model) EcoreUtil.getObjectByType(r.getContents(), UMLPackage.Literals.MODEL);
+        return requireNonNull((Model) EcoreUtil.getObjectByType(r.getContents(), UMLPackage.Literals.MODEL));
     }
 
-    public static Path saveModel(Model model, Path directory) {
-        final ResourceSet resourceSet = new ResourceSetImpl();
+    private static Resource getResource(final URI typesUri) {
+        try {
+            Resource r = RESOURCE_SET.getResource(typesUri, true);
+            return isNull(r) ? RESOURCE_SET.createResource(typesUri) : r;
+        } catch (Exception e) {
+            return requireNonNull(RESOURCE_SET.createResource(typesUri), "Unable to create UML resource: " + typesUri.toString());
+        }
+    }
 
-        UMLResourcesUtil.init(resourceSet);
+    public static Path saveModel(Model model, Path targetFile) {
 
-        Resource resource = resourceSet.createResource(URI.createURI(directory.toString()).appendSegment("model-" + model.getLabel()).appendFileExtension(UMLResource.FILE_EXTENSION));
+        final URI uri = URI.createURI(targetFile.toString());
+        Resource resource = getResource(uri); // is validated in InputModelValidator.class to have the correct file extension.
         resource.getContents().add(model);
 
         // And save
@@ -52,7 +73,7 @@ public class Uml2Support {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        return directory;
+        return targetFile;
     }
 
     public static Model createModel(final String name) {
@@ -66,6 +87,6 @@ public class Uml2Support {
     }
 
     public static void addInteractionToUseCase(final Model model, final MessageTrace messageTrace, final String useCaseName) {
-
+        model.getPackagedElements();
     }
 }

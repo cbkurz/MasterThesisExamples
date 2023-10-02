@@ -13,7 +13,6 @@ import org.kurz.ma.examples.kieker2uml.filter.SequenceDiagrammFilter;
 import teetime.framework.Configuration;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
 
@@ -51,7 +50,7 @@ public class TeeTimeConfiguration extends Configuration {
         this.executionRecordTransformationStage = new ExecutionRecordTransformationStage(this.systemModelRepository);
         executionRecordTransformationStage.declareActive();
 
-        this.sequenceDiagramFilter = new SequenceDiagrammFilter(this.systemModelRepository, Paths.get("output.uml"));
+        this.sequenceDiagramFilter = new SequenceDiagrammFilter(this.systemModelRepository, parameters.getModelPath(), parameters.getUseCaseName() );
     }
 
 }

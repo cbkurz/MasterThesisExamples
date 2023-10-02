@@ -9,10 +9,25 @@ import java.util.List;
 
 public class CliParameters {
 
+    @Parameter(names = {"-m", "--model"},
+            description = "The model which is worked on. " +
+                    "The input files are parsed and put into this model.",
+            converter = PathConverter.class,
+            validateWith = InputModelValidator.class
+    )
+    private Path modelPath = Paths.get("model-output.uml");
+
+    @Parameter(names = {"-uc", "--use-case"},
+            description = "The Name of the use case under which the input files are added. " +
+                    "The use-case is added irrespectively if the use-case is already present.",
+            required = true
+    )
+    private String useCaseName;
+
     @Parameter(names = {"-f", "--file"},
             variableArity = true,
             description = "A file or list of files to parse. " +
-                    "The output file has the same name as the input but the extension is '.uml'",
+                    "These files are converted to a UML model.",
             converter = PathConverter.class,
             validateWith = FileIsPresentValidator.class
     )
@@ -63,4 +78,11 @@ public class CliParameters {
         return help;
     }
 
+    public Path getModelPath() {
+        return modelPath;
+    }
+
+    public String getUseCaseName() {
+        return useCaseName;
+    }
 }

@@ -16,7 +16,6 @@
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/DotToXML" />
         <option name="gradleHome" value="$PROJECT_DIR$/../../../../Gradle/gradle-7.5.1" />
-        <option name="gradleJvm" value="#JAVA_HOME" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/DotToXML" />
@@ -26,7 +25,6 @@
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/EclipseEcoreUml2" />
         <option name="gradleHome" value="$PROJECT_DIR$/../../../../Gradle/gradle-7.5.1" />
-        <option name="gradleJvm" value="#JAVA_HOME" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/EclipseEcoreUml2" />
@@ -36,7 +34,6 @@
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/Kieker2Uml" />
         <option name="gradleHome" value="$PROJECT_DIR$/../../../../Gradle/gradle-7.5.1" />
-        <option name="gradleJvm" value="#JAVA_HOME" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/Kieker2Uml" />
@@ -46,7 +43,6 @@
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/SimpleEpsilonUMLExample" />
         <option name="gradleHome" value="$PROJECT_DIR$/../../../../Gradle/gradle-7.5.1" />
-        <option name="gradleJvm" value="#JAVA_HOME" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/SimpleEpsilonUMLExample" />

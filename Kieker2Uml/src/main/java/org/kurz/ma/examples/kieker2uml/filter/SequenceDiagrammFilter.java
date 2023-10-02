@@ -31,21 +31,24 @@ import java.util.TreeSet;
 
 import static java.lang.String.format;
 import static org.kurz.ma.examples.kieker2uml.uml.Uml2Support.addInteractionToModel;
-import static org.kurz.ma.examples.kieker2uml.uml.Uml2Support.createModel;
+import static org.kurz.ma.examples.kieker2uml.uml.Uml2Support.loadModel;
 import static org.kurz.ma.examples.kieker2uml.uml.Uml2Support.saveModel;
 
 public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SequenceDiagrammFilter.class);
-    private final Path outputPath;
+    private final Path modelPath;
+    private final String useCaseName;
 
     /**
      * @param repository model repository
-     * @param outputPath the path to the file to which the sequence diagramm is written.
+     * @param modelPath  the path to the file to which the sequence diagramm is written.
+     * @param modelPath
      */
-    public SequenceDiagrammFilter(final SystemModelRepository repository, final Path outputPath) {
+    public SequenceDiagrammFilter(final SystemModelRepository repository, final Path modelPath, final String useCaseName) {
         super(repository);
-        this.outputPath = outputPath;
+        this.modelPath = modelPath;
+        this.useCaseName = useCaseName;
     }
 
     @Override
@@ -63,9 +66,9 @@ public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter
         final Set<Lifeline> lifelines = getLifelines(messages);
 
         // UML
-        final Model model = createModel(String.valueOf(mt.getTraceId()));
+        final Model model = loadModel(modelPath);
         addInteractionToModel(model, mt);
-        saveModel(model, Paths.get("output") );
+        saveModel(model, modelPath);
 
         // simplified Model
         liflinesToXml(mt.getTraceId(), lifelines);
@@ -109,7 +112,7 @@ public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter
         return lifelines;
     }
 
-    private String  getMessageLabel(final AbstractMessage me) {
+    private String getMessageLabel(final AbstractMessage me) {
         final Signature sig = me.getReceivingExecution().getOperation().getSignature();
         final String params = String.join(", ", sig.getParamTypeList());
         return sig.getName() + '(' + params + ')';
