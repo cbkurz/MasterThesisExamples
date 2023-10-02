@@ -62,6 +62,10 @@ public class Uml2Support {
     }
 
     public static void addInteractionToModel(final Model model, final MessageTrace messageTrace) {
-        Uml2Interactions2.addInteractionToModel(model, messageTrace);
+        Uml2Interactions.addInteractionToModel(model, messageTrace);
+    }
+
+    public static void addInteractionToUseCase(final Model model, final MessageTrace messageTrace, final String useCaseName) {
+
     }
 }

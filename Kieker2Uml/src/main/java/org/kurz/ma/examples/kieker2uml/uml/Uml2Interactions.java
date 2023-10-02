@@ -1,21 +1,23 @@
 package org.kurz.ma.examples.kieker2uml.uml;
 
-import org.eclipse.emf.common.util.EList;
+import kieker.common.util.signature.Signature;
+import kieker.model.system.model.AbstractMessage;
+import kieker.model.system.model.AssemblyComponent;
+import kieker.model.system.model.MessageTrace;
+import kieker.model.system.model.SynchronousCallMessage;
+import kieker.model.system.model.SynchronousReplyMessage;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.uml2.uml.BehaviorExecutionSpecification;
 import org.eclipse.uml2.uml.Interaction;
-import org.eclipse.uml2.uml.InteractionFragment;
 import org.eclipse.uml2.uml.MessageOccurrenceSpecification;
+import org.eclipse.uml2.uml.MessageSort;
 import org.eclipse.uml2.uml.Model;
-import org.eclipse.uml2.uml.OccurrenceSpecification;
 import org.eclipse.uml2.uml.UMLFactory;
-import org.kurz.ma.examples.kieker2uml.model.Lifeline;
-import org.kurz.ma.examples.kieker2uml.model.Message;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNull;
 
 class Uml2Interactions {
@@ -23,60 +25,110 @@ class Uml2Interactions {
     public static final EClass E_CLASS_MESSAGE_OCCURRENCE = UMLFactory.eINSTANCE.createMessageOccurrenceSpecification().eClass();
     public static final EClass E_CLASS_BEHAVIOUR_EXECUTION = UMLFactory.eINSTANCE.createBehaviorExecutionSpecification().eClass();
 
-    static void addInteractionToModel(final Model model, final String interactionName, final Set<Lifeline> lifelines) {
+    static void addInteractionToModel(final Model model, final MessageTrace messageTrace) {
         final EClass eClass = UMLFactory.eINSTANCE.createInteraction().eClass();
-        final Interaction interaction = (Interaction) model.createPackagedElement(interactionName, eClass);
+        final Interaction interaction = (Interaction) model.createPackagedElement("Interaction-Trace-" + messageTrace.getTraceId() + "-StartAt-" + messageTrace.getStartTimestamp(), eClass);
 
-        final List<org.eclipse.uml2.uml.Lifeline> umlLifelines = addLifelines(lifelines, interaction);
-
-        lifelines.stream().flatMap(l -> l.getMessagesOutgoing().stream()).toList().forEach(m -> createMessage(interaction, umlLifelines, m));
-        lifelines.forEach(l -> createBehaviourOccurrence(interaction, l));
+        addLifelines(interaction, messageTrace.getSequenceAsVector()); // adds lifelines and messages
     }
 
-    private static void createBehaviourOccurrence(final Interaction interaction, final Lifeline lifeline) {
-        final BehaviorExecutionSpecification behaviour = (BehaviorExecutionSpecification) interaction.createFragment("BehaviorExecutionSpecification" + lifeline.getLabel(), E_CLASS_BEHAVIOUR_EXECUTION);
-        final EList<org.eclipse.uml2.uml.Lifeline> lifelines = interaction.getLifelines();
-        final org.eclipse.uml2.uml.Lifeline umlLifeline = getLifeline(lifelines, lifeline);
+    /**
+     * Creates the following Types in the UML2 Model:
+     * * {@link org.eclipse.uml2.uml.Lifeline} - The Lifelines represent the different objects that are interaction within the Trace of the application
+     * * {@link org.eclipse.uml2.uml.Message} - The Messages represent the calls that the objects in the application are making to each other
+     * * {@link org.eclipse.uml2.uml.MessageOccurrenceSpecification} - This is required by UML2 and connects the Message with the lifeline
+     * * {@link org.eclipse.uml2.uml.BehaviorExecutionSpecification} - This is required by UML2 and represents when an object of the application is active
+     *
+     * @param interaction - Representing the whole interaction all other Types are enclosed by this Type.
+     * @param messages    - The Kieker Messages of the {@link MessageTrace}
+     */
+    private static void addLifelines(final Interaction interaction, final List<AbstractMessage> messages) {
+        // assumption: the messages are ordered
+        for (final AbstractMessage message : messages) {
+            final AssemblyComponent senderComponent = message.getSendingExecution().getAllocationComponent().getAssemblyComponent();
+            final AssemblyComponent receiverComponent = message.getReceivingExecution().getAllocationComponent().getAssemblyComponent();
+
+            // getLifeline(name, ignoreCase, createOnDemand) <-- naming of the parameters
+            final org.eclipse.uml2.uml.Lifeline senderLifeline = interaction.getLifeline(senderComponent.getIdentifier(), false, true);
+            final org.eclipse.uml2.uml.Lifeline receiverLifeline = interaction.getLifeline(receiverComponent.getIdentifier(), false, true);
+
+            createMessage(interaction, message, senderLifeline, receiverLifeline);
+
+        }
+    }
+
+    private static void createMessage(final Interaction interaction, final AbstractMessage message, final org.eclipse.uml2.uml.Lifeline senderLifeline, final org.eclipse.uml2.uml.Lifeline receiverLifeline) {
+        requireNonNull(interaction, "interaction");
+        requireNonNull(message, "message");
+        requireNonNull(senderLifeline, "senderLifeline");
+        requireNonNull(receiverLifeline, "receiverLifeline");
+
+        final String messageLabel = getMessageLabel(message);
+        final org.eclipse.uml2.uml.Message umlMessage = interaction.createMessage(messageLabel);
+        final MessageSort messageSort = getMessageSort(message);
+        umlMessage.setMessageSort(messageSort);
+
+        final MessageOccurrenceSpecification messageOccurrenceSend = createMessageOccurrence(interaction, umlMessage, senderLifeline, messageLabel + "SendEvent");
+        final MessageOccurrenceSpecification messageOccurrenceReceive = createMessageOccurrence(interaction, umlMessage, receiverLifeline, messageLabel + "ReceiveEvent");
+
+        umlMessage.setSendEvent(messageOccurrenceSend);
+        umlMessage.setReceiveEvent(messageOccurrenceReceive);
+
+        final boolean senderAndReceiverAreEqual = senderLifeline.equals(receiverLifeline); // this might happen if an object/class calls itself.
+
+        if (messageSort.equals(MessageSort.SYNCH_CALL_LITERAL) && !senderAndReceiverAreEqual) {
+            openBehaviourSpecification(interaction, receiverLifeline, messageOccurrenceReceive);
+        }
+        if (messageSort.equals(MessageSort.REPLY_LITERAL) && !senderAndReceiverAreEqual) {
+            closeBehaviourSpecification(senderLifeline, messageOccurrenceSend);
+        }
+
+    }
+
+    private static void closeBehaviourSpecification(final org.eclipse.uml2.uml.Lifeline senderLifeline, final MessageOccurrenceSpecification messageOccurrenceSend) {
+        final List<BehaviorExecutionSpecification> list = senderLifeline.getCoveredBys().stream()
+                .filter(cb -> cb instanceof BehaviorExecutionSpecification)
+                .map(cb -> (BehaviorExecutionSpecification) cb)
+                .filter(bes -> isNull(bes.getFinish()))
+                .toList();
+        if (list.isEmpty()) {
+            throw new RuntimeException("There is no open BehaviorExecutionSpecification. Exactly one was expected.");
+        }
+        if (list.size() > 1) {
+            throw new RuntimeException(String.format("There is more than one open BehaviourExecutionSpecification, this is unexpected pleas check the running code.\nsize: %s\nlist: %s", list.size(), list.stream().map(Object::toString).collect(Collectors.joining(", ", "[", "]"))));
+        }
+
+        list.get(0).setFinish(messageOccurrenceSend);
+    }
+
+    /**
+     * MessageSort is an enumeration of different kinds of messages.
+     * This enumeration determines if it is a call or a reply.
+     * This method only expects there to be 2 types SYNC_CALL or REPLY
+     * {@link MessageSort}
+     * @param message the kieker trace message, two types are considered {@link SynchronousCallMessage} and {@link SynchronousReplyMessage} if neither are matched an exception is thrown.
+     * @return MessageSort Literal
+     */
+    private static MessageSort getMessageSort(final AbstractMessage message) {
+        if (message instanceof SynchronousCallMessage) {
+            return MessageSort.SYNCH_CALL_LITERAL;
+        }
+        if (message instanceof SynchronousReplyMessage) {
+            return MessageSort.REPLY_LITERAL;
+        }
+        throw new RuntimeException("Unexpected message type of: " + message.getClass());
+
+    }
+
+
+    private static void openBehaviourSpecification(final Interaction interaction, final org.eclipse.uml2.uml.Lifeline umlLifeline, final MessageOccurrenceSpecification messageOccurrenceReceive) {
+        final BehaviorExecutionSpecification behaviour = (BehaviorExecutionSpecification) interaction.createFragment("BehaviorExecutionSpecification" + umlLifeline.getLabel(), E_CLASS_BEHAVIOUR_EXECUTION);
         behaviour.getCovereds().add(umlLifeline);
 
-        behaviour.setStart(getOccurrenceByMessage(umlLifeline.getCoveredBys(), lifeline.getFirstMessage()));
-        behaviour.setFinish(getOccurrenceByMessage(umlLifeline.getCoveredBys(), lifeline.getLastMessage()));
+        behaviour.setStart(messageOccurrenceReceive);
     }
 
-    private static OccurrenceSpecification getOccurrenceByMessage(final EList<InteractionFragment> fragments, final Message message) {
-        final String messageLabel = message.getLabel();
-        requireNonNull(messageLabel, "The lable of the message requires to be non null. Message: " + message);
-
-        final List<MessageOccurrenceSpecification> list = fragments.stream()
-                .filter(f -> f instanceof MessageOccurrenceSpecification)
-                .map(f -> (MessageOccurrenceSpecification) f)
-                .filter(b -> messageLabel.equals(b.getMessage().getLabel()))
-                .toList();
-
-        return list.get(list.size() - 1); // this is just an assumption but the last found message should be the right one.
-    }
-
-    private static List<org.eclipse.uml2.uml.Lifeline> addLifelines(final Set<Lifeline> lifelines, final Interaction interaction) {
-        final List<org.eclipse.uml2.uml.Lifeline> umlLifelines = new ArrayList<>();
-        lifelines.forEach(l -> {
-            final org.eclipse.uml2.uml.Lifeline lifeline = interaction.createLifeline(l.getLabel());
-            lifeline.setName(l.getLabel()); // TODO: redundant?
-            umlLifelines.add(lifeline);
-        });
-        return umlLifelines;
-    }
-
-    private static void createMessage(final Interaction interaction, final List<org.eclipse.uml2.uml.Lifeline> umlLifelines, final Message m) {
-        final org.eclipse.uml2.uml.Message umlMessage = interaction.createMessage(m.getLabel());
-        final org.eclipse.uml2.uml.Lifeline from = getLifeline(umlLifelines, m.getFrom());
-        final org.eclipse.uml2.uml.Lifeline to = getLifeline(umlLifelines, m.getTo());
-
-
-        umlMessage.setSendEvent(createMessageOccurance(interaction, umlMessage, from, m.getLabel() + "SendEvent"));
-        umlMessage.setReceiveEvent(createMessageOccurance(interaction, umlMessage, to, m.getLabel() + "ReceiveEvent"));
-    }
-
-    private static MessageOccurrenceSpecification createMessageOccurance(final Interaction interaction, final org.eclipse.uml2.uml.Message umlMessage, final org.eclipse.uml2.uml.Lifeline lifeline, final String label) {
+    private static MessageOccurrenceSpecification createMessageOccurrence(final Interaction interaction, final org.eclipse.uml2.uml.Message umlMessage, final org.eclipse.uml2.uml.Lifeline lifeline, final String label) {
         final MessageOccurrenceSpecification fragment = (MessageOccurrenceSpecification) interaction.createFragment(label, E_CLASS_MESSAGE_OCCURRENCE);
 
         fragment.getCovereds().add(lifeline);
@@ -84,7 +136,10 @@ class Uml2Interactions {
         return fragment;
     }
 
-    private static org.eclipse.uml2.uml.Lifeline getLifeline(final List<org.eclipse.uml2.uml.Lifeline> umlLifelines, final Lifeline m) {
-        return umlLifelines.stream().filter(l -> l.getLabel().equals(m.getLabel())).findFirst().orElseThrow();
+    private static String getMessageLabel(final AbstractMessage me) {
+        final Signature sig = me.getReceivingExecution().getOperation().getSignature();
+        final String params = String.join(", ", sig.getParamTypeList());
+        return sig.getName() + '(' + params + ')';
     }
+
 }
