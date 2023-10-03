@@ -17,18 +17,9 @@ import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNull;
 
 public class Uml2Support {
-
-    private static final ResourceSet RESOURCE_SET = new ResourceSetImpl();
-
-    static {
-        UMLResourcesUtil.init(RESOURCE_SET);
-        RESOURCE_SET.getPackageRegistry().put(UMLPackage.eNS_URI, UMLPackage.eINSTANCE);
-        RESOURCE_SET.getResourceFactoryRegistry().getExtensionToFactoryMap().put(UMLResource.FILE_EXTENSION, UMLResource.Factory.INSTANCE);
-    }
 
     public static void main(String[] args) {
         Model m = loadModel(Paths.get("Kieker2Uml/input-data/uml/SequenceDiagrams.uml"));
@@ -52,19 +43,12 @@ public class Uml2Support {
         return requireNonNull((Model) EcoreUtil.getObjectByType(r.getContents(), UMLPackage.Literals.MODEL));
     }
 
-    private static Resource getResource(final URI typesUri) {
-        try {
-            Resource r = RESOURCE_SET.getResource(typesUri, true);
-            return isNull(r) ? RESOURCE_SET.createResource(typesUri) : r;
-        } catch (Exception e) {
-            return requireNonNull(RESOURCE_SET.createResource(typesUri), "Unable to create UML resource: " + typesUri.toString());
-        }
-    }
-
     public static Path saveModel(Model model, Path targetFile) {
+        final ResourceSet resourceSet = new ResourceSetImpl();
 
-        final URI uri = URI.createURI(targetFile.toString());
-        Resource resource = getResource(uri); // is validated in InputModelValidator.class to have the correct file extension.
+        UMLResourcesUtil.init(resourceSet);
+
+        Resource resource = resourceSet.createResource(URI.createURI(targetFile.toString()));
         resource.getContents().add(model);
 
         // And save
@@ -87,6 +71,6 @@ public class Uml2Support {
     }
 
     public static void addInteractionToUseCase(final Model model, final MessageTrace messageTrace, final String useCaseName) {
-        model.getPackagedElements();
+        Uml2UseCases.addUseCase(model, messageTrace, useCaseName);
     }
 }

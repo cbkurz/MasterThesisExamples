@@ -22,8 +22,8 @@ import static java.util.Objects.requireNonNull;
 
 class Uml2Interactions {
 
-    public static final EClass E_CLASS_MESSAGE_OCCURRENCE = UMLFactory.eINSTANCE.createMessageOccurrenceSpecification().eClass();
-    public static final EClass E_CLASS_BEHAVIOUR_EXECUTION = UMLFactory.eINSTANCE.createBehaviorExecutionSpecification().eClass();
+    public static final EClass MESSAGE_OCCURRENCE_E_CLASS = UMLFactory.eINSTANCE.createMessageOccurrenceSpecification().eClass();
+    public static final EClass BEHAVIOUR_EXECUTION_E_CLASS = UMLFactory.eINSTANCE.createBehaviorExecutionSpecification().eClass();
 
     static void addInteractionToModel(final Model model, final MessageTrace messageTrace) {
         final EClass eClass = UMLFactory.eINSTANCE.createInteraction().eClass();
@@ -42,7 +42,7 @@ class Uml2Interactions {
      * @param interaction - Representing the whole interaction all other Types are enclosed by this Type.
      * @param messages    - The Kieker Messages of the {@link MessageTrace}
      */
-    private static void addLifelines(final Interaction interaction, final List<AbstractMessage> messages) {
+    static void addLifelines(final Interaction interaction, final List<AbstractMessage> messages) {
         // assumption: the messages are ordered
         for (final AbstractMessage message : messages) {
             final AssemblyComponent senderComponent = message.getSendingExecution().getAllocationComponent().getAssemblyComponent();
@@ -122,14 +122,14 @@ class Uml2Interactions {
 
 
     private static void openBehaviourSpecification(final Interaction interaction, final org.eclipse.uml2.uml.Lifeline umlLifeline, final MessageOccurrenceSpecification messageOccurrenceReceive) {
-        final BehaviorExecutionSpecification behaviour = (BehaviorExecutionSpecification) interaction.createFragment("BehaviorExecutionSpecification" + umlLifeline.getLabel(), E_CLASS_BEHAVIOUR_EXECUTION);
+        final BehaviorExecutionSpecification behaviour = (BehaviorExecutionSpecification) interaction.createFragment("BehaviorExecutionSpecification" + umlLifeline.getLabel(), BEHAVIOUR_EXECUTION_E_CLASS);
         behaviour.getCovereds().add(umlLifeline);
 
         behaviour.setStart(messageOccurrenceReceive);
     }
 
     private static MessageOccurrenceSpecification createMessageOccurrence(final Interaction interaction, final org.eclipse.uml2.uml.Message umlMessage, final org.eclipse.uml2.uml.Lifeline lifeline, final String label) {
-        final MessageOccurrenceSpecification fragment = (MessageOccurrenceSpecification) interaction.createFragment(label, E_CLASS_MESSAGE_OCCURRENCE);
+        final MessageOccurrenceSpecification fragment = (MessageOccurrenceSpecification) interaction.createFragment(label, MESSAGE_OCCURRENCE_E_CLASS);
 
         fragment.getCovereds().add(lifeline);
         fragment.setMessage(umlMessage);

@@ -9,7 +9,6 @@ import kieker.model.system.model.MessageTrace;
 import kieker.model.system.model.SynchronousCallMessage;
 import kieker.model.system.model.SynchronousReplyMessage;
 import org.apache.commons.io.FileUtils;
-import org.eclipse.uml2.uml.Interaction;
 import org.eclipse.uml2.uml.Model;
 import org.kurz.ma.examples.kieker2uml.model.Lifeline;
 import org.kurz.ma.examples.kieker2uml.model.Lifeline.LifelineType;
@@ -30,7 +29,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import static java.lang.String.format;
-import static org.kurz.ma.examples.kieker2uml.uml.Uml2Support.addInteractionToModel;
+import static org.kurz.ma.examples.kieker2uml.uml.Uml2Support.addInteractionToUseCase;
 import static org.kurz.ma.examples.kieker2uml.uml.Uml2Support.loadModel;
 import static org.kurz.ma.examples.kieker2uml.uml.Uml2Support.saveModel;
 
@@ -67,14 +66,14 @@ public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter
 
         // UML
         final Model model = loadModel(modelPath);
-        addInteractionToModel(model, mt);
+        addInteractionToUseCase(model, mt, useCaseName);
         saveModel(model, modelPath);
 
         // simplified Model
         liflinesToXml(mt.getTraceId(), lifelines);
 
 
-        final Interaction interaction = (Interaction) model.getPackagedElements().get(0);
+//        final Interaction interaction = (Interaction) model.getPackagedElements().get(0);
         // logging
         toFile("TraceId: " + mt.getTraceId());
         toFile(format("Total number of messages: %s", messages.size()));
@@ -82,8 +81,8 @@ public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter
         toFile(format("Lifelines found: %s", lifelines.size()));
         toFile(format("Outgoing Messages found in Lifelines: %s", lifelines.stream().mapToLong(l -> l.getMessagesOutgoing().size()).sum()));
         toFile(format("Incoming Messages found in Lifelines: %s", lifelines.stream().mapToLong(l -> l.getMessagesIncoming().size()).sum()));
-        toFile(format("UML - Lifelines found: %s", interaction.getLifelines()));
-        toFile(format("UML - Total number of Messages found: %s", interaction.getMessages().size()));
+//        toFile(format("UML - Lifelines found: %s", interaction.getLifelines()));
+//        toFile(format("UML - Total number of Messages found: %s", interaction.getMessages().size()));
         toFile("\n");
     }
 
