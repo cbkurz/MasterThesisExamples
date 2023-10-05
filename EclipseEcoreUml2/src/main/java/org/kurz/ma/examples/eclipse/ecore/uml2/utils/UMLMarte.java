@@ -48,7 +48,7 @@ public class UMLMarte {
 		UMLPlugin.getEPackageNsURIToProfileLocationMap().put(GRMPackage.eNS_URI, URI.createURI(MARTE_PROFILES_PATHMAP + MARTE_GRM_FRAGMENT));
 		resourceSet.getPackageRegistry().put(GRMPackage.eNS_URI, GRMPackage.eINSTANCE);
 		
-		// Alloc		
+		// Alloc
 		UMLPlugin.getEPackageNsURIToProfileLocationMap().put(AllocPackage.eNS_URI, URI.createURI(MARTE_PROFILES_PATHMAP + MARTE_ALLOC_FRAGMENT));
 		resourceSet.getPackageRegistry().put(AllocPackage.eNS_URI, AllocPackage.eINSTANCE);
 		

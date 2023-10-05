@@ -9,6 +9,8 @@ import kieker.model.system.model.SynchronousReplyMessage;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.uml2.uml.BehaviorExecutionSpecification;
 import org.eclipse.uml2.uml.Interaction;
+import org.eclipse.uml2.uml.Lifeline;
+import org.eclipse.uml2.uml.Message;
 import org.eclipse.uml2.uml.MessageOccurrenceSpecification;
 import org.eclipse.uml2.uml.MessageSort;
 import org.eclipse.uml2.uml.Model;
@@ -20,7 +22,7 @@ import java.util.stream.Collectors;
 import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNull;
 
-class Uml2Interactions {
+class UmlInteractions {
 
     public static final EClass MESSAGE_OCCURRENCE_E_CLASS = UMLFactory.eINSTANCE.createMessageOccurrenceSpecification().eClass();
     public static final EClass BEHAVIOUR_EXECUTION_E_CLASS = UMLFactory.eINSTANCE.createBehaviorExecutionSpecification().eClass();
@@ -83,6 +85,14 @@ class Uml2Interactions {
             closeBehaviourSpecification(senderLifeline, messageOccurrenceSend);
         }
 
+        applyPerformanceAnnotations(message, senderLifeline, umlMessage);
+
+    }
+
+    private static void applyPerformanceAnnotations(final AbstractMessage message, final Lifeline senderLifeline, final Message umlMessage) {
+        final double execTime = (message.getReceivingExecution().getTout() - message.getReceivingExecution().getTin()) / 1_000_000_000.0; // in seconds
+        MarteSupport.setGaStepAsAnnotation(umlMessage, execTime + "", "1");
+        MarteSupport.setGaWorkflow(senderLifeline, "closed:2");
     }
 
     private static void closeBehaviourSpecification(final org.eclipse.uml2.uml.Lifeline senderLifeline, final MessageOccurrenceSpecification messageOccurrenceSend) {

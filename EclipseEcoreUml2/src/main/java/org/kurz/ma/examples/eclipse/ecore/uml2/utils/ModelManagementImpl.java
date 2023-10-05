@@ -1,12 +1,14 @@
 package org.kurz.ma.examples.eclipse.ecore.uml2.utils;
 
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.papyrus.MARTE.MARTEPackage;
 import org.eclipse.papyrus.MARTE.impl.MARTEPackageImpl;
 import org.eclipse.uml2.uml.Interaction;
 import org.eclipse.uml2.uml.Model;
+import org.eclipse.uml2.uml.Node;
 import org.eclipse.uml2.uml.UMLFactory;
 import org.eclipse.uml2.uml.UMLPackage;
 import org.eclipse.uml2.uml.resource.UMLResource;
@@ -41,6 +43,14 @@ public class ModelManagementImpl implements ModelManagement {
     public Interaction createInteraction(final String name) {
         final Interaction interaction = UMLFactory.eINSTANCE.createInteraction();
         return (Interaction) model.createPackagedElement(name, interaction.eClass());
+    }
+
+    @Override
+    public Node createNode(final String name) {
+        final Node node = UMLFactory.eINSTANCE.createNode();
+        final EClass nodeEClass = node.eClass();
+        final Node myNode = (Node) model.createPackagedElement(name, nodeEClass);
+        return myNode;
     }
 
     @Override

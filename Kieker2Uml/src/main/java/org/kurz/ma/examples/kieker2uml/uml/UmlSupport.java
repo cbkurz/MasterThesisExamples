@@ -1,11 +1,14 @@
 package org.kurz.ma.examples.kieker2uml.uml;
 
 import kieker.model.system.model.MessageTrace;
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.UMLFactory;
 import org.eclipse.uml2.uml.UMLPackage;
@@ -19,7 +22,7 @@ import java.nio.file.Paths;
 
 import static java.util.Objects.requireNonNull;
 
-public class Uml2Support {
+public class UmlSupport {
 
     public static void main(String[] args) {
         Model m = loadModel(Paths.get("Kieker2Uml/input-data/uml/SequenceDiagrams.uml"));
@@ -67,10 +70,29 @@ public class Uml2Support {
     }
 
     public static void addInteractionToModel(final Model model, final MessageTrace messageTrace) {
-        Uml2Interactions.addInteractionToModel(model, messageTrace);
+        UmlInteractions.addInteractionToModel(model, messageTrace);
     }
 
     public static void addInteractionToUseCase(final Model model, final MessageTrace messageTrace, final String useCaseName) {
-        Uml2UseCases.addUseCase(model, messageTrace, useCaseName);
+        UmlUseCases.addUseCase(model, messageTrace, useCaseName);
+    }
+
+    public static void addDeploymentToModel(final Model model, final String componentName, final String artifactName) {
+        UmlDeployment.addDeploymentToModel(model, componentName, artifactName);
+    }
+
+    static void setAnnotationDetail(final Element element, final String annotationName, final String key, final String value) {
+        final EAnnotation eAnnotation = element.getEAnnotations().stream()
+                .filter(a -> a.getSource().equals(annotationName))
+                .findFirst()
+                .orElseGet(() -> element.createEAnnotation(annotationName));
+
+        final EMap<String, String> details = eAnnotation.getDetails();
+        if (details.containsKey(key)) {
+            details.removeKey(key);
+            details.put(key, value);
+        } else {
+            details.put(key, value);
+        }
     }
 }

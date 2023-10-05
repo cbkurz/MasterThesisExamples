@@ -45,6 +45,8 @@ public class UmlProfileMain {
         final Node myNode = (Node) model.createPackagedElement("myNode", nodeEClass);
         deployment.createDependency(myNode);
 
+        myNode.createOwnedAttribute("myAttribute", UMLFactory.eINSTANCE.createPrimitiveType());
+
         // Apply Stereotype - does not work and fails (?) silently
         // Meaning of "does not work" is, that after saving there is no stereotype attached to the node.
         final Stereotype gaExecHost = getGaExecHost(profile);
