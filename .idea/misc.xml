@@ -8,6 +8,7 @@
     <file type="web" url="file://$PROJECT_DIR$/Kieker2Uml" />
     <file type="web" url="file://$PROJECT_DIR$/SimpleEpsilonUMLExample" />
     <file type="web" url="file://$PROJECT_DIR$/TeaStore" />
+    <file type="web" url="file://$PROJECT_DIR$/Uml2PlantUml" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="corretto-17" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />

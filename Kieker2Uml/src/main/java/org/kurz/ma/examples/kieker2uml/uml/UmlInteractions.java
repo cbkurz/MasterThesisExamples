@@ -112,9 +112,9 @@ class UmlInteractions {
     }
 
     /**
-     * MessageSort is an enumeration of different kinds of messages.
+     * {@link MessageSort} is an enumeration of different kinds of messages.
      * This enumeration determines if it is a call or a reply.
-     * This method only expects there to be 2 types SYNC_CALL or REPLY
+     * This method only expects there to be 2 types {MessageSort.SYNCH_CALL_LITERAL} or {MessageSort.REPLY_LITERAL}
      * {@link MessageSort}
      * @param message the kieker trace message, two types are considered {@link SynchronousCallMessage} and {@link SynchronousReplyMessage} if neither are matched an exception is thrown.
      * @return MessageSort Literal
