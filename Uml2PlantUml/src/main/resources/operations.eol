@@ -1,0 +1,148 @@
+
+// Provide the Name of the stereotype that is expected and the key of the value you want.
+// If and only if both are present in the EModelElement, a String is returned, otherwise the value is null.
+// If one of the values is not present the operation will throw an Error.
+operation EModelElement getStereotypeValue(stereotypeName: String, key: String): String {
+	
+	// fail fast: if any of the variables are not defined an Exception is thrown.
+	if (stereotypeName.isUndefined() and key.isUndefined()) {
+		throw "Neither the StereotypeName nor the key are defined.";
+	}
+	if (stereotypeName.isUndefined()) {
+		throw "The Name of the Stereotype is not defined.\n Key: " + key;
+	}
+	if (key.isUndefined()) {
+		throw "The Name of the Key is not defined.\n Stereotype Name: " + stereotypeName;
+	}
+	
+	var annotations = self.getEAnnotations();
+	if (annotations.size == 0) {
+		return null;
+	}
+	
+	var stereotypeIsPresent: Boolean = false;
+	var stereotype = null;
+	for (anno in annotations) {
+		if (anno.source == stereotypeName) {
+			stereotypeIsPresent = true;
+			stereotype = anno;
+			break;
+		}
+	}
+	
+	if (stereotypeIsPresent == false) {
+		return null;
+	}
+	
+	var details = stereotype.getDetails();
+	if (not details.isDefined()) {
+		return null;
+	}
+	
+	return details.get(key);
+}
+
+// This Operation will create a String that represents all applied Stereotypes (in this case that are assembled as Annotations)
+// for the Template Engine in the EGL language
+// This Operation will never throw an Exception
+// This Operation will always return a String, in case no Value was found, an empty String.
+operation EModelElement assembleStereotypeTemplateString(paddingLeft : Integer) : String {
+		var annotations : OrderedSet = self.getEAnnotations();
+	
+		if (annotations.size == 0) {
+			return "";
+		}
+		
+		var padString = "".pad(paddingLeft, " ", false);
+		
+		var text : String = "";
+		for (anno in annotations) {
+			text += padString;
+			text += "<< " + anno.source + " >>\n"; // the <<>> mark the name of the stereotype.
+			for (detail in anno.getDetails()) {
+				text += padString;
+				text += detail.key + ": " + detail.value;
+				if (hasMore) {
+					text += "\n";
+				}
+			}
+			if (hasMore) {
+				text += "\n";
+			}
+		}
+		return text;
+}
+
+
+operation Message getMessageType() : String {
+	var type = self.getMessageSort().name;
+	if (type == "synchCall") {
+		return "->"; // normal arrow
+	}
+	if (type == "reply") {
+		return "-->"; // dotted arrow
+	}
+	
+	throw "Unexpected type: " + self.getMessageSort().name;
+}
+
+operation Message getActivation() : String {
+		var type = self.getMessageSort().name;
+	if (type == "synchCall") {
+		return "activate " + self.getReceiverName(); 
+	}
+	if (type == "reply") {
+		return "deactivate " + self.getSenderName(); 
+	}
+
+	throw "Unexpected type: " + self.getMessageSort().name;
+}
+
+
+operation Message getSenderName() : String {
+	return sanitize(self.getSendEvent().getCovereds().get(0).name);
+}
+
+operation Message getReceiverName() : String {
+	return sanitize(self.getReceiveEvent().getCovereds().get(0).name);
+}
+
+// This is a sanitization for PlantUML
+// ' - Tickmarks are removed in order to not create accidental Comments that may be malformed
+operation sanitize(s : String) : String {
+	
+	// s.replace("$", "_"); --> the expected behaviour would be that the $ got replaced with _
+	// However at the current state this does not happen, a string like "abcd$1" becomes "abcd$1_" which is really not intended.
+	// Therefore the following fix is made ...
+	
+	var split : Sequence = s.split("\\$"); // the split variables contains every piece of the split except the $ character.
+	var s1 = "";
+	for (part in split) {
+		s1 += part; // stich all parts together again.
+		if (hasMore) {
+		s1 += "_"; // Apply placeholder (this might be confusing if a string exists like "abcd$", since no placeholder will be created for the trailing $)			
+		}
+	}
+	return s1.replace("'", "");
+}
+
+operation EModelElement getStereotypeNames() : String {
+
+	var annotations = self.getEAnnotations();
+	if (annotations.size == 0) {
+		return "";
+	}
+	
+	var text = "<< ";
+	for (anno in annotations) {
+		if (not hasMore) {
+			text += anno.source;
+			break; // the last one should not add a comma
+		}
+		text += anno.source;
+		text += ",";
+	}
+	text += " >>";
+	return text;
+}
+

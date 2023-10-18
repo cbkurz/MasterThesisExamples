@@ -1,0 +1,19 @@
+[%
+	import "operations.eol";
+    // variables, containing the templates required for PlantUML
+    var interactionTemplate : Template = TemplateFactory.load("Interactions.egl");
+    var componentTemplate : Template = TemplateFactory.load("Components.egl");
+  
+    // generates a new file or overwrites the file and begins from scratch, every other call simply appends their output
+    var interactions = uml!Interaction.all;
+    
+    interactions.println();
+    
+    for (i in uml!Interaction.all) {
+    	interactionTemplate.populate("interaction", i);
+	    interactionTemplate.generate("../output/Interaction-" + i.name + ".txt");
+    }
+    
+
+    componentTemplate.generate("../output/Output.txt");
+%]

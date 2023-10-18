@@ -1,0 +1,25 @@
+[% import "operations.eol"; %]
+
+@startuml
+
+title [%=interaction.name%]
+
+[% for (l in interaction.lifelines) { %]
+participant [%=sanitize(l.name)%] [%=l.getStereotypeNames()%] [
+    =[%=sanitize(l.name)%]
+    ----
+[%=l.assembleStereotypeTemplateString(4)%]
+] 
+[% } %]
+
+autonumber
+
+[% for (m in interaction.messages) { %]
+[%=m.getSenderName()%] [%=m.getMessageType()%] [%=m.getReceiverName()%] : [%=sanitize(m.name)%]
+note over [%=m.getReceiverName()%]
+[%=m.assembleStereotypeTemplateString(4)%]
+end note
+[%=m.getActivation()%]
+[% } %]
+
+@enduml
