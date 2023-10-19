@@ -13,10 +13,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 import static java.lang.String.format;
-import static org.kurz.ma.examples.kieker2uml.uml.UmlSupport.addDeploymentToModel;
-import static org.kurz.ma.examples.kieker2uml.uml.UmlSupport.addInteractionToUseCase;
-import static org.kurz.ma.examples.kieker2uml.uml.UmlSupport.loadModel;
-import static org.kurz.ma.examples.kieker2uml.uml.UmlSupport.saveModel;
+import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlModel.addDeploymentToModel;
+import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlModel.addInteractionToUseCase;
+import static org.kurz.ma.examples.kieker2uml.uml.UmlUtil.loadModel;
+import static org.kurz.ma.examples.kieker2uml.uml.UmlUtil.saveModel;
 
 public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter {
 
@@ -46,7 +46,7 @@ public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter
 
         // UML
         final Model model = loadModel(modelPath);
-        addDeploymentToModel(model, "myComponent", "myArtifact");
+        addDeploymentToModel(model, mt);
         addInteractionToUseCase(model, mt, useCaseName);
         saveModel(model, modelPath);
 

@@ -20,7 +20,7 @@ class Node {
 	ref Edge#to incoming; // There can always be only one callee to a Node (exception is the Root-Node
 	ref Edge[*]#from outgoing; // One Node can have many children.
 
-	op boolean isLeaf(); // This operation shall inform if there are outgoing Edges
+	op boolean isLeaf(); // This operationNode shall inform if there are outgoing Edges
 }
 
 class Edge {

@@ -4,8 +4,6 @@ import kieker.common.util.signature.Signature;
 import kieker.model.system.model.AbstractMessage;
 import kieker.model.system.model.AssemblyComponent;
 import kieker.model.system.model.MessageTrace;
-import kieker.model.system.model.SynchronousCallMessage;
-import kieker.model.system.model.SynchronousReplyMessage;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.uml2.uml.BehaviorExecutionSpecification;
 import org.eclipse.uml2.uml.Interaction;
@@ -15,6 +13,7 @@ import org.eclipse.uml2.uml.MessageOccurrenceSpecification;
 import org.eclipse.uml2.uml.MessageSort;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.UMLFactory;
+import org.kurz.ma.examples.kieker2uml.filter.Util;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -67,7 +66,7 @@ class UmlInteractions {
 
         final String messageLabel = getMessageLabel(message);
         final org.eclipse.uml2.uml.Message umlMessage = interaction.createMessage(messageLabel);
-        final MessageSort messageSort = getMessageSort(message);
+        final MessageSort messageSort = Util.getMessageSort(message);
         umlMessage.setMessageSort(messageSort);
 
         final MessageOccurrenceSpecification messageOccurrenceSend = createMessageOccurrence(interaction, umlMessage, senderLifeline, messageLabel + "SendEvent");
@@ -109,25 +108,6 @@ class UmlInteractions {
         }
 
         list.get(0).setFinish(messageOccurrenceSend);
-    }
-
-    /**
-     * {@link MessageSort} is an enumeration of different kinds of messages.
-     * This enumeration determines if it is a call or a reply.
-     * This method only expects there to be 2 types {MessageSort.SYNCH_CALL_LITERAL} or {MessageSort.REPLY_LITERAL}
-     * {@link MessageSort}
-     * @param message the kieker trace message, two types are considered {@link SynchronousCallMessage} and {@link SynchronousReplyMessage} if neither are matched an exception is thrown.
-     * @return MessageSort Literal
-     */
-    private static MessageSort getMessageSort(final AbstractMessage message) {
-        if (message instanceof SynchronousCallMessage) {
-            return MessageSort.SYNCH_CALL_LITERAL;
-        }
-        if (message instanceof SynchronousReplyMessage) {
-            return MessageSort.REPLY_LITERAL;
-        }
-        throw new RuntimeException("Unexpected message type of: " + message.getClass());
-
     }
 
 

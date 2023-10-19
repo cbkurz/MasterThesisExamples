@@ -14,12 +14,12 @@ public class MarteSupport {
      *
      */
     static void setGaStepAsAnnotation(final Message umlMessage, final String execTime, final String repetitions) {
-        UmlSupport.setAnnotationDetail(umlMessage, "GaStep", "execTime", execTime);
-        UmlSupport.setAnnotationDetail(umlMessage, "GaStep", "rep", repetitions);
+        UmlUtil.setAnnotationDetail(umlMessage, "GaStep", "execTime", execTime);
+        UmlUtil.setAnnotationDetail(umlMessage, "GaStep", "rep", repetitions);
     }
 
     static void setGaWorkflow(final Lifeline lifeline, final String pattern) {
-        UmlSupport.setAnnotationDetail(lifeline, "GaWorkload", "pattern", pattern);
+        UmlUtil.setAnnotationDetail(lifeline, "GaWorkload", "pattern", pattern);
     }
 
     static void setGaExecHost(final Node node) {

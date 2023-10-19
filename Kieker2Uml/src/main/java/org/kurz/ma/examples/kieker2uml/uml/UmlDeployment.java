@@ -20,17 +20,16 @@ public class UmlDeployment {
 
     public static final EClass NODE_E_CLASS = UMLFactory.eINSTANCE.createNode().eClass();
     public static final EClass COMPONENT_E_CLASS = UMLFactory.eINSTANCE.createComponent().eClass();
-    public static final EClass PACKAGE_E_CLASS = UMLFactory.eINSTANCE.createPackage().eClass();
     public static final EClass ARTIFACT_E_CLASS = UMLFactory.eINSTANCE.createArtifact().eClass();
 
     static void addDeploymentToModel(final Model model, final String componentName, final String artifactName) {
         requireNonNull(componentName, "componentName");
         requireNonNull(artifactName, "artifactName");
 
-        final Package staticView = getPackagedElement(model, "staticView");
+        final Package staticView = UmlUtil.getPackagedElement(model, "staticView");
         final Component component = createComponent(componentName, staticView);
 
-        final Package deploymentView = getPackagedElement(model, "deploymentView");
+        final Package deploymentView = UmlUtil.getPackagedElement(model, "deploymentView");
         final Node node = createNode(deploymentView, componentName);
         final Artifact artifact = createArtifact(deploymentView, artifactName);
 
@@ -90,9 +89,5 @@ public class UmlDeployment {
         }
     }
 
-
-    private static Package getPackagedElement(final Model model, final String packageName) {
-        return (Package) model.getPackagedElements().stream().filter(p -> p.getName().equals(packageName)).findFirst().orElseGet(() -> model.createPackagedElement(packageName, PACKAGE_E_CLASS));
-    }
 
 }

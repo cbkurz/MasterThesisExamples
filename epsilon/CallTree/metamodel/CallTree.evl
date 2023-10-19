@@ -34,7 +34,7 @@ context Graph {
 	}
 }
 
-operation isRootNode(n : Node) : Boolean {
+operationNode isRootNode(n : Node) : Boolean {
 	return not n.incoming.isDefined();
 }
 

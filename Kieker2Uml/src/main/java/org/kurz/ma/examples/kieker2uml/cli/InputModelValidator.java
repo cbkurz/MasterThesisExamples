@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.kurz.ma.examples.kieker2uml.uml.UmlSupport.createModel;
-import static org.kurz.ma.examples.kieker2uml.uml.UmlSupport.loadModel;
-import static org.kurz.ma.examples.kieker2uml.uml.UmlSupport.saveModel;
+import static org.kurz.ma.examples.kieker2uml.uml.UmlUtil.createModel;
+import static org.kurz.ma.examples.kieker2uml.uml.UmlUtil.loadModel;
+import static org.kurz.ma.examples.kieker2uml.uml.UmlUtil.saveModel;
 
 public class InputModelValidator implements IParameterValidator {
 
