@@ -1,5 +1,10 @@
 package org.kurz.ma.examples.kieker2uml.uml;
 
+import kieker.common.util.signature.Signature;
+import kieker.model.system.model.AbstractMessage;
+import kieker.model.system.model.Execution;
+import kieker.model.system.model.SynchronousCallMessage;
+import kieker.model.system.model.SynchronousReplyMessage;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EAnnotation;
@@ -9,6 +14,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.uml2.uml.Element;
+import org.eclipse.uml2.uml.MessageSort;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.UMLFactory;
@@ -84,5 +90,37 @@ public class UmlUtil {
         final Model model = UMLFactory.eINSTANCE.createModel();
         model.setName(name);
         return model;
+    }
+
+    static String getMessageLabel(final Execution execution) {
+        final Signature sig = execution.getOperation().getSignature();
+        final String params = String.join(", ", sig.getParamTypeList());
+        return sig.getName() + '(' + params + ')';
+    }
+
+    /**
+     * {@link MessageSort} is an enumeration of different kinds of messages.
+     * This enumeration determines if it is a call or a reply.
+     * This method only expects there to be 2 types {MessageSort.SYNCH_CALL_LITERAL} or {MessageSort.REPLY_LITERAL}
+     * {@link MessageSort}
+     * @param message the kieker trace message, two types are considered {@link SynchronousCallMessage} and {@link SynchronousReplyMessage} if neither are matched an exception is thrown.
+     * @return MessageSort Literal
+     */
+    public static MessageSort getMessageSort(final AbstractMessage message) {
+        if (message instanceof SynchronousCallMessage) {
+            return MessageSort.SYNCH_CALL_LITERAL;
+        }
+        if (message instanceof SynchronousReplyMessage) {
+            return MessageSort.REPLY_LITERAL;
+        }
+        throw new RuntimeException("Unexpected message type of: " + message.getClass());
+
+    }
+
+    static void applyReferenceAnnotations(final Element element, final Execution execution) {
+        setAnnotationDetail(element, "Reference", "package", execution.getOperation().getComponentType().getPackageName());
+        setAnnotationDetail(element, "Reference", "class", execution.getOperation().getComponentType().getTypeName());
+        setAnnotationDetail(element, "Reference", "fullQualifiedName", execution.getOperation().getComponentType().getFullQualifiedName());
+        setAnnotationDetail(element, "Reference", "signature", execution.getOperation().toString());
     }
 }

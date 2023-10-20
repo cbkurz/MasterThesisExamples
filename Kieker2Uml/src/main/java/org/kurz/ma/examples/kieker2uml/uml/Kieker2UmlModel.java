@@ -21,8 +21,8 @@ public class Kieker2UmlModel {
         UmlUseCases.addUseCase(model, messageTrace, useCaseName);
     }
 
-    public static void addDeploymentToModel(final Model model, final MessageTrace trace) {
-        UmlDeployment2.addStaticViewToModel(model, trace);
+    public static void addStaticViewToModel(final Model model, final MessageTrace trace) {
+        UmlStaticView.addStaticViewToModel(model, trace);
     }
 
 }

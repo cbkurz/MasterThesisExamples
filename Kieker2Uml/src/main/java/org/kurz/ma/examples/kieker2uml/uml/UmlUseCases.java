@@ -29,7 +29,7 @@ public class UmlUseCases {
             return; // trace has already been added to the use-case and needs no further execution
         }
         final Interaction myInteraction = (Interaction) useCase.createOwnedBehavior(traceName, INTERACTION_E_CLASS);
-        linkInteractionWithComponent(model, myInteraction, "myComponent"); // TODO: for now there are only dummy components.
+//        linkInteractionWithComponent(model, myInteraction, "myComponent"); // TODO: for now there are only dummy components.
         addLifelines(myInteraction, messageTrace.getSequenceAsVector());
     }
 

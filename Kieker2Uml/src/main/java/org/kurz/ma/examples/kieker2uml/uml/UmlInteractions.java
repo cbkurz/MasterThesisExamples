@@ -1,6 +1,5 @@
 package org.kurz.ma.examples.kieker2uml.uml;
 
-import kieker.common.util.signature.Signature;
 import kieker.model.system.model.AbstractMessage;
 import kieker.model.system.model.AssemblyComponent;
 import kieker.model.system.model.MessageTrace;
@@ -13,7 +12,6 @@ import org.eclipse.uml2.uml.MessageOccurrenceSpecification;
 import org.eclipse.uml2.uml.MessageSort;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.UMLFactory;
-import org.kurz.ma.examples.kieker2uml.filter.Util;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -64,9 +62,9 @@ class UmlInteractions {
         requireNonNull(senderLifeline, "senderLifeline");
         requireNonNull(receiverLifeline, "receiverLifeline");
 
-        final String messageLabel = getMessageLabel(message);
+        final String messageLabel = UmlUtil.getMessageLabel(message.getReceivingExecution());
         final org.eclipse.uml2.uml.Message umlMessage = interaction.createMessage(messageLabel);
-        final MessageSort messageSort = Util.getMessageSort(message);
+        final MessageSort messageSort = UmlUtil.getMessageSort(message);
         umlMessage.setMessageSort(messageSort);
 
         final MessageOccurrenceSpecification messageOccurrenceSend = createMessageOccurrence(interaction, umlMessage, senderLifeline, messageLabel + "SendEvent");
@@ -85,7 +83,7 @@ class UmlInteractions {
         }
 
         applyPerformanceAnnotations(message, senderLifeline, umlMessage);
-
+        UmlUtil.applyReferenceAnnotations(umlMessage, message.getReceivingExecution());
     }
 
     private static void applyPerformanceAnnotations(final AbstractMessage message, final Lifeline senderLifeline, final Message umlMessage) {
@@ -125,11 +123,4 @@ class UmlInteractions {
         fragment.setMessage(umlMessage);
         return fragment;
     }
-
-    private static String getMessageLabel(final AbstractMessage me) {
-        final Signature sig = me.getReceivingExecution().getOperation().getSignature();
-        final String params = String.join(", ", sig.getParamTypeList());
-        return sig.getName() + '(' + params + ')';
-    }
-
 }
