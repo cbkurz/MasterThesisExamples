@@ -1,0 +1,13 @@
+$0;1694246610402309100;1.15.2;KIEKER;Meshify5800X570;1;false;0;NANOSECONDS;0
+$1;1694246610416812200;public kieker.examples.monitoring.application.Catalog.<init>();<no-session-id>;7967289953283473409;1694246610416711700;1694246610416717500;Meshify5800X570;2;2
+$1;1694246610419208900;public kieker.examples.monitoring.application.CRM.<init>(kieker.examples.monitoring.application.Catalog);<no-session-id>;7967289953283473409;1694246610419203500;1694246610419207500;Meshify5800X570;3;2
+$1;1694246610419219000;public kieker.examples.monitoring.application.Bookstore.<init>();<no-session-id>;7967289953283473409;1694246610413222000;1694246610419218100;Meshify5800X570;1;1
+$1;1694246610419240500;private static int kieker.examples.monitoring.application.Main.extractNumRequestsFromArgs(java.lang.String[]);<no-session-id>;7967289953283473409;1694246610419237100;1694246610419239600;Meshify5800X570;4;1
+$1;1694246610425112900;kieker.examples.monitoring.application.Main$1.<init>(kieker.examples.monitoring.application.Bookstore, java.util.concurrent.CountDownLatch);<no-session-id>;7967289953283473409;1694246610425106200;1694246610425110500;Meshify5800X570;6;2
+$1;1694246610425239600;private static void kieker.examples.monitoring.application.Main.spawnAsyncRequest(kieker.examples.monitoring.application.Bookstore, java.util.concurrent.CountDownLatch);<no-session-id>;7967289953283473409;1694246610421444500;1694246610425237400;Meshify5800X570;5;1
+$1;1694246610427724600;public void kieker.examples.monitoring.application.Catalog.getBook(boolean);<no-session-id>;7967289953283473410;1694246610426379100;1694246610427721700;Meshify5800X570;2;2
+$1;1694246610429728100;public void kieker.examples.monitoring.application.Catalog.getBook(boolean);<no-session-id>;7967289953283473410;1694246610427755200;1694246610429726000;Meshify5800X570;4;3
+$1;1694246610429736700;public void kieker.examples.monitoring.application.CRM.getOffers();<no-session-id>;7967289953283473410;1694246610427748400;1694246610429735800;Meshify5800X570;3;2
+$1;1694246610429741400;public void kieker.examples.monitoring.application.Bookstore.searchBook();<no-session-id>;7967289953283473410;1694246610425361000;1694246610429739400;Meshify5800X570;1;1
+$1;1694246610429760100;public void kieker.examples.monitoring.application.Main$1.run();<no-session-id>;7967289953283473410;1694246610425344900;1694246610429759300;Meshify5800X570;0;0
+$1;1694246610429779400;public static void kieker.examples.monitoring.application.Main.main(java.lang.String[]);<no-session-id>;7967289953283473409;1694246610412923100;1694246610429776600;Meshify5800X570;0;0
