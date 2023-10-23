@@ -22,7 +22,7 @@ public class Kieker2UmlModel {
     }
 
     public static void addStaticViewToModel(final Model model, final MessageTrace trace) {
-        UmlStaticView.addStaticViewToModel(model, trace);
+        UmlClasses.addClasses(model, trace);
     }
 
 }

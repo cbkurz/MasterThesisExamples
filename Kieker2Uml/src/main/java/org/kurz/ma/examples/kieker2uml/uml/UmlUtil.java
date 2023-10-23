@@ -25,11 +25,13 @@ import org.eclipse.uml2.uml.resources.util.UMLResourcesUtil;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
+import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
 public class UmlUtil {
     public static final EClass PACKAGE_E_CLASS = UMLFactory.eINSTANCE.createPackage().eClass();
+    public static final String REFERENCE_ANNOTATION_NAME = "Reference";
 
     static Package getPackagedElement(final Model model, final String packageName) {
         return (Package) model.getPackagedElements().stream()
@@ -118,9 +120,21 @@ public class UmlUtil {
     }
 
     static void applyReferenceAnnotations(final Element element, final Execution execution) {
-        setAnnotationDetail(element, "Reference", "package", execution.getOperation().getComponentType().getPackageName());
-        setAnnotationDetail(element, "Reference", "class", execution.getOperation().getComponentType().getTypeName());
-        setAnnotationDetail(element, "Reference", "fullQualifiedName", execution.getOperation().getComponentType().getFullQualifiedName());
-        setAnnotationDetail(element, "Reference", "signature", execution.getOperation().toString());
+        setAnnotationDetail(element, REFERENCE_ANNOTATION_NAME, "package", execution.getOperation().getComponentType().getPackageName());
+        setAnnotationDetail(element, REFERENCE_ANNOTATION_NAME, "class", execution.getOperation().getComponentType().getTypeName());
+        setAnnotationDetail(element, REFERENCE_ANNOTATION_NAME, "fullQualifiedName", execution.getOperation().getComponentType().getFullQualifiedName());
+        setAnnotationDetail(element, REFERENCE_ANNOTATION_NAME, "fullQualifiedNameSignature", execution.getOperation().toString());
+        setAnnotationDetail(element, REFERENCE_ANNOTATION_NAME, "signature", execution.getOperation().getSignature().toString());
+    }
+
+    static Optional<String> getReference(final Element element, final String key) {
+        return element.getEAnnotations().stream()
+                .filter(a -> REFERENCE_ANNOTATION_NAME.equals(a.getSource()))
+                .findFirst()
+                .map(a -> a.getDetails().get(key));
+    }
+
+    static String removeInstanceInformation(final String name) {
+        return name.replaceAll("\\$[0-9]*", "");
     }
 }
