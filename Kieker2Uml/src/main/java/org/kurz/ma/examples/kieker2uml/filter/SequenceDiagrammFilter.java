@@ -15,8 +15,8 @@ import java.nio.file.Path;
 import static java.lang.String.format;
 import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlModel.addStaticViewToModel;
 import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlModel.addInteractionToUseCase;
-import static org.kurz.ma.examples.kieker2uml.uml.UmlUtil.loadModel;
-import static org.kurz.ma.examples.kieker2uml.uml.UmlUtil.saveModel;
+import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.loadModel;
+import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.saveModel;
 
 public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter {
 

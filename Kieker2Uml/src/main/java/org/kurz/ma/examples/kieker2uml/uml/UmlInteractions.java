@@ -7,28 +7,71 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.uml2.uml.BehaviorExecutionSpecification;
 import org.eclipse.uml2.uml.Interaction;
 import org.eclipse.uml2.uml.Lifeline;
-import org.eclipse.uml2.uml.Message;
 import org.eclipse.uml2.uml.MessageOccurrenceSpecification;
 import org.eclipse.uml2.uml.MessageSort;
-import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.UMLFactory;
+import org.eclipse.uml2.uml.UseCase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNull;
+import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.getId;
+import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.setId;
+import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.setReferenceAnnotation;
+import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.setReferenceAnnotations;
 
 class UmlInteractions {
-
+    public static final EClass INTERACTION_E_CLASS = UMLFactory.eINSTANCE.createInteraction().eClass();
+    private static final Logger LOGGER = LoggerFactory.getLogger(UmlInteractions.class);
     public static final EClass MESSAGE_OCCURRENCE_E_CLASS = UMLFactory.eINSTANCE.createMessageOccurrenceSpecification().eClass();
     public static final EClass BEHAVIOUR_EXECUTION_E_CLASS = UMLFactory.eINSTANCE.createBehaviorExecutionSpecification().eClass();
+    public static final String TRACE_IDS_SET_NAME = "AppliedTraceIds";
 
-    static void addInteractionToModel(final Model model, final MessageTrace messageTrace) {
-        final EClass eClass = UMLFactory.eINSTANCE.createInteraction().eClass();
-        final Interaction interaction = (Interaction) model.createPackagedElement("Interaction-Trace-" + messageTrace.getTraceId() + "-StartAt-" + messageTrace.getStartTimestamp(), eClass);
+    static Interaction createInteraction(final String interactionName, final MessageTrace messageTrace) {
+        final Interaction interaction = UMLFactory.eINSTANCE.createInteraction();
 
+        interaction.setName(interactionName);
         addLifelines(interaction, messageTrace.getSequenceAsVector()); // adds lifelines and messages
+        addTraceId(interaction, messageTrace);
+        setId(interaction, Kieker2UmlUtil.getTraceRepresentation(messageTrace));
+
+        return interaction;
+    }
+
+    static void addTraceId(final Interaction interaction, final MessageTrace messageTrace) {
+        Kieker2UmlUtil.setAnnotationSetEntry(interaction, TRACE_IDS_SET_NAME, Long.toString(messageTrace.getTraceId()));
+    }
+
+    /**
+     * @param useCase             The UseCase to which this Interaction will be added.
+     * @param traceRepresentation The traceRepresentation for the Interaction so it can be correctly identified.
+     * @return The Interaction, either an existing one or the newly created one. The Interaction will have the traceRepresentation set in the id-Annotation.
+     */
+    static Optional<Interaction> getInteraction(final UseCase useCase, final String traceRepresentation) {
+        requireNonNull(useCase, "useCase");
+        requireNonNull(traceRepresentation, "traceRepresentation");
+
+        return useCase.getOwnedBehaviors().stream()
+                .filter(i -> i instanceof Interaction)
+                .map(i -> (Interaction) i)
+                .filter(i -> getId(i).map(s -> s.equals(traceRepresentation)).orElseGet(() -> false))
+                .findFirst();
+    }
+
+    /**
+     * The Name is used as File-Name later in the process and simply is "Interaction-" + the count of the interaction.
+     * count starts with zero.
+     *
+     * @param useCase The MessageTrace that is used to create the name.
+     * @return The Name of the Trace beginning with "Interaction-" + COUNT
+     */
+    static String getInteractionName(final UseCase useCase) {
+        return "Interaction-" + useCase.getOwnedBehaviors().size();
     }
 
     /**
@@ -51,8 +94,10 @@ class UmlInteractions {
             final org.eclipse.uml2.uml.Lifeline senderLifeline = interaction.getLifeline(senderComponent.getIdentifier(), false, true);
             final org.eclipse.uml2.uml.Lifeline receiverLifeline = interaction.getLifeline(receiverComponent.getIdentifier(), false, true);
 
-            createMessage(interaction, message, senderLifeline, receiverLifeline);
+            setReferenceAnnotations(senderLifeline, message.getSendingExecution());
+            setReferenceAnnotations(receiverLifeline, message.getReceivingExecution());
 
+            createMessage(interaction, message, senderLifeline, receiverLifeline);
         }
     }
 
@@ -62,13 +107,18 @@ class UmlInteractions {
         requireNonNull(senderLifeline, "senderLifeline");
         requireNonNull(receiverLifeline, "receiverLifeline");
 
-        final String messageLabel = UmlUtil.getMessageLabel(message.getReceivingExecution());
+        final String messageLabel = Kieker2UmlUtil.getMessageLabel(message.getReceivingExecution());
         final org.eclipse.uml2.uml.Message umlMessage = interaction.createMessage(messageLabel);
-        final MessageSort messageSort = UmlUtil.getMessageSort(message);
+        final MessageSort messageSort = Kieker2UmlUtil.getMessageSort(message);
         umlMessage.setMessageSort(messageSort);
+        final String messageId = getMessageRepresentation(message);
+        setId(umlMessage, messageId);
 
         final MessageOccurrenceSpecification messageOccurrenceSend = createMessageOccurrence(interaction, umlMessage, senderLifeline, messageLabel + "SendEvent");
         final MessageOccurrenceSpecification messageOccurrenceReceive = createMessageOccurrence(interaction, umlMessage, receiverLifeline, messageLabel + "ReceiveEvent");
+
+        setId(messageOccurrenceSend, "SendMessageOccurrenceSpecification-" + messageId);
+        setId(messageOccurrenceReceive, "ReceiveMessageOccurrenceSpecification-" + messageId);
 
         umlMessage.setSendEvent(messageOccurrenceSend);
         umlMessage.setReceiveEvent(messageOccurrenceReceive);
@@ -76,23 +126,19 @@ class UmlInteractions {
         final boolean senderAndReceiverAreEqual = senderLifeline.equals(receiverLifeline); // this might happen if an object/class calls itself.
 
         if (messageSort.equals(MessageSort.SYNCH_CALL_LITERAL) && !senderAndReceiverAreEqual) {
-            openBehaviourSpecification(interaction, receiverLifeline, messageOccurrenceReceive);
+            final BehaviorExecutionSpecification bes = openBehaviourSpecification(interaction, receiverLifeline, messageOccurrenceReceive);
+            setId(bes, "BehaviorExecutionSpecification-" + messageId);
+            setReferenceAnnotation(bes, "OpenMessage", messageId);
         }
         if (messageSort.equals(MessageSort.REPLY_LITERAL) && !senderAndReceiverAreEqual) {
-            closeBehaviourSpecification(senderLifeline, messageOccurrenceSend);
+            final BehaviorExecutionSpecification bes = closeBehaviourSpecification(senderLifeline, messageOccurrenceSend);
+            setReferenceAnnotation(bes, "CloseMessage", messageId);
         }
 
-        applyPerformanceAnnotations(message, senderLifeline, umlMessage);
-        UmlUtil.applyReferenceAnnotations(umlMessage, message.getReceivingExecution());
+        Kieker2UmlUtil.setReferenceAnnotations(umlMessage, message.getReceivingExecution());
     }
 
-    private static void applyPerformanceAnnotations(final AbstractMessage message, final Lifeline senderLifeline, final Message umlMessage) {
-        final double execTime = (message.getReceivingExecution().getTout() - message.getReceivingExecution().getTin()) / 1_000_000_000.0; // in seconds
-        MarteSupport.setGaStepAsAnnotation(umlMessage, execTime + "", "1");
-        MarteSupport.setGaWorkflow(senderLifeline, "closed:2");
-    }
-
-    private static void closeBehaviourSpecification(final org.eclipse.uml2.uml.Lifeline senderLifeline, final MessageOccurrenceSpecification messageOccurrenceSend) {
+    private static BehaviorExecutionSpecification closeBehaviourSpecification(final Lifeline senderLifeline, final MessageOccurrenceSpecification messageOccurrenceSend) {
         final List<BehaviorExecutionSpecification> list = senderLifeline.getCoveredBys().stream()
                 .filter(cb -> cb instanceof BehaviorExecutionSpecification)
                 .map(cb -> (BehaviorExecutionSpecification) cb)
@@ -106,14 +152,16 @@ class UmlInteractions {
         }
 
         list.get(0).setFinish(messageOccurrenceSend);
+        return list.get(0);
     }
 
 
-    private static void openBehaviourSpecification(final Interaction interaction, final org.eclipse.uml2.uml.Lifeline umlLifeline, final MessageOccurrenceSpecification messageOccurrenceReceive) {
+    private static BehaviorExecutionSpecification openBehaviourSpecification(final Interaction interaction, final Lifeline umlLifeline, final MessageOccurrenceSpecification messageOccurrenceReceive) {
         final BehaviorExecutionSpecification behaviour = (BehaviorExecutionSpecification) interaction.createFragment("BehaviorExecutionSpecification" + umlLifeline.getLabel(), BEHAVIOUR_EXECUTION_E_CLASS);
         behaviour.getCovereds().add(umlLifeline);
 
         behaviour.setStart(messageOccurrenceReceive);
+        return behaviour;
     }
 
     private static MessageOccurrenceSpecification createMessageOccurrence(final Interaction interaction, final org.eclipse.uml2.uml.Message umlMessage, final org.eclipse.uml2.uml.Lifeline lifeline, final String label) {
@@ -123,4 +171,12 @@ class UmlInteractions {
         fragment.setMessage(umlMessage);
         return fragment;
     }
+
+    private static String getMessageRepresentation(final AbstractMessage message) {
+        return message.getSendingExecution().getOperation().getComponentType().getFullQualifiedName()
+                + message.getSendingExecution().getOperation().getSignature().toString()
+                + message.getReceivingExecution().getOperation().getComponentType().getFullQualifiedName()
+                + message.getReceivingExecution().getOperation().getSignature().toString();
+    }
+
 }

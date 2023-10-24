@@ -15,9 +15,9 @@ import org.eclipse.uml2.uml.UMLFactory;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
-import static org.kurz.ma.examples.kieker2uml.uml.UmlUtil.applyReferenceAnnotations;
-import static org.kurz.ma.examples.kieker2uml.uml.UmlUtil.getMessageSort;
-import static org.kurz.ma.examples.kieker2uml.uml.UmlUtil.setAnnotationDetail;
+import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.setReferenceAnnotations;
+import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.getMessageSort;
+import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.setAnnotationDetail;
 
 public class UmlClasses {
 
@@ -27,7 +27,7 @@ public class UmlClasses {
         requireNonNull(model, "model");
         requireNonNull(messageTrace, "messageTrace");
 
-        final Package staticView = UmlUtil.getPackagedElement(model, "staticView-classes");
+        final Package staticView = Kieker2UmlUtil.getPackagedElement(model, "staticView-classes");
 
         for (final AbstractMessage message : messageTrace.getSequenceAsVector()) {
 
@@ -39,8 +39,8 @@ public class UmlClasses {
             final org.eclipse.uml2.uml.Operation sender = getOperation(message.getSendingExecution().getOperation(), staticView);
             final org.eclipse.uml2.uml.Operation receiver = getOperation(message.getReceivingExecution().getOperation(), staticView);
 
-            applyReferenceAnnotations(sender, message.getSendingExecution());
-            applyReferenceAnnotations(receiver, message.getReceivingExecution());
+            setReferenceAnnotations(sender, message.getSendingExecution());
+            setReferenceAnnotations(receiver, message.getReceivingExecution());
             addDependency(sender, message.getReceivingExecution().getOperation());
 
             createAssociation(sender.getClass_(), receiver.getClass_());
@@ -79,13 +79,13 @@ public class UmlClasses {
         final Optional<org.eclipse.uml2.uml.Operation> umlOperation = staticView.getPackagedElements().stream()
                 .filter(pe -> CLASS_E_CLASS.equals(pe.eClass()))
                 .map(pe -> (org.eclipse.uml2.uml.Class) pe)
-                .filter(c -> UmlUtil.removeInstanceInformation(operation.getComponentType().getFullQualifiedName()).equals(c.getName()))
+                .filter(c -> Kieker2UmlUtil.removeInstanceInformation(operation.getComponentType().getFullQualifiedName()).equals(c.getName()))
                 .flatMap(c -> c.getOperations().stream())
                 .filter(op -> operation.getSignature().toString().equals(op.getName()))
                 .findFirst();
 
         if (umlOperation.isEmpty()) {
-            final Class umlClass = createUmlClass(UmlUtil.removeInstanceInformation(operation.getComponentType().getFullQualifiedName()), staticView);
+            final Class umlClass = createUmlClass(Kieker2UmlUtil.removeInstanceInformation(operation.getComponentType().getFullQualifiedName()), staticView);
             return umlClass.createOwnedOperation(operation.getSignature().toString(), null, null);
         }
 

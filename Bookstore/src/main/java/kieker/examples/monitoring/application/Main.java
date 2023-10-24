@@ -20,7 +20,7 @@ import java.util.concurrent.CountDownLatch;
 
 public final class Main {
 
-	private static final int NUM_REQUESTS_DEFAULT = 1;
+	private static final int NUM_REQUESTS_DEFAULT = 3;
 
 	private Main() {}
 

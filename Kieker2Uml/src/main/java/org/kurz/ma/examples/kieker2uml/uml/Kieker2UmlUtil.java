@@ -3,6 +3,7 @@ package org.kurz.ma.examples.kieker2uml.uml;
 import kieker.common.util.signature.Signature;
 import kieker.model.system.model.AbstractMessage;
 import kieker.model.system.model.Execution;
+import kieker.model.system.model.MessageTrace;
 import kieker.model.system.model.SynchronousCallMessage;
 import kieker.model.system.model.SynchronousReplyMessage;
 import org.eclipse.emf.common.util.EMap;
@@ -26,12 +27,15 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
-public class UmlUtil {
+public class Kieker2UmlUtil {
     public static final EClass PACKAGE_E_CLASS = UMLFactory.eINSTANCE.createPackage().eClass();
     public static final String REFERENCE_ANNOTATION_NAME = "Reference";
+    public static final String ID_ANNOTATION_NAME = "Id";
 
     static Package getPackagedElement(final Model model, final String packageName) {
         return (Package) model.getPackagedElements().stream()
@@ -119,7 +123,7 @@ public class UmlUtil {
 
     }
 
-    static void applyReferenceAnnotations(final Element element, final Execution execution) {
+    static void setReferenceAnnotations(final Element element, final Execution execution) {
         setAnnotationDetail(element, REFERENCE_ANNOTATION_NAME, "package", execution.getOperation().getComponentType().getPackageName());
         setAnnotationDetail(element, REFERENCE_ANNOTATION_NAME, "class", execution.getOperation().getComponentType().getTypeName());
         setAnnotationDetail(element, REFERENCE_ANNOTATION_NAME, "fullQualifiedName", execution.getOperation().getComponentType().getFullQualifiedName());
@@ -127,14 +131,102 @@ public class UmlUtil {
         setAnnotationDetail(element, REFERENCE_ANNOTATION_NAME, "signature", execution.getOperation().getSignature().toString());
     }
 
+    static void setReferenceAnnotation(final Element element, final String name, final String value) {
+        setAnnotationDetail(element, REFERENCE_ANNOTATION_NAME, name, value);
+    }
+
     static Optional<String> getReference(final Element element, final String key) {
+        return getAnnotationDetailsMap(element, REFERENCE_ANNOTATION_NAME).map(entries -> entries.get(key));
+    }
+
+    static Optional<EMap<String, String>> getAnnotationDetailsMap(final Element element, final String annotationName) {
         return element.getEAnnotations().stream()
-                .filter(a -> REFERENCE_ANNOTATION_NAME.equals(a.getSource()))
+                .filter(a -> annotationName.equals(a.getSource()))
                 .findFirst()
-                .map(a -> a.getDetails().get(key));
+                .map(EAnnotation::getDetails);
     }
 
     static String removeInstanceInformation(final String name) {
         return name.replaceAll("\\$[0-9]*", "");
     }
+
+
+    /**
+     * The Representation of the message is independent of the execution time, starting time, trace id or
+     * any other variable that can change within multiple executions of the same sequence of messages.
+     * The message is represented by:
+     * <ul>
+     * <li>the full qualified name of the calling method and</li>
+     * <li>the full qualified name of the called method.</li>
+     * </ul>
+     * @param message the message to be represented as a string
+     * @return the string representation of the message, independend of changing parameters
+     */
+    static String getMessageRepresentation(final AbstractMessage message) {
+        final String sender = "Sender--" + getExecutionRepresentation(message.getSendingExecution());
+        final String receiver = "--Receiver--" + getExecutionRepresentation(message.getReceivingExecution())
+                + message.getReceivingExecution().getOperation().getComponentType().getFullQualifiedName()
+                + message.getReceivingExecution().getOperation().getSignature().toString();
+        return sender + receiver;
+    }
+
+    private static String getExecutionRepresentation(final Execution execution) {
+        return execution.getOperation().getComponentType().getFullQualifiedName() + execution.getOperation().getSignature().toString();
+    }
+
+    /**
+     * The Trace Representation is the concatenation of the contained messages.
+     * @param messageTrace The messageTrace to be represented.
+     * @return The string representing this Trace
+     */
+    static String getTraceRepresentation(final MessageTrace messageTrace) {
+        return messageTrace.getSequenceAsVector().stream()
+                .map(Kieker2UmlUtil::getMessageRepresentation)
+                .collect(Collectors.joining());
+    }
+
+    static boolean isMessageEqual(AbstractMessage abstractMessage1, AbstractMessage abstractMessage2) {
+        return getMessageRepresentation(abstractMessage1).equals(getMessageRepresentation(abstractMessage2));
+    }
+
+    /**
+     * The equality shall determine if the same messages and the same sequence of messages are called.
+     * The equality is determined by the String-Representations of the Traces.
+     * <p>
+     * Equality is *not* given by the objects the traces contain since they will be always different.
+     * <p>
+     * Traces have different, names, starting timestamps and execution times.
+     * All these factors play a role in the equality of objects given in the trace.
+     * @param messageTrace1 The first Trace
+     * @param messageTrace2 The second Trace
+     * @return Equality of Traces
+     */
+    static boolean isTraceEqual(final MessageTrace messageTrace1, final MessageTrace messageTrace2) {
+        if (messageTrace1.getSequenceAsVector().size() != messageTrace2.getSequenceAsVector().size()) {
+            return false; // different lengths in message Traces cannot be equal.
+        }
+
+        final String traceRep1 = getTraceRepresentation(messageTrace1);
+        final String traceRep2 = getTraceRepresentation(messageTrace2);
+        return traceRep1.equals(traceRep2); // The equality is Determined by the String representation of the Traces
+    }
+
+    static void setAnnotationSetEntry(final Element element, final String setName, final String entry) {
+        setAnnotationDetail(element, setName, entry, null);
+    }
+
+    static Optional<Set<String>> getAnnotationSet(final Element element, final String setName) {
+        return getAnnotationDetailsMap(element, setName).map(EMap::keySet);
+    }
+
+    static void setId(final Element element, final String id) {
+        EAnnotation idAnnotation = Optional.ofNullable(element.getEAnnotation(ID_ANNOTATION_NAME))
+                .orElseGet(() -> element.createEAnnotation(ID_ANNOTATION_NAME));
+        idAnnotation.getDetails().put(ID_ANNOTATION_NAME, id);
+    }
+    static Optional<String> getId(final Element element) {
+        return Optional.ofNullable(element.getEAnnotation(ID_ANNOTATION_NAME))
+                .map(a -> a.getDetails().get(ID_ANNOTATION_NAME));
+    }
+
 }
