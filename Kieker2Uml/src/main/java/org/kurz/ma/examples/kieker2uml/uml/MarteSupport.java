@@ -2,18 +2,30 @@ package org.kurz.ma.examples.kieker2uml.uml;
 
 import kieker.model.system.model.AbstractMessage;
 import kieker.model.system.model.MessageTrace;
+import kieker.model.system.model.SynchronousCallMessage;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Interaction;
 import org.eclipse.uml2.uml.Lifeline;
 import org.eclipse.uml2.uml.Message;
 import org.eclipse.uml2.uml.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+
+import static java.util.Objects.requireNonNull;
+import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.addTraceId;
+import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.getMessageRepresentation;
+import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.getRepresentation;
+import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.getRepresentationCount;
+import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.getTraceRepresentation;
 
 public class MarteSupport {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MarteSupport.class);
     public static final String GA_EXEC_HOST = "GaExecHost";
     public static final String GA_STEP_ANNOTATION_NAME = "GaStep";
     public static final String EXEC_TIME_ENTRIES_GA_STEP = "execTimeEntries";
@@ -22,8 +34,9 @@ public class MarteSupport {
 
     /**
      * By Default the rep Attribute (repetition) is set to 1
+     *
      * @param umlMessage the UML Element on which the annotations shall be applied.
-     * @param execTime the time of execution
+     * @param execTime   the time of execution
      */
     static void setGaStep(final Element umlMessage, final long execTime) {
         final String execTimeString = Long.toString(execTime);
@@ -35,6 +48,7 @@ public class MarteSupport {
     /**
      * The repetition is determined by the amount of exeTimeEntries there are.
      * The execTime is determined by the mean value of the execTimeEntries.
+     *
      * @param element The Element to which the GaStep shall be applied.
      */
     static void updateGaStep(final Element element, Long execTime) {
@@ -61,8 +75,8 @@ public class MarteSupport {
         details.put(REP_GA_STEP, Integer.toString(execTimeSplit.length));
     }
 
-    static void setGaWorkflow(final Lifeline lifeline, final String pattern) {
-        Kieker2UmlUtil.setAnnotationDetail(lifeline, "GaWorkload", "pattern", pattern);
+    static void setGaWorkloadEvent(final Lifeline lifeline, final String pattern) {
+        Kieker2UmlUtil.setAnnotationDetail(lifeline, "GaWorkloadEvent", "pattern", pattern);
     }
 
     static void setGaExecHost(final Node node) {
@@ -72,13 +86,78 @@ public class MarteSupport {
                 .orElseGet(() -> node.createEAnnotation(GA_EXEC_HOST));
     }
 
-    public static void applyPerformanceStereotypesToInteraction(final Interaction interaction, final MessageTrace messageTrace) {
+    static void applyPerformanceStereotypesToInteraction(final Interaction interaction, final MessageTrace messageTrace) {
 
+        LOGGER.trace("Starting to apply performance stereotypes to interaction");
+
+        // fail fast
+        requireNonNull(interaction, "interaction");
+        requireNonNull(messageTrace, "messageTrace");
+        final String traceRepresentation = getTraceRepresentation(messageTrace);
+        final Optional<String> id = getRepresentation(interaction);
+        if (id.isEmpty()) {
+            throw new ModelNotComformantException("Cannot apply performance information to Interaction that does not have an id. Interaction: " + interaction.getName());
+        }
+        if (!traceRepresentation.equals(id.get())) {
+            throw new IllegalArgumentException("Interaction does not represent MessageTrace. It is not possible to apply performance information.");
+        }
+
+        // start working
+        int count = 0; // The count was introduced to have an additional separation option for Messages that have the same representation
+        for (final AbstractMessage message : messageTrace.getSequenceAsVector()) {
+            final String messageRepresentation = getMessageRepresentation(message);
+            final Message umlMessage = getUmlMessage(interaction, messageRepresentation, count);
+            if (message instanceof SynchronousCallMessage) {
+                applyGaStep(message, umlMessage);
+            }
+            final Lifeline lifeline = getSenderLifeline(interaction, message.getSendingExecution().getAllocationComponent().getAssemblyComponent().getIdentifier());
+            setGaWorkloadEvent(lifeline, "closed:2"); // TODO: why is this fixed, this should somehow be calculated
+            count++;
+        }
+        // finnish
+        addTraceId(interaction, messageTrace);
+    }
+
+    private static void applyGaStep(final AbstractMessage message, final Message umlMessage) {
+        final long execTime = (message.getReceivingExecution().getTout() - message.getReceivingExecution().getTin());
+        updateGaStep(umlMessage, execTime);
+    }
+
+    private static Lifeline getSenderLifeline(final Interaction interaction, final String identifier) {
+        requireNonNull(interaction, "interaction");
+        requireNonNull(identifier, "identifier");
+        final List<Lifeline> list = interaction.getLifelines().stream()
+                .filter(l -> identifier.equals(l.getName()))
+                .toList();
+
+        if (list.isEmpty()) {
+            throw new ModelNotComformantException("Lifeline not found with identifier: " + identifier);
+        }
+        if (list.size() > 1) {
+            throw new ModelNotComformantException(String.format("To many Lifelines found for identifier: %s\nList size: %s\nList: %s", identifier, list.size(), list));
+        }
+
+        return list.get(0);
+    }
+
+    private static Message getUmlMessage(final Interaction interaction, final String messageRepresentation, final int count) {
+        final List<Message> list = interaction.getMessages().stream()
+                .filter(m -> getRepresentation(m).map(rep -> rep.equals(messageRepresentation)).orElse(false))
+                .filter(m -> getRepresentationCount(m).map(messageCount -> messageCount == count).orElse(false))
+                .toList();
+
+        if (list.isEmpty()) {
+            throw new ModelNotComformantException("Message not found with representation: " + messageRepresentation);
+        }
+        if (list.size() > 1) {
+            throw new ModelNotComformantException(String.format("To many Messages found for representation: %s\nList size: %s\nList: %s", messageRepresentation, list.size(), list));
+        }
+        return list.get(0);
     }
 
     private static void applyPerformanceAnnotations(final AbstractMessage message, final Lifeline senderLifeline, final Message umlMessage) {
         final long execTime = (message.getReceivingExecution().getTout() - message.getReceivingExecution().getTin());
         setGaStep(umlMessage, execTime);
-        setGaWorkflow(senderLifeline, "closed:2"); // TODO: what exactly are those two values?
+        setGaWorkloadEvent(senderLifeline, "closed:2"); // TODO: what exactly are those two values?
     }
 }

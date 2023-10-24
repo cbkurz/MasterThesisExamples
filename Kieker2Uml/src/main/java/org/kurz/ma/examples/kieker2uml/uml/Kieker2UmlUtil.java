@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.uml2.uml.Element;
+import org.eclipse.uml2.uml.Interaction;
 import org.eclipse.uml2.uml.MessageSort;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.Package;
@@ -30,12 +31,15 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 
 public class Kieker2UmlUtil {
     public static final EClass PACKAGE_E_CLASS = UMLFactory.eINSTANCE.createPackage().eClass();
     public static final String REFERENCE_ANNOTATION_NAME = "Reference";
-    public static final String ID_ANNOTATION_NAME = "Id";
+    public static final String REPRESENTATION_ANNOTATION_NAME = "Representation";
+    public static final String REPRESENTATION_NAME = "representation";
+    public static final String REPRESENTATION_COUNT = "count";
 
     static Package getPackagedElement(final Model model, final String packageName) {
         return (Package) model.getPackagedElements().stream()
@@ -159,6 +163,7 @@ public class Kieker2UmlUtil {
      * <li>the full qualified name of the calling method and</li>
      * <li>the full qualified name of the called method.</li>
      * </ul>
+     *
      * @param message the message to be represented as a string
      * @return the string representation of the message, independend of changing parameters
      */
@@ -219,14 +224,46 @@ public class Kieker2UmlUtil {
         return getAnnotationDetailsMap(element, setName).map(EMap::keySet);
     }
 
-    static void setId(final Element element, final String id) {
-        EAnnotation idAnnotation = Optional.ofNullable(element.getEAnnotation(ID_ANNOTATION_NAME))
-                .orElseGet(() -> element.createEAnnotation(ID_ANNOTATION_NAME));
-        idAnnotation.getDetails().put(ID_ANNOTATION_NAME, id);
-    }
-    static Optional<String> getId(final Element element) {
-        return Optional.ofNullable(element.getEAnnotation(ID_ANNOTATION_NAME))
-                .map(a -> a.getDetails().get(ID_ANNOTATION_NAME));
+    static void setRepresentation(final Element element, final String representation) {
+        EAnnotation idAnnotation = Optional.ofNullable(element.getEAnnotation(REPRESENTATION_ANNOTATION_NAME))
+                .orElseGet(() -> element.createEAnnotation(REPRESENTATION_ANNOTATION_NAME));
+        idAnnotation.getDetails().put(REPRESENTATION_NAME, representation);
     }
 
+    static void setRepresentationCount(final Element element, final Integer count) {
+        EAnnotation idAnnotation = Optional.ofNullable(element.getEAnnotation(REPRESENTATION_ANNOTATION_NAME))
+                .orElseGet(() -> element.createEAnnotation(REPRESENTATION_ANNOTATION_NAME));
+        idAnnotation.getDetails().put(REPRESENTATION_COUNT, count + "");
+
+    }
+    static Optional<String> getRepresentation(final Element element) {
+        return Optional.ofNullable(element.getEAnnotation(REPRESENTATION_ANNOTATION_NAME))
+                .map(a -> a.getDetails().get(REPRESENTATION_NAME));
+    }
+
+    static Optional<Integer> getRepresentationCount(final Element element) {
+        return Optional.ofNullable(element.getEAnnotation(REPRESENTATION_ANNOTATION_NAME))
+                .map(a -> a.getDetails().get(REPRESENTATION_COUNT))
+                .map(Integer::parseInt);
+    }
+
+    static void addTraceId(final Interaction interaction, final MessageTrace messageTrace) {
+        setAnnotationSetEntry(interaction, UmlInteractions.TRACE_IDS_SET_NAME, Long.toString(messageTrace.getTraceId()));
+    }
+
+    static boolean isTraceApplied(final Interaction interaction, final long traceId) {
+        return nonNull(interaction.getEAnnotation(UmlInteractions.TRACE_IDS_SET_NAME).getDetails().get(traceId + ""));
+    }
+
+    static String getBESRepresentation(final String messageId) {
+        return "BehaviorExecutionSpecification-" + messageId;
+    }
+
+    static String getReceiveMOSRepresentation(final String messageId) {
+        return "ReceiveMessageOccurrenceSpecification-" + messageId;
+    }
+
+    static String getSendMOSRepresentation(final String messageId) {
+        return "SendMessageOccurrenceSpecification-" + messageId;
+    }
 }

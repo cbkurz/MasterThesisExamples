@@ -47,16 +47,11 @@ public final class Main {
 	 * @param bookstore
 	 *            the bookstore
 	 */
-	private static void spawnAsyncRequest(final Bookstore bookstore,
-			final CountDownLatch latch) {
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				bookstore.searchBook();
-				latch.countDown();
-			}
-		}).start();
+	private static void spawnAsyncRequest(final Bookstore bookstore, final CountDownLatch latch) {
+		new Thread(() -> {
+            bookstore.searchBook();
+            latch.countDown();
+        }).start();
 	}
 
 	/**

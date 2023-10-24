@@ -20,10 +20,11 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNull;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.getId;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.setId;
+import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.getRepresentation;
+import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.setRepresentation;
 import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.setReferenceAnnotation;
 import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.setReferenceAnnotations;
+import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.setRepresentationCount;
 
 class UmlInteractions {
     public static final EClass INTERACTION_E_CLASS = UMLFactory.eINSTANCE.createInteraction().eClass();
@@ -37,14 +38,10 @@ class UmlInteractions {
 
         interaction.setName(interactionName);
         addLifelines(interaction, messageTrace.getSequenceAsVector()); // adds lifelines and messages
-        addTraceId(interaction, messageTrace);
-        setId(interaction, Kieker2UmlUtil.getTraceRepresentation(messageTrace));
+        Kieker2UmlUtil.addTraceId(interaction, messageTrace);
+        setRepresentation(interaction, Kieker2UmlUtil.getTraceRepresentation(messageTrace));
 
         return interaction;
-    }
-
-    static void addTraceId(final Interaction interaction, final MessageTrace messageTrace) {
-        Kieker2UmlUtil.setAnnotationSetEntry(interaction, TRACE_IDS_SET_NAME, Long.toString(messageTrace.getTraceId()));
     }
 
     /**
@@ -59,7 +56,7 @@ class UmlInteractions {
         return useCase.getOwnedBehaviors().stream()
                 .filter(i -> i instanceof Interaction)
                 .map(i -> (Interaction) i)
-                .filter(i -> getId(i).map(s -> s.equals(traceRepresentation)).orElseGet(() -> false))
+                .filter(i -> getRepresentation(i).map(s -> s.equals(traceRepresentation)).orElseGet(() -> false))
                 .findFirst();
     }
 
@@ -86,6 +83,7 @@ class UmlInteractions {
      */
     static void addLifelines(final Interaction interaction, final List<AbstractMessage> messages) {
         // assumption: the messages are ordered
+        int count = 0; // The count was introduced to have an additional separation option for Messages that have the same representation
         for (final AbstractMessage message : messages) {
             final AssemblyComponent senderComponent = message.getSendingExecution().getAllocationComponent().getAssemblyComponent();
             final AssemblyComponent receiverComponent = message.getReceivingExecution().getAllocationComponent().getAssemblyComponent();
@@ -97,11 +95,13 @@ class UmlInteractions {
             setReferenceAnnotations(senderLifeline, message.getSendingExecution());
             setReferenceAnnotations(receiverLifeline, message.getReceivingExecution());
 
-            createMessage(interaction, message, senderLifeline, receiverLifeline);
+            final String messageId = Kieker2UmlUtil.getMessageRepresentation(message);
+            createMessage(interaction, message, senderLifeline, receiverLifeline, messageId, count);
+            count++;
         }
     }
 
-    private static void createMessage(final Interaction interaction, final AbstractMessage message, final org.eclipse.uml2.uml.Lifeline senderLifeline, final org.eclipse.uml2.uml.Lifeline receiverLifeline) {
+    private static void createMessage(final Interaction interaction, final AbstractMessage message, final Lifeline senderLifeline, final Lifeline receiverLifeline, final String messageId, final int count) {
         requireNonNull(interaction, "interaction");
         requireNonNull(message, "message");
         requireNonNull(senderLifeline, "senderLifeline");
@@ -111,14 +111,9 @@ class UmlInteractions {
         final org.eclipse.uml2.uml.Message umlMessage = interaction.createMessage(messageLabel);
         final MessageSort messageSort = Kieker2UmlUtil.getMessageSort(message);
         umlMessage.setMessageSort(messageSort);
-        final String messageId = getMessageRepresentation(message);
-        setId(umlMessage, messageId);
 
         final MessageOccurrenceSpecification messageOccurrenceSend = createMessageOccurrence(interaction, umlMessage, senderLifeline, messageLabel + "SendEvent");
         final MessageOccurrenceSpecification messageOccurrenceReceive = createMessageOccurrence(interaction, umlMessage, receiverLifeline, messageLabel + "ReceiveEvent");
-
-        setId(messageOccurrenceSend, "SendMessageOccurrenceSpecification-" + messageId);
-        setId(messageOccurrenceReceive, "ReceiveMessageOccurrenceSpecification-" + messageId);
 
         umlMessage.setSendEvent(messageOccurrenceSend);
         umlMessage.setReceiveEvent(messageOccurrenceReceive);
@@ -127,15 +122,29 @@ class UmlInteractions {
 
         if (messageSort.equals(MessageSort.SYNCH_CALL_LITERAL) && !senderAndReceiverAreEqual) {
             final BehaviorExecutionSpecification bes = openBehaviourSpecification(interaction, receiverLifeline, messageOccurrenceReceive);
-            setId(bes, "BehaviorExecutionSpecification-" + messageId);
+            setRepresentation(bes, Kieker2UmlUtil.getBESRepresentation(messageId));
+            setRepresentationCount(bes, count);
             setReferenceAnnotation(bes, "OpenMessage", messageId);
         }
         if (messageSort.equals(MessageSort.REPLY_LITERAL) && !senderAndReceiverAreEqual) {
             final BehaviorExecutionSpecification bes = closeBehaviourSpecification(senderLifeline, messageOccurrenceSend);
             setReferenceAnnotation(bes, "CloseMessage", messageId);
+            setReferenceAnnotation(bes, "CloseMessageCount", count + "");
         }
 
-        Kieker2UmlUtil.setReferenceAnnotations(umlMessage, message.getReceivingExecution());
+        // set Metadata
+        // uml message
+        setRepresentation(umlMessage, messageId);
+        setRepresentationCount(umlMessage, count);
+        setReferenceAnnotations(umlMessage, message.getReceivingExecution());
+        // message occurrence send
+        setRepresentation(messageOccurrenceSend, Kieker2UmlUtil.getSendMOSRepresentation(messageId));
+        setRepresentationCount(messageOccurrenceSend, count);
+        setReferenceAnnotations(messageOccurrenceSend, message.getSendingExecution());
+        // message occurrence receive
+        setRepresentation(messageOccurrenceReceive, Kieker2UmlUtil.getReceiveMOSRepresentation(messageId));
+        setRepresentationCount(messageOccurrenceReceive, count);
+        setReferenceAnnotations(messageOccurrenceReceive, message.getReceivingExecution());
     }
 
     private static BehaviorExecutionSpecification closeBehaviourSpecification(final Lifeline senderLifeline, final MessageOccurrenceSpecification messageOccurrenceSend) {
@@ -170,13 +179,6 @@ class UmlInteractions {
         fragment.getCovereds().add(lifeline);
         fragment.setMessage(umlMessage);
         return fragment;
-    }
-
-    private static String getMessageRepresentation(final AbstractMessage message) {
-        return message.getSendingExecution().getOperation().getComponentType().getFullQualifiedName()
-                + message.getSendingExecution().getOperation().getSignature().toString()
-                + message.getReceivingExecution().getOperation().getComponentType().getFullQualifiedName()
-                + message.getReceivingExecution().getOperation().getSignature().toString();
     }
 
 }

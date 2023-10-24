@@ -4,17 +4,21 @@ import kieker.model.system.model.MessageTrace;
 import org.eclipse.uml2.uml.Interaction;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.UseCase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.file.Paths;
 import java.util.Optional;
 
 import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.getTraceRepresentation;
-import static org.kurz.ma.examples.kieker2uml.uml.UmlInteractions.addTraceId;
+import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.isTraceApplied;
 import static org.kurz.ma.examples.kieker2uml.uml.UmlInteractions.createInteraction;
 import static org.kurz.ma.examples.kieker2uml.uml.UmlInteractions.getInteraction;
 import static org.kurz.ma.examples.kieker2uml.uml.UmlInteractions.getInteractionName;
 
 public class Kieker2UmlModel {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Kieker2UmlModel.class);
 
     public static void main(String[] args) {
         Model m = Kieker2UmlUtil.loadModel(Paths.get("Kieker2Uml/input-data/uml/SequenceDiagrams.uml"));
@@ -28,12 +32,15 @@ public class Kieker2UmlModel {
 
         final Optional<Interaction> interaction = getInteraction(useCase, traceRepresentation);
         if (interaction.isEmpty()) { // create Interaction
+            LOGGER.info("Creating interaction for Trace: " + messageTrace.getTraceId());
             final Interaction newInteraction = createInteraction(getInteractionName(useCase), messageTrace);
             MarteSupport.applyPerformanceStereotypesToInteraction(newInteraction, messageTrace);
             useCase.getOwnedBehaviors().add(newInteraction);
-        } else { // update Interaction
+        } else if (isTraceApplied(interaction.get(), messageTrace.getTraceId())) { // update Interaction
+            LOGGER.info("Interaction was created before, performance information will now be added to Trace with id: " + messageTrace.getTraceId());
             MarteSupport.applyPerformanceStereotypesToInteraction(interaction.get(), messageTrace);
-            addTraceId(interaction.get(), messageTrace);
+        } else {
+            LOGGER.info(String.format("Trace with id '%s' was applied before and is therefore skipped.", messageTrace.getTraceId()));
         }
     }
 
