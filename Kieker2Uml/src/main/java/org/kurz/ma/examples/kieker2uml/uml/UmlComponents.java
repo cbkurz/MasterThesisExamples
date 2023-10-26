@@ -7,6 +7,7 @@ import org.eclipse.uml2.uml.Component;
 import org.eclipse.uml2.uml.Deployment;
 import org.eclipse.uml2.uml.Interface;
 import org.eclipse.uml2.uml.Lifeline;
+import org.eclipse.uml2.uml.MessageSort;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.Node;
 import org.eclipse.uml2.uml.Package;
@@ -21,6 +22,7 @@ import java.util.Optional;
 
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
+import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.getMessageSort;
 
 public class UmlComponents {
 
@@ -38,6 +40,11 @@ public class UmlComponents {
         final Package deploymentView = Kieker2UmlUtil.getPackagedElement(model, "deploymentView");
 
         for (final AbstractMessage message : messageTrace.getSequenceAsVector()) {
+
+            if (getMessageSort(message).equals(MessageSort.REPLY_LITERAL)) {
+                continue;
+            }
+
             // sender
             // names
             final String senderInterfaceName = message.getSendingExecution().getOperation().getSignature().toString();

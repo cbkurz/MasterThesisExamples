@@ -46,8 +46,8 @@ public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter
 
         // UML
         final Model model = loadModel(modelPath);
-        addStaticViewToModel(model, mt);
         addInteractionToUseCase(model, mt, useCaseName);
+        addStaticViewToModel(model, mt);
         saveModel(model, modelPath);
 
 
