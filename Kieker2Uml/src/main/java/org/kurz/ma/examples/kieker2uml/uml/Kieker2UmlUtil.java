@@ -43,7 +43,7 @@ public class Kieker2UmlUtil {
 
     static Package getPackagedElement(final Model model, final String packageName) {
         return (Package) model.getPackagedElements().stream()
-                .filter(p -> p.getName().equals(packageName))
+                .filter(p -> packageName.equals(p.getName()))
                 .findFirst()
                 .orElseGet(() -> model.createPackagedElement(packageName, PACKAGE_E_CLASS));
     }

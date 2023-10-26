@@ -21,7 +21,6 @@ import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.setAnnotationDe
 
 public class UmlClasses {
 
-    final static private EClass OPERATION_E_CLASS = UMLFactory.eINSTANCE.createOperation().eClass();
     final static private EClass CLASS_E_CLASS = UMLFactory.eINSTANCE.createClass().eClass();
     static void addClasses(final Model model, final MessageTrace messageTrace) {
         requireNonNull(model, "model");
