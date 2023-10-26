@@ -155,9 +155,4 @@ public class MarteSupport {
         return list.get(0);
     }
 
-    private static void applyPerformanceAnnotations(final AbstractMessage message, final Lifeline senderLifeline, final Message umlMessage) {
-        final long execTime = (message.getReceivingExecution().getTout() - message.getReceivingExecution().getTin());
-        setGaStep(umlMessage, execTime);
-        setGaWorkloadEvent(senderLifeline, "closed:2"); // TODO: what exactly are those two values?
-    }
 }
