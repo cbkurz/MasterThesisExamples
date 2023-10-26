@@ -148,6 +148,7 @@ operation sanitize(s : String) : String {
 				.replace(":", "_")
 				.replace(" ", "_")
 				.replace(",", "_")
+				.replace("@", "_")
 				.replace("\\(", "_")
 				.replace("\\)", "_");
 }

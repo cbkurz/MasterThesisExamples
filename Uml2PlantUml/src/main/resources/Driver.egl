@@ -30,5 +30,6 @@
     // Deployment
     var deploymentView = uml!PackageableElement.all.selectOne(p|"deploymentView".equals(p.name));
 	deploymentTemplate.populate("deploymentView", deploymentView);
+	deploymentTemplate.populate("componentView", componentsView);
     deploymentTemplate.generate("../output/DeploymentView.txt");
 %]
