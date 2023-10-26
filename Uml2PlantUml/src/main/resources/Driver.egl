@@ -2,7 +2,10 @@
 	import "operations.eol";
     // variables, containing the templates required for PlantUML
     var interactionTemplate : Template = TemplateFactory.load("Interactions.egl");
-    var componentTemplate : Template = TemplateFactory.load("Components.egl");
+    var classesTemplate : Template = TemplateFactory.load("StaticView-Classes.egl");
+    var componentsTemplate : Template = TemplateFactory.load("StaticView-Components.egl");
+    var deploymentTemplate : Template = TemplateFactory.load("DeploymentView.egl");
+    
   
     // generates a new file or overwrites the file and begins from scratch, every other call simply appends their output
     var interactions = uml!Interaction.all;
@@ -14,6 +17,18 @@
 	    interactionTemplate.generate("../output/Interaction-" + i.name + ".txt");
     }
     
-
-    componentTemplate.generate("../output/Output.txt");
+    // Classes
+	var classesView = uml!PackageableElement.all.selectOne(p|"staticView-classes".equals(p.name));
+	classesTemplate.populate("classesView", classesView);
+    classesTemplate.generate("../output/StaticView-Classes.txt");
+    
+    // Components
+    var componentsView = uml!PackageableElement.all.selectOne(p|"staticView-components".equals(p.name));
+	componentsTemplate.populate("componentsView", componentsView);
+    componentsTemplate.generate("../output/StaticView-Components.txt");
+    
+    // Deployment
+    var deploymentView = uml!PackageableElement.all.selectOne(p|"deploymentView".equals(p.name));
+	deploymentTemplate.populate("deploymentView", deploymentView);
+    deploymentTemplate.generate("../output/DeploymentView.txt");
 %]

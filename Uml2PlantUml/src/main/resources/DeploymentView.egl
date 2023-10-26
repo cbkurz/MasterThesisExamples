@@ -1,0 +1,6 @@
+[% import "operations.eol"; %]
+@startuml
+
+[%=getStandardInformation()%]
+
+@enduml

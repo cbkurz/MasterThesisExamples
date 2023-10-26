@@ -2,7 +2,7 @@
   <configuration default="false" name="Kieker2UmlMain" type="Application" factoryName="Application" nameIsGenerated="true">
     <option name="MAIN_CLASS_NAME" value="org.kurz.ma.examples.kieker2uml.Kieker2UmlMain" />
     <module name="Kieker2Uml.main" />
-    <option name="PROGRAM_PARAMETERS" value="-m Kieker2Uml/output/MyModel.uml -uc MyUseCase -d Kieker2Uml/input-data/Bookstore/kieker-monitoring-2" />
+    <option name="PROGRAM_PARAMETERS" value="-m Kieker2Uml/output/MyModel.uml -uc MyUseCase -d Kieker2Uml/input-data/Bookstore/kieker-monitoring" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="org.kurz.ma.examples.kieker2uml.*" />

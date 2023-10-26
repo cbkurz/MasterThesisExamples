@@ -1,6 +1,7 @@
 [% import "operations.eol"; %]
-
 @startuml
+
+[%=getStandardInformation()%]
 
 title [%=interaction.name%]
 
