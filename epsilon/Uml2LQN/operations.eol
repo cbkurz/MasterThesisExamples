@@ -2,8 +2,7 @@
  * Converts an element to the native Java BigInteger type
  * @return a java.math.BigInteger
  */
-operation Any asBigInteger(): Native("java.math.BigInteger")
-{
+operation Any asBigInteger(): Native("java.math.BigInteger") {
 	// Converts an element to the java native type BigInteger
 	return new Native("java.math.BigInteger")(self);
 }
@@ -11,29 +10,30 @@ operation Any asBigInteger(): Native("java.math.BigInteger")
  * Retrieves the artifacts representing an element
  * @return a collection comprising the set of artifacts
  */
-operation UML!NamedElement getArtifacts(): Collection
-{
+operation UML!NamedElement getArtifacts(): Collection {
 	var artifacts = UML!Artifact.all();
 	var output = new Sequence();
 	
 	for(artifact in artifacts)
 	{
 		var manifestation = artifact.manifestation;
-		manifestation = manifestation.select(i | i.supplier.first = self);
+		manifestation = manifestation.select(i | i.supplier.contains(self));
 			
-		if(manifestation.notEmpty)
+		if(manifestation.notEmpty) {
 			output.add(artifact);
+		}
+		
 	}	
 		
 	return output;	
 }
+
 /**
  * Checks if it exists a behavioral description involving self
  * @param element: element under investigation
  * @return a boolean
  */
-operation UML!NamedElement isInteracting(): Boolean
-{	
+operation UML!NamedElement isInteracting(): Boolean {	
 	// Gets all the lifelines involving the input 'element'
 	var lifelines = self.getLifelines();
 	
@@ -44,9 +44,8 @@ operation UML!NamedElement isInteracting(): Boolean
 	return interacting.notEmpty();
 }
 
-operation UML!Lifeline getWorkload(): Sequence
-{
-	var pattern = self.getValue(gaworkload, "pattern").trim();
+operation UML!Lifeline getWorkload(): Sequence {
+	var pattern = self.getStereotypeValue(gaworkload, "pattern").trim();
 	var reg = '(closed|open):[0-9]+(.[0-9]+)?';
 	
 	if(not pattern.matches(reg))
@@ -59,13 +58,13 @@ operation UML!Lifeline getWorkload(): Sequence
  * Gets all the lifelines representing self
  * @return a Collection of Lifelines 
  */
-operation UML!NamedElement getLifelines(): Collection
-{
+operation UML!NamedElement getLifelines(): Collection {
 	// All the lifelines of the Model
 	var lifelines = UML!Lifeline.all();
 	// Get all the lifelines involving "element"
 	return lifelines.select(i | i.represents.type = self);
 }
+
 /*
  * Operations on UML!Node; 
  */
@@ -74,8 +73,7 @@ operation UML!NamedElement getLifelines(): Collection
  * Retrieves the manifestation of the artifact deployed on a Node
  * @return the object representing the deployed component or null
  */
-operation UML!Node getDeployed(): Collection
-{
+operation UML!Node getDeployed(): Collection {
 	// If the deployment dependency does not exists, then the deployed element is 
 	if(self.deployment.isEmpty())
 		return new Sequence();
@@ -92,35 +90,30 @@ operation UML!Node getDeployed(): Collection
 /*
  * Operations on UML!Lifeline; 
  */
-operation UML!Lifeline isInteracting(): Boolean
-{
+operation UML!Lifeline isInteracting(): Boolean {
 	return self.coveredBy.notEmpty();
 }
 /**
  * Returns the elements, inside a lifeline, having 'type' as type
  * @returns a OrderedSet of elements with type 'type'
  */
-operation UML!Lifeline getElements(type: String): OrderedSet	
-{
+operation UML!Lifeline getElements(type: String): OrderedSet {
 	var elements = self.coveredBy.asOrderedSet();
 	return elements.select(i | i.eClass.name == type);
 }
 
-/*
- * Operations on UML!BehaviorExecutionSpecification; 
- */
+
 /**
  * Checks if the BehaviorExecutionSpecification is well specified.
  * This means that is has a MessageOccurrenceSpecifiation for both the 
  * start event and the finish event
  * @return a boolean stating if the property is verified or not
  */
-operation UML!BehaviorExecutionSpecification isWellFormed() : Boolean
-{
+operation UML!BehaviorExecutionSpecification isWellFormed() : Boolean {
 
-	if(self.start.isTypeOf(MessageOccurrenceSpecification) and 
-		self.finish.isTypeOf(MessageOccurrenceSpecification))
+	if ( self.start.isTypeOf(MessageOccurrenceSpecification) and self.finish.isTypeOf(MessageOccurrenceSpecification)) {
 		return true;
+	}
 		
 	return false;
 }
@@ -130,8 +123,7 @@ operation UML!BehaviorExecutionSpecification isWellFormed() : Boolean
  * of 'self' (BES) 
  * @return a collection of MessageOccurenceSpecification
  */
-operation UML!BehaviorExecutionSpecification getMessages(): Collection
-{	
+operation UML!BehaviorExecutionSpecification getMessages(): Collection {	
 
 	var modelMessages = UML!MessageOccurrenceSpecification.all();
 	var lifeline = self.covered.first;
@@ -144,10 +136,58 @@ operation UML!BehaviorExecutionSpecification getMessages(): Collection
 	return modelMessages.select(i | elements.indexOf(i) >= start 
 		and elements.indexOf(i) <= end);
 }
-/*
- * Operations on UML!Artifact; 
- */
-operation UML!Artifact getDeployments() : Sequence
-{
-	return UML!Deployment.all().select(i | i.supplier.first = self).flatten;
+
+operation UML!Artifact getDeployments() : Sequence {
+	return UML!Deployment.all.select(i | i.supplier.contains(self)).flatten;
+}
+
+operation NamedElement isStereotypeApplied(name : String) : Boolean {
+	return self.getStereotype(name).isDefined();
+}
+
+operation NamedElement getStereotype(name : String) {
+	
+	// fail fast: if any of the variables are not defined an Exception is thrown.
+	if (name.isUndefined()) {
+		throw "No name for the stereotype was given.";
+	}
+	
+	// work
+	var annotations = self.getEAnnotations();
+	if (annotations.size == 0) {
+		return null;
+	}
+	
+	for (anno in annotations) {
+		if (anno.source == name) {
+			var details = anno.getDetails();
+			if (not details.isDefined()) {
+				return new Map<String, String>();				
+			}
+			return details;
+		}
+	}
+	
+	return null;
+}
+
+operation NamedElement getStereotypeValue(stereotypeName: String, key: String): String {
+	
+	// fail fast: if any of the variables are not defined an Exception is thrown.
+	if (stereotypeName.isUndefined() and key.isUndefined()) {
+		throw "Neither the StereotypeName nor the key are defined.";
+	}
+	if (stereotypeName.isUndefined()) {
+		throw "The Name of the Stereotype is not defined.\n Key: " + key;
+	}
+	if (key.isUndefined()) {
+		throw "The Name of the Key is not defined.\n Stereotype Name: " + stereotypeName;
+	}
+	
+	var details = self.getStereotype(stereotypeName);
+	if (not details.isDefined()) {
+		return null;
+	}
+	
+	return details.get(key);
 }
