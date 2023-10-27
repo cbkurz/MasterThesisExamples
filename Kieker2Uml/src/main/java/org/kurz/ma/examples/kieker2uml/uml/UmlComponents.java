@@ -108,6 +108,8 @@ public class UmlComponents {
                 .distinct()
                 .forEach(i -> i.getInterfaceRealization("Realization-" + anInterface.getName(), anInterface, false, true));
 
+        lifelines.forEach(l -> l.setRepresents(l.getInteraction().getOwnedParameter("Representation-" + component.getName(), component, false, true)));
+
         artifact.getManifestation("ArtifactManifestation-" + component.getName(), component, false, true);
         final Deployment deployment = node.getDeployment("NodeDeployment-" + node.getName(), false, true);
         if (!deployment.getDeployedArtifacts().contains(artifact)) {
