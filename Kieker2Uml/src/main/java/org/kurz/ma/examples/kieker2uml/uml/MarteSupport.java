@@ -81,7 +81,7 @@ public class MarteSupport {
 
     static void setGaExecHost(final Node node) {
         node.getEAnnotations().stream()
-                .filter(a -> a.getSource().equals(GA_EXEC_HOST))
+                .filter(a -> GA_EXEC_HOST.equals(a.getSource()))
                 .findFirst()
                 .orElseGet(() -> node.createEAnnotation(GA_EXEC_HOST));
     }
@@ -155,4 +155,8 @@ public class MarteSupport {
         return list.get(0);
     }
 
+    public static void applyPerformanceStereotypesToNodes(final List<Node> nodeList) {
+        requireNonNull(nodeList, "nodeList");
+        nodeList.forEach(MarteSupport::setGaExecHost);
+    }
 }

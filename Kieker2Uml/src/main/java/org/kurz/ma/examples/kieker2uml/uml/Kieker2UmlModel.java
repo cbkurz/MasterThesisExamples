@@ -3,11 +3,13 @@ package org.kurz.ma.examples.kieker2uml.uml;
 import kieker.model.system.model.MessageTrace;
 import org.eclipse.uml2.uml.Interaction;
 import org.eclipse.uml2.uml.Model;
+import org.eclipse.uml2.uml.Node;
 import org.eclipse.uml2.uml.UseCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 
 import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.getTraceRepresentation;
@@ -47,6 +49,8 @@ public class Kieker2UmlModel {
     public static void addStaticViewToModel(final Model model, final MessageTrace trace) {
         UmlClasses.addClasses(model, trace);
         UmlComponents.addComponents(model, trace);
+        final List<Node> nodeList = model.allOwnedElements().stream().filter(pe -> pe instanceof Node).map(pe -> (Node) pe).toList();
+        MarteSupport.applyPerformanceStereotypesToNodes(nodeList);
     }
 
 }

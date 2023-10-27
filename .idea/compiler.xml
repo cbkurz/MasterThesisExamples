@@ -7,6 +7,7 @@
       <module name="org.kurz.ma.examples.SimpleEpsilonUMLExample" target="11" />
       <module name="SimpleEpsilonUMLExample.main" target="11" />
       <module name="SimpleEpsilonUMLExample.test" target="11" />
+      <module name="Uml2PlantUml" target="17" />
     </bytecodeTargetLevel>
   </component>
 </project>
