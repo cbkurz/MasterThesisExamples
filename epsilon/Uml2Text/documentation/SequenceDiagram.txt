@@ -1,0 +1,27 @@
+@startuml
+' this is a comment
+/'
+this comment is a multiline comment
+'/
+
+participant a << Stereotype >> [
+    =Title
+    ----
+    ""SubTitle""
+]
+
+
+a -> b
+activate b
+b -> c
+activate c
+c -> b
+deactivate c
+b -> d
+activate d
+d -> b
+deactivate d
+b -> a
+deactivate b
+
+@enduml
