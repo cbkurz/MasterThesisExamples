@@ -127,19 +127,7 @@ operation Message getReceiverName() : String {
 // ' - Tickmarks are removed in order to not create accidental Comments that may be malformed
 operation sanitize(s : String) : String {
 	
-	// s.replace("$", "_"); --> the expected behaviour would be that the $ got replaced with _
-	// However at the current state this does not happen, a string like "abcd$1" becomes "abcd$1_" which is really not intended.
-	// Therefore the following fix is made ...
-	
-	var split : Sequence = s.split("\\$"); // the split variables contains every piece of the split except the $ character.
-	var s1 = "";
-	for (part in split) {
-		s1 += part; // stich all parts together again.
-		if (hasMore) {
-			s1 += "_"; // Apply placeholder (this might be confusing if a string exists like "abcd$", since no placeholder will be created for the trailing $)			
-		}
-	}
-	return s1.replace("'", "_")
+	return s.replace("'", "_")
 				.replace("<", "_")
 				.replace(">", "_")
 				.replace("-", "_")
@@ -149,6 +137,7 @@ operation sanitize(s : String) : String {
 				.replace(" ", "_")
 				.replace(",", "_")
 				.replace("@", "_")
+				.replace("\\$", "_")
 				.replace("\\(", "_")
 				.replace("\\)", "_");
 }
