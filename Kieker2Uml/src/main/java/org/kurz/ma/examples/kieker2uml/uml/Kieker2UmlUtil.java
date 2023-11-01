@@ -14,11 +14,15 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.uml2.uml.AggregationKind;
+import org.eclipse.uml2.uml.Association;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Interaction;
 import org.eclipse.uml2.uml.MessageSort;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.Package;
+import org.eclipse.uml2.uml.Property;
+import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.UMLFactory;
 import org.eclipse.uml2.uml.UMLPackage;
 import org.eclipse.uml2.uml.resource.UMLResource;
@@ -265,5 +269,48 @@ public class Kieker2UmlUtil {
 
     static String getSendMOSRepresentation(final String messageId) {
         return "SendMessageOccurrenceSpecification-" + messageId;
+    }
+
+    static Association createAssociation(final Type from, final Type to) {
+        requireNonNull(from, "from");
+        requireNonNull(to, "to");
+
+        final Optional<Association> first = from.getAssociations().stream()
+                .filter(a -> a.getMemberEnds().size() == 2)
+                .filter(a -> a.getMembers().stream().anyMatch(me -> from.equals(((Property) me).getType())))
+                .filter(a -> a.getMembers().stream().anyMatch(me -> to.equals(((Property) me).getType())))
+                .findFirst();
+
+        if (first.isPresent()) {
+            return first.get();
+        }
+
+        // Some of these values are chosen at random and have no meaning besides being there.
+        // The following is the parameterlist and their names:
+        //   boolean end1IsNavigable, AggregationKind end1Aggregation, String end1Name, int end1Lower, int end1Upper,
+        //   Type end1Type, boolean end2IsNavigable, AggregationKind end2Aggregation, String end2Name, int end2Lower, int end2Upper
+        return from.createAssociation(true, AggregationKind.NONE_LITERAL, from.getName(), 1, 1,
+                to, true, AggregationKind.NONE_LITERAL, to.getName(), 1, 1);
+    }
+
+    /**
+     * There are circumstances where the "getModel()" method returns null.
+     * In such cases this method can be called
+     * @param element some element
+     * @return the Model
+     * @throws NullPointerException In case the element or some owner of the element returns null and the Model has not been reached.
+     */
+    static Model getModel(final Element element) {
+        requireNonNull(element, "element");
+        if (element instanceof Model) {
+            return (Model) element;
+        }
+        final Element owner = element.getOwner();
+        requireNonNull(owner, "owner");
+        if (owner instanceof Model) {
+            return (Model) owner;
+        } else {
+            return getModel(owner);
+        }
     }
 }

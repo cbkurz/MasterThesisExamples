@@ -4,11 +4,14 @@ import kieker.model.system.model.AbstractMessage;
 import kieker.model.system.model.AssemblyComponent;
 import kieker.model.system.model.MessageTrace;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.uml2.uml.Actor;
 import org.eclipse.uml2.uml.BehaviorExecutionSpecification;
 import org.eclipse.uml2.uml.Interaction;
 import org.eclipse.uml2.uml.Lifeline;
 import org.eclipse.uml2.uml.MessageOccurrenceSpecification;
 import org.eclipse.uml2.uml.MessageSort;
+import org.eclipse.uml2.uml.Model;
+import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.UMLFactory;
 import org.eclipse.uml2.uml.UseCase;
 import org.slf4j.Logger;
@@ -19,12 +22,19 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
+import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.createAssociation;
+import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.getModel;
 import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.getRepresentation;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.setRepresentation;
 import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.setReferenceAnnotation;
 import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.setReferenceAnnotations;
+import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.setRepresentation;
 import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.setRepresentationCount;
+import static org.kurz.ma.examples.kieker2uml.uml.MarteSupport.setGaWorkloadEvent;
+import static org.kurz.ma.examples.kieker2uml.uml.UmlUseCases.KIEKER_ENTRY_NAME;
+import static org.kurz.ma.examples.kieker2uml.uml.UmlUseCases.getActor;
+import static org.kurz.ma.examples.kieker2uml.uml.UmlUseCases.getDynamicView;
 
 class UmlInteractions {
     public static final EClass INTERACTION_E_CLASS = UMLFactory.eINSTANCE.createInteraction().eClass();
@@ -181,4 +191,22 @@ class UmlInteractions {
         return fragment;
     }
 
+    static void connectEntryLifelineToActor(final UseCase useCase) {
+        final Model model = getModel(useCase);
+        final Package dynamicView = getDynamicView(model);
+        final Actor actor = getActor(dynamicView);
+        setGaWorkloadEvent(actor, "closed:2");;
+
+        useCase.getOwnedBehaviors().stream()
+                .filter(b -> b instanceof Interaction)
+                .map(b -> (Interaction) b)
+                .filter(i -> nonNull(i.getLifeline(KIEKER_ENTRY_NAME)))
+                .forEach(i -> {
+                    final Lifeline lifeline = i.getLifeline(KIEKER_ENTRY_NAME);
+                    lifeline.setRepresents(createAssociation(actor, i).getMemberEnd(i.getName(), null));
+                    setGaWorkloadEvent(lifeline, "closed:2"); // TODO: why is this fixed, this should somehow be calculated
+                });
+
+
+    }
 }

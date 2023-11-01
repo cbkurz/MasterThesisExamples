@@ -4,8 +4,6 @@ import kieker.model.system.model.AbstractMessage;
 import kieker.model.system.model.MessageTrace;
 import kieker.model.system.model.Operation;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.uml2.uml.AggregationKind;
-import org.eclipse.uml2.uml.Association;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.MessageSort;
 import org.eclipse.uml2.uml.Model;
@@ -42,30 +40,8 @@ public class UmlClasses {
             setReferenceAnnotations(receiver, message.getReceivingExecution());
             addDependency(sender, message.getReceivingExecution().getOperation());
 
-            createAssociation(sender.getClass_(), receiver.getClass_());
+            Kieker2UmlUtil.createAssociation(sender.getClass_(), receiver.getClass_());
         }
-    }
-
-    private static Association createAssociation(final Class from, final Class to) {
-        requireNonNull(from, "from");
-        requireNonNull(to, "to");
-
-        final Optional<Association> first = from.getAssociations().stream()
-                .filter(a -> a.getMemberEnds().size() == 2)
-                .filter(a -> a.getMemberEnds().stream().anyMatch(me -> from.equals(me.getClass_())))
-                .filter(a -> a.getMemberEnds().stream().anyMatch(me -> to.equals(me.getClass_())))
-                .findFirst();
-
-        if (first.isPresent()) {
-            return first.get();
-        }
-
-        // Some of these values are chosen at random and have no meaning besides being there.
-        // The following is the parameterlist and their names:
-        //   boolean end1IsNavigable, AggregationKind end1Aggregation, String end1Name, int end1Lower, int end1Upper,
-        //   Type end1Type, boolean end2IsNavigable, AggregationKind end2Aggregation, String end2Name, int end2Lower, int end2Upper
-        return from.createAssociation(true, AggregationKind.NONE_LITERAL, null, 1, 1,
-                to, true, AggregationKind.NONE_LITERAL, null, 1, 1);
     }
 
     private static void addDependency(final org.eclipse.uml2.uml.Operation from, final Operation operation) {

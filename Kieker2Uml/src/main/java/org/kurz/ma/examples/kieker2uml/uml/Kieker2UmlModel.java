@@ -30,6 +30,7 @@ public class Kieker2UmlModel {
 
     public static void addInteractionToUseCase(final Model model, final MessageTrace messageTrace, final String useCaseName) {
         final UseCase useCase = UmlUseCases.getUseCase(model, useCaseName);
+        MarteSupport.applyGaScenario(useCase);
         final String traceRepresentation = getTraceRepresentation(messageTrace);
 
         final Optional<Interaction> interaction = getInteraction(useCase, traceRepresentation);
@@ -38,6 +39,7 @@ public class Kieker2UmlModel {
             final Interaction newInteraction = createInteraction(getInteractionName(useCase), messageTrace);
             MarteSupport.applyPerformanceStereotypesToInteraction(newInteraction, messageTrace);
             useCase.getOwnedBehaviors().add(newInteraction);
+            UmlInteractions.connectEntryLifelineToActor(useCase);
         } else if (isTraceApplied(interaction.get(), messageTrace.getTraceId())) { // update Interaction
             LOGGER.info("Interaction was created before, performance information will now be added to Trace with id: " + messageTrace.getTraceId());
             MarteSupport.applyPerformanceStereotypesToInteraction(interaction.get(), messageTrace);

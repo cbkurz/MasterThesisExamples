@@ -8,7 +8,9 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Interaction;
 import org.eclipse.uml2.uml.Lifeline;
 import org.eclipse.uml2.uml.Message;
+import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Node;
+import org.eclipse.uml2.uml.UseCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +29,7 @@ public class MarteSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MarteSupport.class);
     public static final String GA_EXEC_HOST = "GaExecHost";
+    public static final String GA_SCENARIO = "GaScenario";
     public static final String GA_STEP_ANNOTATION_NAME = "GaStep";
     public static final String EXEC_TIME_ENTRIES_GA_STEP = "execTimeEntries";
     public static final String EXEC_TIME_GA_STEP = "execTime";
@@ -75,8 +78,8 @@ public class MarteSupport {
         details.put(REP_GA_STEP, Integer.toString(execTimeSplit.length));
     }
 
-    static void setGaWorkloadEvent(final Lifeline lifeline, final String pattern) {
-        Kieker2UmlUtil.setAnnotationDetail(lifeline, "GaWorkloadEvent", "pattern", pattern);
+    static void setGaWorkloadEvent(final NamedElement element, final String pattern) {
+        Kieker2UmlUtil.setAnnotationDetail(element, "GaWorkloadEvent", "pattern", pattern);
     }
 
     static void setGaExecHost(final Node node) {
@@ -103,6 +106,7 @@ public class MarteSupport {
         }
 
         // start working
+        // GaStep
         int count = 0; // The count was introduced to have an additional separation option for Messages that have the same representation
         for (final AbstractMessage message : messageTrace.getSequenceAsVector()) {
             final String messageRepresentation = getMessageRepresentation(message);
@@ -110,10 +114,9 @@ public class MarteSupport {
             if (message instanceof SynchronousCallMessage) {
                 applyGaStep(message, umlMessage);
             }
-            final Lifeline lifeline = getSenderLifeline(interaction, message.getSendingExecution().getAllocationComponent().getAssemblyComponent().getIdentifier());
-            setGaWorkloadEvent(lifeline, "closed:2"); // TODO: why is this fixed, this should somehow be calculated
             count++;
         }
+
         // finnish
         addTraceId(interaction, messageTrace);
     }
@@ -158,5 +161,12 @@ public class MarteSupport {
     public static void applyPerformanceStereotypesToNodes(final List<Node> nodeList) {
         requireNonNull(nodeList, "nodeList");
         nodeList.forEach(MarteSupport::setGaExecHost);
+    }
+
+    public static void applyGaScenario(final UseCase useCase) {
+        useCase.getEAnnotations().stream()
+                .filter(a -> GA_SCENARIO.equals(a.getSource()))
+                .findFirst()
+                .orElseGet(() -> useCase.createEAnnotation(GA_SCENARIO));
     }
 }
