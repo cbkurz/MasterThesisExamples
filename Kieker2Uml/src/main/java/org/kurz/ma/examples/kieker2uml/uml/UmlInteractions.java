@@ -13,6 +13,7 @@ import org.eclipse.uml2.uml.MessageSort;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.UMLFactory;
+import org.eclipse.uml2.uml.UMLPackage;
 import org.eclipse.uml2.uml.UseCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,10 +38,10 @@ import static org.kurz.ma.examples.kieker2uml.uml.UmlUseCases.getActor;
 import static org.kurz.ma.examples.kieker2uml.uml.UmlUseCases.getDynamicView;
 
 class UmlInteractions {
-    public static final EClass INTERACTION_E_CLASS = UMLFactory.eINSTANCE.createInteraction().eClass();
     private static final Logger LOGGER = LoggerFactory.getLogger(UmlInteractions.class);
-    public static final EClass MESSAGE_OCCURRENCE_E_CLASS = UMLFactory.eINSTANCE.createMessageOccurrenceSpecification().eClass();
-    public static final EClass BEHAVIOUR_EXECUTION_E_CLASS = UMLFactory.eINSTANCE.createBehaviorExecutionSpecification().eClass();
+    public static final EClass INTERACTION_E_CLASS = UMLPackage.Literals.INTERACTION;
+    public static final EClass MESSAGE_OCCURRENCE_E_CLASS = UMLPackage.Literals.MESSAGE_OCCURRENCE_SPECIFICATION;
+    public static final EClass BEHAVIOUR_EXECUTION_E_CLASS = UMLPackage.Literals.BEHAVIOR_EXECUTION_SPECIFICATION;
     public static final String TRACE_IDS_SET_NAME = "AppliedTraceIds";
 
     static Interaction createInteraction(final String interactionName, final MessageTrace messageTrace) {
