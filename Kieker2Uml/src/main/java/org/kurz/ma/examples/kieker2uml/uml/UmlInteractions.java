@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -39,10 +38,10 @@ import static org.kurz.ma.examples.kieker2uml.uml.UmlUseCases.getDynamicView;
 
 class UmlInteractions {
     private static final Logger LOGGER = LoggerFactory.getLogger(UmlInteractions.class);
-    public static final EClass INTERACTION_E_CLASS = UMLPackage.Literals.INTERACTION;
     public static final EClass MESSAGE_OCCURRENCE_E_CLASS = UMLPackage.Literals.MESSAGE_OCCURRENCE_SPECIFICATION;
     public static final EClass BEHAVIOUR_EXECUTION_E_CLASS = UMLPackage.Literals.BEHAVIOR_EXECUTION_SPECIFICATION;
     public static final String TRACE_IDS_SET_NAME = "AppliedTraceIds";
+    public static final String BES_PREFIX = "BehaviorExecutionSpecification-";
 
     static Interaction createInteraction(final String interactionName, final MessageTrace messageTrace) {
         final Interaction interaction = UMLFactory.eINSTANCE.createInteraction();
@@ -129,15 +128,13 @@ class UmlInteractions {
         umlMessage.setSendEvent(messageOccurrenceSend);
         umlMessage.setReceiveEvent(messageOccurrenceReceive);
 
-        final boolean senderAndReceiverAreEqual = senderLifeline.equals(receiverLifeline); // this might happen if an object/class calls itself.
-
-        if (messageSort.equals(MessageSort.SYNCH_CALL_LITERAL) && !senderAndReceiverAreEqual) {
+        if (messageSort.equals(MessageSort.SYNCH_CALL_LITERAL)) {
             final BehaviorExecutionSpecification bes = openBehaviourSpecification(interaction, receiverLifeline, messageOccurrenceReceive);
             setRepresentation(bes, Kieker2UmlUtil.getBESRepresentation(messageId));
             setRepresentationCount(bes, count);
             setReferenceAnnotation(bes, "OpenMessage", messageId);
         }
-        if (messageSort.equals(MessageSort.REPLY_LITERAL) && !senderAndReceiverAreEqual) {
+        if (messageSort.equals(MessageSort.REPLY_LITERAL)) {
             final BehaviorExecutionSpecification bes = closeBehaviourSpecification(senderLifeline, messageOccurrenceSend);
             setReferenceAnnotation(bes, "CloseMessage", messageId);
             setReferenceAnnotation(bes, "CloseMessageCount", count + "");
@@ -165,19 +162,17 @@ class UmlInteractions {
                 .filter(bes -> isNull(bes.getFinish()))
                 .toList();
         if (list.isEmpty()) {
-            throw new RuntimeException("There is no open BehaviorExecutionSpecification. Exactly one was expected.");
+            throw new RuntimeException("There is no open BehaviorExecutionSpecification. At least one was expected.");
         }
-        if (list.size() > 1) {
-            throw new RuntimeException(String.format("There is more than one open BehaviourExecutionSpecification, this is unexpected pleas check the running code.\nsize: %s\nlist: %s", list.size(), list.stream().map(Object::toString).collect(Collectors.joining(", ", "[", "]"))));
-        }
-
-        list.get(0).setFinish(messageOccurrenceSend);
-        return list.get(0);
+        // get last opened BehaviorExecutionSpecification on lifeline and "close" it.
+        // this is possible since a single kieker-trace is sequential.
+        list.get(list.size() - 1).setFinish(messageOccurrenceSend);
+        return list.get(list.size() - 1);
     }
 
 
     private static BehaviorExecutionSpecification openBehaviourSpecification(final Interaction interaction, final Lifeline umlLifeline, final MessageOccurrenceSpecification messageOccurrenceReceive) {
-        final BehaviorExecutionSpecification behaviour = (BehaviorExecutionSpecification) interaction.createFragment("BehaviorExecutionSpecification" + umlLifeline.getLabel(), BEHAVIOUR_EXECUTION_E_CLASS);
+        final BehaviorExecutionSpecification behaviour = (BehaviorExecutionSpecification) interaction.createFragment(BES_PREFIX + umlLifeline.getLabel(), BEHAVIOUR_EXECUTION_E_CLASS);
         behaviour.getCovereds().add(umlLifeline);
 
         behaviour.setStart(messageOccurrenceReceive);
