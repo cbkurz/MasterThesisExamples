@@ -109,6 +109,29 @@ class UmlInteractions {
             createMessage(interaction, message, senderLifeline, receiverLifeline, messageId, count);
             count++;
         }
+        setBehaviourSpecificationForActorLifeline(messages.get(0), interaction, count - 1);
+    }
+
+    private static void setBehaviourSpecificationForActorLifeline(final AbstractMessage firstMessage, final Interaction interaction, final int finalCount) {
+        final String messageId = Kieker2UmlUtil.getMessageRepresentation(firstMessage);
+        final Lifeline lifeline = requireNonNull(interaction.getLifeline(firstMessage.getSendingExecution().getAllocationComponent().getAssemblyComponent().getIdentifier()));
+        final List<MessageOccurrenceSpecification> mosList = lifeline.getCoveredBys().stream()
+                .filter(c -> c instanceof MessageOccurrenceSpecification)
+                .map(c -> (MessageOccurrenceSpecification) c)
+                .toList();
+        final MessageOccurrenceSpecification openMos = mosList.get(0);
+        final MessageOccurrenceSpecification closeMos = mosList.get(mosList.size() - 1);
+
+        // open MOS
+        final BehaviorExecutionSpecification besOpen = openBehaviourSpecification(interaction, lifeline, openMos);
+        setRepresentation(besOpen, Kieker2UmlUtil.getBESRepresentation(messageId));
+        setRepresentationCount(besOpen, 0);
+        setReferenceAnnotation(besOpen, "OpenMessage", messageId);
+
+        // close MOS
+        final BehaviorExecutionSpecification besClose = closeBehaviourSpecification(lifeline, closeMos);
+        setReferenceAnnotation(besClose, "CloseMessage", messageId);
+        setReferenceAnnotation(besClose, "CloseMessageCount",  finalCount + "");
     }
 
     private static void createMessage(final Interaction interaction, final AbstractMessage message, final Lifeline senderLifeline, final Lifeline receiverLifeline, final String messageId, final int count) {
