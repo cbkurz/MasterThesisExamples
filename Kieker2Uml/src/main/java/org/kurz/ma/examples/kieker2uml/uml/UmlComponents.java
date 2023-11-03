@@ -23,6 +23,7 @@ import java.util.Optional;
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.getMessageSort;
+import static org.kurz.ma.examples.kieker2uml.uml.UmlUseCases.KIEKER_ENTRY_NAME;
 
 public class UmlComponents {
 
@@ -101,6 +102,7 @@ public class UmlComponents {
                 .filter(e -> UMLPackage.Literals.LIFELINE.equals(e.eClass()))
                 .map(e -> (Lifeline) e)
                 .filter(l -> l.getName().equals(component.getName()))
+                .filter(l -> !KIEKER_ENTRY_NAME.equals(l.getName()))
                 .toList();
 
         lifelines.stream()

@@ -289,8 +289,8 @@ public class Kieker2UmlUtil {
         // The following is the parameterlist and their names:
         //   boolean end1IsNavigable, AggregationKind end1Aggregation, String end1Name, int end1Lower, int end1Upper,
         //   Type end1Type, boolean end2IsNavigable, AggregationKind end2Aggregation, String end2Name, int end2Lower, int end2Upper
-        return from.createAssociation(true, AggregationKind.NONE_LITERAL, from.getName(), 1, 1,
-                to, true, AggregationKind.NONE_LITERAL, to.getName(), 1, 1);
+        return from.createAssociation(true, AggregationKind.NONE_LITERAL, to.getName(), 1, 1,
+                to, true, AggregationKind.NONE_LITERAL, from.getName(), 1, 1);
     }
 
     /**
