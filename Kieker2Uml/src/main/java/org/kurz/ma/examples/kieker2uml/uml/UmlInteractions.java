@@ -172,7 +172,10 @@ class UmlInteractions {
 
 
     private static BehaviorExecutionSpecification openBehaviourSpecification(final Interaction interaction, final Lifeline umlLifeline, final MessageOccurrenceSpecification messageOccurrenceReceive) {
-        final BehaviorExecutionSpecification behaviour = (BehaviorExecutionSpecification) interaction.createFragment(BES_PREFIX + umlLifeline.getLabel(), BEHAVIOUR_EXECUTION_E_CLASS);
+        final long amountOfBes = umlLifeline.getCoveredBys().stream()
+                .filter(c -> c instanceof BehaviorExecutionSpecification)
+                .count();
+        final BehaviorExecutionSpecification behaviour = (BehaviorExecutionSpecification) interaction.createFragment(BES_PREFIX + umlLifeline.getLabel() + "-" + amountOfBes + "-" + interaction.getName() , BEHAVIOUR_EXECUTION_E_CLASS);
         behaviour.getCovereds().add(umlLifeline);
 
         behaviour.setStart(messageOccurrenceReceive);
