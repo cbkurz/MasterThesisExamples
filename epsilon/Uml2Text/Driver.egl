@@ -1,7 +1,6 @@
 [%
 	import "operations.eol";
     // variables, containing the templates required for PlantUML
-    var interactionTemplate : Template = TemplateFactory.load("Interactions.egl");
     var classesTemplate : Template = TemplateFactory.load("StaticView-Classes.egl");
     var componentsTemplate : Template = TemplateFactory.load("StaticView-Components.egl");
     var deploymentTemplate : Template = TemplateFactory.load("DeploymentView.egl");
@@ -13,8 +12,9 @@
     interactions.println();
     
     for (i in uml!Interaction.all) {
+	    var interactionTemplate : Template = TemplateFactory.load("Interactions.egl");
     	interactionTemplate.populate("interaction", i);
-	    interactionTemplate.generate("../output/Interaction-" + i.name + ".txt");
+	    interactionTemplate.generate("../output/" + i.name + ".txt");
     }
     
     // Classes
