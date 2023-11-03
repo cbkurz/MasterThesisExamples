@@ -13,7 +13,9 @@ class [%=sanitize(c.name)%] {
 [% } %]
 
 [% for (a in uml!Association.all) { %]
+[% if (a.getMemberEnds().get(0).getClass_().isDefined()) { %]
 [%=sanitize(a.getMemberEnds().get(0).getClass_().name)%] -- [%=sanitize(a.getMemberEnds().get(1).getClass_().name)%]
+[% } %]
 [% } %]
 
 @enduml
