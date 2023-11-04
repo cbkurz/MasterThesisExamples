@@ -14,8 +14,7 @@ operation UML!NamedElement getArtifacts(): Collection {
 	var artifacts = UML!Artifact.all();
 	var output = new Sequence();
 	
-	for(artifact in artifacts)
-	{
+	for(artifact in artifacts) {
 		var manifestation = artifact.manifestation;
 		manifestation = manifestation.select(i | i.supplier.contains(self));
 			
@@ -23,7 +22,10 @@ operation UML!NamedElement getArtifacts(): Collection {
 			output.add(artifact);
 		}
 		
-	}	
+	}
+	
+	("Searched artifacts for element: " + self.name).println();
+	("Number of artifacts found: " + output.size()).println();
 		
 	return output;	
 }
@@ -40,7 +42,7 @@ operation UML!NamedElement isInteracting(): Boolean {
 	var interacting = lifelines.select(i | i.isInteracting());
 	var artifacts = self.getArtifacts().flatten;
 	var deployments = artifacts.collect(i | i.getDeployments()).flatten;
-		
+	(self.name + " is interacting: " + interacting.notEmpty()).println();
 	return interacting.notEmpty();
 }
 
@@ -48,8 +50,9 @@ operation UML!Lifeline getWorkload(): Sequence {
 	var pattern = self.getStereotypeValue(gaworkload, "pattern").trim();
 	var reg = '(closed|open):[0-9]+(.[0-9]+)?';
 	
-	if(not pattern.matches(reg))
+	if(not pattern.matches(reg)) {
 		throw "value not recognized GaWorkloadEvent::pattern at " + self.name;
+	}
 			
 	return pattern.split(":");
 }
@@ -191,3 +194,18 @@ operation NamedElement getStereotypeValue(stereotypeName: String, key: String): 
 	
 	return details.get(key);
 }
+
+operation NamedElement getValue(stereotypeName: String, valueName: String) : String {
+	return self.getStereotypeValue(stereotypeName, valueName);
+}
+
+operation UML!UseCase hasInteraction() : Boolean {
+	var bs = self.getOwnedBehaviors();
+	for (b in bs) {
+		if (b.isTypeOf(UML!Interaction)) {
+			return true;
+		}
+	}
+	return false;
+}
+

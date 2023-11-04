@@ -1,0 +1,170 @@
+import "operations.eol";
+
+pre {
+	var lifelines = UML!Lifeline.all;
+	var dynamicViewName = "dynamicView";
+	var staticViewComponentsName = "staticView-components";
+	var staticViewClassesName = "staticView-classes";
+	var deploymentViewName = "deploymentView";
+	var validPackageNames = new Sequence();
+	validPackageNames.add(staticViewComponentsName);
+	validPackageNames.add(staticViewClassesName);
+	validPackageNames.add(dynamicViewName);
+	validPackageNames.add(deploymentViewName);
+	
+	// stereotypes
+	var gaScenario = "GaScenario";
+}
+
+// model structure
+context UML!Model {
+	
+	constraint ExactlyOneModel {
+		check : UML!Model.all.size() == 1
+		message : "Exactly one model-element is allowed. The model element count is: " + UML!Model.all.size()
+	}
+	
+}
+
+context UML!Package {
+	
+	constraint HasValidName {
+		guard : not self.isTypeOf(UML!Model)
+		check : validPackageNames.contains(self.name)
+		message {
+			return "The valid Package-Names are: " + validPackageNames.concat(", ") + "\n"
+			 		+ " The given name is: " + self.name;
+		}
+	}
+	
+}
+
+
+// Dynamic View
+context UML!UseCase {
+
+	constraint OwnerIsPackge {
+		check : self.getOwner().isDefined() and self.getOwner().isTypeOf(UML!Package)
+		message: "Owner of UseCase '" + self.name + "' is not defined or not a package. Owner: " + self.getOwner()
+	}
+	
+	constraint IsInDynamicViewPackage {
+		check : self.getOwner().name == dynamicViewName
+		message: "Owner of UseCase '" + self.name + "' is not the " + dynamicViewName + "Package. Owner: " + self.getOwner()
+	}
+	
+	constraint HasInteraction {
+		check : self.hasInteraction()
+		message : "UseCase '" + self.name + "' has no interaction. Behaviours: " + self.getOwnedBehaviors()
+	}
+	
+	constraint GaScenarioStereotypeApplied {
+		check : self.isStereotypeApplied(gaScenario)
+		message : self.getMessageStereotypeNotApplied(gaScenario)
+	}
+	
+}
+
+context UML!Interaction {
+	
+	constraint InteractionHasLifelineWithActor {
+		check : self.isDefined()
+		message : "Each Interaction is expected to have exactly one Lifeline that represents an Actor."
+	}
+	
+	
+}
+
+context UML!Lifeline {
+
+	constraint NameIsSet {
+		check : self.name.isDefined()
+		message : "Name of lifeline is not defined: " + self
+	}
+	
+	constraint BehaviorExecutionSpecificationIsSet {
+		guard : not "Entry".isSubstringOf(self.name) and self.name.length <= 7 // checks that the lifeline is not the "'Entry'" lifeline from kieker.
+		check  {
+			var covered = self.getCoveredBys();
+			for (c : UML!BehaviorExecutionSpecification in covered ) {
+				return true;
+			}
+			return false;
+		}
+		message : "The lifeline '" + self.name + "' has no BehaviorExecutionSpecification"
+	}
+	
+}
+
+context UML!Message {
+	
+	constraint HasEdges {
+		check : self.isDefined()
+	}
+	
+}
+
+context UML!BehaviorExecutionSpecification {
+	
+	constraint SendIsSet {
+		check : self.getSend().isDefined()
+		message : "My Message"
+	}
+}
+
+context UML!MessageOccurrenceSpecification {
+	
+	constraint NumberMustBeUnique {
+		guard : self.number.isDefined()
+		check : self.isDefined()
+		message {
+			return "Number attribute must be unique but is not.\n" 
+					+ "The number " + self.number + " was found " 
+					+ Node.all.select( n | n.number == self.number).size()
+					+ " times." ;
+			}
+	}
+}
+
+// Static View
+
+context UML!Component {
+	
+	constraint HasEdges {
+		check : self.isDefined()
+	}
+	
+}
+
+context UML!Interface {
+	
+	constraint HasEdges {
+		check : self.isDefined()
+	}
+	
+}
+
+
+// Deployment View
+
+context UML!Node {
+	
+	constraint HasEdges {
+		check : self.isDefined()
+	}
+	
+}
+
+context UML!Artifact {
+	
+	constraint HasEdges {
+		check : self.isDefined()
+	}
+	
+}
+
+operation UML!NamedElement getMessageStereotypeNotApplied(stereotypeName : String) : String {
+	return "The Stereotype '" + stereotypeName + "' is not applied to UseCase '" + self.name + "'"; 
+}
+
+

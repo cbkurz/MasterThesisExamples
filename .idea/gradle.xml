@@ -49,15 +49,6 @@
           </set>
         </option>
       </GradleProjectSettings>
-      <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/Uml2PlantUml" />
-        <option name="gradleHome" value="$PROJECT_DIR$/../../../../Gradle/gradle-7.5.1" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$/Uml2PlantUml" />
-          </set>
-        </option>
-      </GradleProjectSettings>
     </option>
   </component>
 </project>

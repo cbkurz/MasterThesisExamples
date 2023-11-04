@@ -8,6 +8,8 @@
       <module name="SimpleEpsilonUMLExample.main" target="11" />
       <module name="SimpleEpsilonUMLExample.test" target="11" />
       <module name="Uml2PlantUml" target="17" />
+      <module name="Uml2PlantUml.main" target="17" />
+      <module name="Uml2PlantUml.test" target="17" />
     </bytecodeTargetLevel>
   </component>
 </project>

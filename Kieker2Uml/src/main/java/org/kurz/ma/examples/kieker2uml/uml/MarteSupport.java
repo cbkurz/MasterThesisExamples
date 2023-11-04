@@ -1,6 +1,7 @@
 package org.kurz.ma.examples.kieker2uml.uml;
 
 import kieker.model.system.model.AbstractMessage;
+import kieker.model.system.model.Execution;
 import kieker.model.system.model.MessageTrace;
 import kieker.model.system.model.SynchronousCallMessage;
 import org.eclipse.emf.common.util.EMap;
@@ -41,8 +42,8 @@ public class MarteSupport {
      * @param umlMessage the UML Element on which the annotations shall be applied.
      * @param execTime   the time of execution
      */
-    static void setGaStep(final Element umlMessage, final long execTime) {
-        final String execTimeString = Long.toString(execTime);
+    static void setGaStep(final Element umlMessage, final double execTime) {
+        final String execTimeString = Double.toString(execTime);
         Kieker2UmlUtil.setAnnotationDetail(umlMessage, GA_STEP_ANNOTATION_NAME, EXEC_TIME_ENTRIES_GA_STEP, execTimeString);
         Kieker2UmlUtil.setAnnotationDetail(umlMessage, GA_STEP_ANNOTATION_NAME, EXEC_TIME_GA_STEP, execTimeString);
         Kieker2UmlUtil.setAnnotationDetail(umlMessage, GA_STEP_ANNOTATION_NAME, REP_GA_STEP, "1");
@@ -54,7 +55,7 @@ public class MarteSupport {
      *
      * @param element The Element to which the GaStep shall be applied.
      */
-    static void updateGaStep(final Element element, Long execTime) {
+    static void updateGaStep(final Element element, Double execTime) {
         final Optional<EMap<String, String>> annotationDetailsOptional = Kieker2UmlUtil.getAnnotationDetailsMap(element, GA_STEP_ANNOTATION_NAME);
         if (annotationDetailsOptional.isEmpty()) {
             setGaStep(element, execTime);
@@ -63,18 +64,18 @@ public class MarteSupport {
 
         final EMap<String, String> details = annotationDetailsOptional.get();
         final String currentExecTimeEntries = details.get(EXEC_TIME_ENTRIES_GA_STEP);
-        final String execTimeString = Long.toString(execTime);
+        final String execTimeString = Double.toString(execTime);
         final String execTimeCSV = currentExecTimeEntries + "," + execTimeString;
 
         final String[] execTimeSplit = execTimeCSV.split(","); // the length of this is the amounts of repetitions
-        final Long sum = Arrays.stream(execTimeSplit)
-                .map(Long::parseLong)
-                .reduce(0L, Long::sum);
+        final Double sum = Arrays.stream(execTimeSplit)
+                .map(Double::parseDouble)
+                .reduce(0D, Double::sum);
 
-        final long execTimeMean = Long.divideUnsigned(sum, execTimeSplit.length);
+        final double execTimeMean = sum / (execTimeSplit.length + 0.0D);
 
         details.put(EXEC_TIME_ENTRIES_GA_STEP, execTimeCSV);
-        details.put(EXEC_TIME_GA_STEP, Long.toString(execTimeMean));
+        details.put(EXEC_TIME_GA_STEP, Double.toString(execTimeMean));
         details.put(REP_GA_STEP, Integer.toString(execTimeSplit.length));
     }
 
@@ -107,22 +108,37 @@ public class MarteSupport {
 
         // start working
         // GaStep
-        int count = 0; // The count was introduced to have an additional separation option for Messages that have the same representation
-        for (final AbstractMessage message : messageTrace.getSequenceAsVector()) {
-            final String messageRepresentation = getMessageRepresentation(message);
-            final Message umlMessage = getUmlMessage(interaction, messageRepresentation, count);
+        List<AbstractMessage> sequenceAsVector = messageTrace.getSequenceAsVector();
+        for (int count = 0; count < sequenceAsVector.size(); count++) { // The count was introduced to have an additional separation option for Messages that have the same representation
+            final AbstractMessage message = sequenceAsVector.get(count);
             if (message instanceof SynchronousCallMessage) {
-                applyGaStep(message, umlMessage);
+                final String messageRepresentation = getMessageRepresentation(message);
+                final Message umlMessage = getUmlMessage(interaction, messageRepresentation, count);
+                // Ess - execution stack size
+                final Long execTimeOtherExecutions = messageTrace.getSequenceAsVector().stream()
+                        .filter(m -> m instanceof SynchronousCallMessage)
+                        .filter(m -> message.getReceivingExecution().equals(m.getSendingExecution()))
+                        .map(m -> getExecTime(m.getReceivingExecution()))
+                        .reduce(Long::sum)
+                        .orElse(0L); // if no other executions are found this execution does not call others and the total time should be applied
+                final long totalExecTime = getExecTime(message.getReceivingExecution());
+                final long execTime = totalExecTime - execTimeOtherExecutions;
+                if (execTime < 0) {
+                    throw new IllegalArgumentException("ExecTime cannot be less than zero. ExecTime value: " + execTime);
+                }
+                applyGaStep(umlMessage, execTime); // --> in the LQNS solver the default time is 10.000 time units, therefore one second should at least be possible
             }
-            count++;
         }
 
         // finnish
         addTraceId(interaction, messageTrace);
     }
 
-    private static void applyGaStep(final AbstractMessage message, final Message umlMessage) {
-        final long execTime = (message.getReceivingExecution().getTout() - message.getReceivingExecution().getTin());
+    private static long getExecTime(final Execution execution) {
+        return execution.getTout() - execution.getTin();
+    }
+
+    private static void applyGaStep(final Message umlMessage, final double execTime) {
         updateGaStep(umlMessage, execTime);
     }
 

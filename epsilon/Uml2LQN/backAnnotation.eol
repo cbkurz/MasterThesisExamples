@@ -1,5 +1,7 @@
 import "operations.eol";
 
+"Start annotating the performance from lqn solver...".println();	
+
 // Annotates all the UML!UseCase stereotyped with GaScenario
 var scenarios = UML!UseCase.all().select(i | i.checkStereotypeApplication("GaScenario"));
 
@@ -71,8 +73,8 @@ operation UML!UseCase getScenarioRespTime()
  * Given a Scenario, the function retrieves the response time calculated in the LQN;
  * Calculates the throughput and annotates the source model
  */
-operation UML!UseCase annotateScenario()
-{
+operation UML!UseCase annotateScenario() {
+	"Set performance annotations for UseCase that is stereotyped with 'GaScenario'".println();
 	self.name.println();
 	var stereotype = self.getAppliedStereotypes().selectOne(i | i.name = "GaScenario");
 
@@ -83,7 +85,7 @@ operation UML!UseCase annotateScenario()
 	// Sets Throughput
 	var root = self.getValue(stereotype, "root");
 	
-	root.println("root: ");
+	root.println("root: " + root.isDefined());
 	
 	// Calculates Throughput
 	var throughput = root.rep.asDouble() / resptime; 
@@ -97,8 +99,8 @@ operation UML!UseCase annotateScenario()
 /**
  * Retrieves and sets the utilization to a UML!Node
  */
-operation UML!Node annotateNode()
-{	
+operation UML!Node annotateNode() {
+	"Set performance annotations for Node that is stereotyped with 'GaExecHost'".println();	
 	var stereotype = self.getAppliedStereotypes().selectOne(i | i.name == "GaExecHost");
 	
 	var clones = UML!Node.all().select(i | i.checkStereotypeApplication("GaExecHost"));
@@ -134,8 +136,9 @@ operation UML!Node annotateNode()
 /**
  * Adds the service time to a UML!Message
  */
-operation UML!Message annotateActivity()
-{
+operation UML!Message annotateActivity() {
+	"Set performance annotations for Activity that is stereotyped with 'GaStep'".println();	
+
 	`t_activity`.all().println();
 	self.name.println();
 	var activity =`t_activity`.all().selectOne(i | i.`a_name` = self.name);
@@ -153,3 +156,5 @@ operation UML!Message annotateActivity()
 		serviceTime.first + " Stored: ");
 }
 	
+	
+"Done!".println();
