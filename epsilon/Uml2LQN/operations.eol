@@ -144,11 +144,11 @@ operation UML!Artifact getDeployments() : Sequence {
 	return UML!Deployment.all.select(i | i.supplier.contains(self)).flatten;
 }
 
-operation NamedElement isStereotypeApplied(name : String) : Boolean {
+operation UML!NamedElement isStereotypeApplied(name : String) : Boolean {
 	return self.getStereotype(name).isDefined();
 }
 
-operation NamedElement getStereotype(name : String) {
+operation UML!NamedElement getStereotype(name : String) {
 	
 	// fail fast: if any of the variables are not defined an Exception is thrown.
 	if (name.isUndefined()) {
@@ -174,7 +174,7 @@ operation NamedElement getStereotype(name : String) {
 	return null;
 }
 
-operation NamedElement getStereotypeValue(stereotypeName: String, key: String): String {
+operation UML!NamedElement getStereotypeValue(stereotypeName: String, key: String): String {
 	
 	// fail fast: if any of the variables are not defined an Exception is thrown.
 	if (stereotypeName.isUndefined() and key.isUndefined()) {
@@ -195,8 +195,13 @@ operation NamedElement getStereotypeValue(stereotypeName: String, key: String): 
 	return details.get(key);
 }
 
-operation NamedElement getValue(stereotypeName: String, valueName: String) : String {
+operation UML!NamedElement getValue(stereotypeName: String, valueName: String) : String {
 	return self.getStereotypeValue(stereotypeName, valueName);
+}
+
+operation UML!NamedElement setValue(stereotypeName: String, valueName: String, value: String) {
+	var details = self.getStereotype(stereotypeName);
+	details.put(valueName, value);
 }
 
 operation UML!UseCase hasInteraction() : Boolean {
