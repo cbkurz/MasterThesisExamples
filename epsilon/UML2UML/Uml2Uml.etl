@@ -1,0 +1,7 @@
+rule Tree2Node
+    transform uc : UmlTransformation!UseCase
+    to m : FUML!Model {
+    
+    	m.getPackagedElements().addAll(UML!Model.all.first.getPackagedElements());
+    
+	}
