@@ -1,0 +1,32 @@
+@namespace(uri="org.kurz.ma.model.umltransformation", prefix="uml2uml")
+package org.kurz.ma.model.umltransformation;
+
+class Root {
+	val UseCase[+] useCases;
+}
+
+class UseCase {
+	attr String[1] name;
+	attr String[+] umlUseCases; // This requires the Names of the UML Use-Cases that are included in the transformation.
+	val TransformationRule[+] transformationRules;
+}
+
+abstract class TransformationRule {
+	attr String[1] name;
+}
+
+class IncreaseMessageTime extends TransformationRule {
+	attr String messageName;
+	attr Integer time;
+	attr TimeUnit timeUnit;
+}
+
+enum TimeUnit {
+	NANO;
+	MICRO;
+	MILLI;
+	SECOND;
+	MINUTE;
+	HOUR;
+	DAY; 
+}
