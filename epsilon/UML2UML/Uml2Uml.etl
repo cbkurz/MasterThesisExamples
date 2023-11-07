@@ -1,7 +1,16 @@
-rule Tree2Node
-    transform uc : UmlTransformation!UseCase
+import "operations.eol";
+rule UseCase2Model
+    transform uc : UML!UseCase
     to m : FUML!Model {
-    
-    	m.getPackagedElements().addAll(UML!Model.all.first.getPackagedElements());
+    	
+    	var packages = m.getPackagedElements();
+		
+		m.getPackagedElements().addAll(UML!Model.all.first.getPackagedElements());
+		"DeleteElements".println();
+    	for (p: UML!Package in m.getPackagedElements()) {
+    		p.annotateIgnore(uc);
+    	}
+    	System.context.transformationTrace.println();
     
 	}
+	
