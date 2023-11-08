@@ -1,168 +1,85 @@
 import "operations.eol";
+import "DynamicView.etl";
+import "StaticView.etl";
+import "DeploymentView.etl";
 
 rule Model
-    transform elem1 : UML!Model
-    to elem2 : FUML!Model {
+    transform model1 : UML!Model
+    to model2 : FUML!Model {
 
-    	// generic conversion
-		elem1.convertToFutureModel(elem2);
-		
-		// specific conversion
+    	model2.name = model1.name;
+    	
+    	doPackage("staticView-components", "StaticViewPackage", model1, model2);
+    	doPackage("deploymentView", "DeploymentViewPackage", model1, model2);
+    	doPackage("dynamicView", "Package", model1, model2);
+    	
+    	
+    	"Model creation completed".println();
+
+    	"Starting UseCase Transformation...".println();
+    	"TODO".println();
+    	"TODO: Stereotypes".println();
+    	
 	}
-	
+
+@lazy
 rule Package
     transform elem1 : UML!Package
     to elem2 : FUML!Package {
-
-    	// generic conversion
-		elem1.convertToFutureModel(elem2);
-
-		// specific conversion
-	}
-
-// staticView
-rule Component
-    transform elem1 : UML!Component
-    to elem2 : FUML!Component {
-
-    	// generic conversion
-		elem1.convertToFutureModel(elem2);
-
-		// specific conversion
-	}
-	
-rule Interface
-    transform elem1 : UML!Interface
-    to elem2 : FUML!Interface {
-    	
-    	// generic conversion
-		elem1.convertToFutureModel(elem2);
-
-		// specific conversion
-	}
-
-// deploymentView
-
-rule Artifact
-    transform elem1 : UML!Artifact
-    to elem2 : FUML!Artifact {
-    	
-    	// generic conversion
 		elem1.convertToFutureModel(elem2);
 	}
 	
-rule Node
-    transform elem1 : UML!Node
-    to elem2 : FUML!Node {
+@lazy
+rule DeploymentViewPackage
+    transform deploymentView1 : UML!Package
+    to deploymentView2 : FUML!Package {
     	
-    	// generic conversion
-		elem1.convertToFutureModel(elem2);
-	}
-	
-// dynamicView
-
-rule UseCase
-    transform useCase1 : UML!UseCase
-    to useCase2 : FUML!UseCase {
+    	deploymentView2.name = deploymentView1.name;
     
-    	guard : UmlTransformation!UseCase.all.first.umlUseCases.contains(useCase1.name)
-    	
-    	// generic conversion
-		useCase1.convertToFutureModel(useCase2);
-		
-		// spezific conversion
-		for (ob1 in useCase1.getOwnedBehaviors()) {
-			var ob2 = ob1.equivalent();
-			useCase2.getOwnedBehaviors().add(ob2);
+		for (pe1 : UML!Artifact in deploymentView1.getPackagedElements()) {
+			var pe2 = pe1.equivalent();
+			deploymentView2.getPackagedElements().add(pe2);
 		}
-	}
 
-
-rule Actor
-    transform elem1 : UML!Actor
-    to elem2 : FUML!Actor {
-    	
-    	// generic conversion
-		elem1.convertToFutureModel(elem2);
-	}
-
-@lazy
-rule Interaction
-    transform interaction1 : UML!Interaction
-    to interaction2 : FUML!Interaction {
-    	
-		interaction2.name = interaction1.name;
-		
-		// specific conversion
-		for (lf1 in interaction1.getLifelines()) {
-			var lf2 = lf1.equivalent();
-			interaction2.getLifelines().add(lf2);		
+		for (pe1 : UML!Node in deploymentView1.getPackagedElements()) {
+			var pe2 = pe1.equivalent();
+			deploymentView2.getPackagedElements().add(pe2);
 		}
-		
-		for (m1 in interaction1.getMessages()) {
-			var m2 = m1.equivalent();
-			interaction2.getMessages().add(m2);
-		}
-		
-		for (f1 : UML!BehaviorExecutionSpecification in interaction1.getFragments()) {
-			var f2 = f1.equivalent();
-			interaction2.getFragments().add(f2);
-		}
-	}
-	
-	
-@lazy
-rule Lifeline
-    transform lifeline1 : UML!Lifeline
-    to lifeline2 : FUML!Lifeline {
-		lifeline2.name = lifeline1.name;
-	}
 
-@lazy
-rule Message
-    transform message1 : UML!Message
-    to message2 : FUML!Message {
-		message2.name = message1.name;
-		message2.setMessageSort(message1.getMessageSort());
-	}
-
-@lazy
-rule BehaviorExecutionSpecification
-    transform bes1 : UML!BehaviorExecutionSpecification
-    to bes2 : FUML!BehaviorExecutionSpecification {
-		bes2.name = bes1.name;
-		
-		var start = bes1.getStart().equivalent();
-		var finish = bes1.getFinish().equivalent();
-		if (bes1.getCovereds().size() != 1) {
-			throw "The expected abouts of covered Fragments is not met.";
-		}
-		var umlLifeline2 = interaction2.getLifeline(bes1.getCovereds().get(0).name);
-		
-		bes2.setStart(start);
-		bes2.setFinish(finish);
-		bes2.getCovereds().add(umlLifeline2);		
-		
-		interaction2.getFragments().add(start);
-		interaction2.getFragments().add(finish);
 	}
 	
 @lazy
-rule MessageOccurrenceSpecification
-    transform mos1 : UML!MessageOccurrenceSpecification
-    to mos2 : FUML!MessageOccurrenceSpecification {
+rule StaticViewPackage
+    transform staticView1 : UML!Package
+    to staticView2 : FUML!Package {
+		"staticView".println();
 		
-		var umlMessage2 = interaction2.getMessage(mos1.getMessage().name);
+		staticView2.name =staticView1.name;
 		
-		if (mos1.getCovereds().size() != 1) {
-			throw "The expected abouts of covered Fragments is not met.";
+		for (pe1 : UML!Interface in staticView1.getPackagedElements()) {
+			var pe2 = pe1.equivalent();
+			if (pe2.isDefined()) {
+				staticView2.getPackagedElements().add(pe2);
+			}
 		}
-		var umlLifeline2 = interaction2.getLifeline(mos1.getCovereds().get(0).name);
+
+		for (pe1 : UML!Usage in staticView1.getPackagedElements()) {
+			var pe2 = pe1.equivalent();
+			if (pe2.isDefined()) {
+				staticView2.getPackagedElements().add(pe2);
+			}
+		}	
 		
-		mos2.name = mos1.name;
-		mos2.setMessage(umlMessage2);
-		mos2.getCovereds().add(umlLifeline2);
+		for (pe1 : UML!Component in staticView1.getPackagedElements()) {
+			var pe2 = pe1.equivalent();
+			if (pe2.isDefined()) {
+				staticView2.getPackagedElements().add(pe2);
+			}
+		}	
 	}
+
+
+	
 
 
 

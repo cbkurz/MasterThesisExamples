@@ -1,0 +1,121 @@
+@lazy
+rule UseCase
+    transform useCase1 : UML!UseCase
+    to useCase2 : FUML!UseCase {
+    
+    	guard : UmlTransformation!UseCase.all.first.umlUseCases.contains(useCase1.name)
+    	
+    	// generic conversion
+		useCase1.convertToFutureModel(useCase2);
+		
+		// spezific conversion
+		for (ob1 in useCase1.getOwnedBehaviors()) {
+			var ob2 = ob1.equivalent();
+			useCase2.getOwnedBehaviors().add(ob2);
+		}
+	}
+
+@lazy
+rule Actor
+    transform elem1 : UML!Actor
+    to elem2 : FUML!Actor {
+    	
+    	// generic conversion
+		elem1.convertToFutureModel(elem2);
+	}
+
+@lazy
+rule Interaction
+    transform interaction1 : UML!Interaction
+    to interaction2 : FUML!Interaction {
+    	
+		interaction2.name = interaction1.name;
+		
+		// specific conversion
+		for (ir1 : UML!InterfaceRealization in interaction1.getInterfaceRealizations()) {
+			var ifName = ir1.getSuppliers().first.name;
+			var if2 = getInterface(ifName);
+			interaction2.createInterfaceRealization(ir1.name, if2);
+		}
+		
+		for (lf1 in interaction1.getLifelines()) {
+			var lf2 = lf1.equivalent();
+			interaction2.getLifelines().add(lf2);		
+		}
+		
+		for (m1 in interaction1.getMessages()) {
+			var m2 = m1.equivalent();
+			interaction2.getMessages().add(m2);
+		}
+		
+		for (f1 : UML!BehaviorExecutionSpecification in interaction1.getFragments()) {
+			var f2 = f1.equivalent();
+			interaction2.getFragments().add(f2);
+		}
+		
+
+	}
+	
+	
+@lazy
+rule Lifeline
+    transform lifeline1 : UML!Lifeline
+    to lifeline2 : FUML!Lifeline {
+		lifeline2.name = lifeline1.name;
+		
+		var rep1 = lifeline1.getRepresents();
+		
+		var type2 = getType(rep1.getType());
+		
+		var rep2 = interaction2.getOwnedParameter(rep1.name, type2, false, true);
+		
+		lifeline2.setRepresents(rep2);
+	}
+
+@lazy
+rule Message
+    transform message1 : UML!Message
+    to message2 : FUML!Message {
+		message2.name = message1.name;
+		message2.setMessageSort(message1.getMessageSort());
+	}
+
+@lazy
+rule BehaviorExecutionSpecification
+    transform bes1 : UML!BehaviorExecutionSpecification
+    to bes2 : FUML!BehaviorExecutionSpecification {
+		bes2.name = bes1.name;
+		
+		var start = bes1.getStart().equivalent();
+		var finish = bes1.getFinish().equivalent();
+		if (bes1.getCovereds().size() != 1) {
+			throw "The expected abouts of covered Fragments is not met.";
+		}
+		var umlLifeline2 = interaction2.getLifeline(bes1.getCovereds().get(0).name);
+		
+		bes2.setStart(start);
+		bes2.setFinish(finish);
+		bes2.getCovereds().add(umlLifeline2);		
+		
+		interaction2.getFragments().add(start);
+		interaction2.getFragments().add(finish);
+	}
+	
+@lazy
+rule MessageOccurrenceSpecification
+    transform mos1 : UML!MessageOccurrenceSpecification
+    to mos2 : FUML!MessageOccurrenceSpecification {
+		
+		var umlMessage2 = interaction2.getMessage(mos1.getMessage().name);
+		
+		if (mos1.getCovereds().size() != 1) {
+			throw "The expected abouts of covered Fragments is not met.";
+		}
+		var umlLifeline2 = interaction2.getLifeline(mos1.getCovereds().get(0).name);
+		
+		mos2.name = mos1.name;
+		mos2.setMessage(umlMessage2);
+		mos2.getCovereds().add(umlLifeline2);
+	}
+	
+

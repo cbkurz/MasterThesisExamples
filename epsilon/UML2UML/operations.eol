@@ -24,3 +24,63 @@ operation doPackagedElements(elem1, elem2) {
 operation hasPackagedElements(elem) : Boolean {
 	return elem.packagedElements.isDefined() and elem.packagedElements.size() > 0;
 }
+
+operation doPackage(name: String, ruleName: String, model1, model2) {
+	var package1 = model1.getPackagedElements().selectOne(e | name.equals(e.name));
+	if (not package1.isDefined()) {
+		throw "Unable to find Packge with name: " + name;
+	}
+	var package2 = package1.equivalent(ruleName);
+	model2.getPackagedElements().add(package2);
+}
+
+operation getInterfaceFromClientDependency(clientDependency) {
+	var suppl = clientDependency.getSuppliers();
+	
+	if (not (suppl.size() == 1)) {
+		throw "Unexpected size for Interface Realizations: " + suppl;
+	}
+	
+	var name = suppl.first.name;
+	
+	return getInterface(name);
+}
+
+operation getInterface(name) {
+	for (pe : UML!Interface in FUML!Interface.all) {
+		if (pe.name.isDefined() and pe.name.equals(name)) {
+			return pe;
+		}
+	}
+	throw "Unable to find interface: " + name;
+}
+
+operation getArtifact(deploymentViewPackage, name) {
+	for (pe : UML!Artifact in deploymentViewPackage.getPackagedElements()) {
+		if (pe.name.isDefined() and pe.name.equals(name)) {
+			return pe;
+		}
+	}
+	throw "Unable to find artifact: " + name;
+}
+
+operation getComponent(name) {
+	var comps = FUML!Component.all.select(c|name.equals(c.name));
+	if (not (comps.size == 1)) {
+		throw "Unable to find component: " + name + ". Due to mismatch in comps size: " + comps ;
+	}
+	return comps.get(0);	
+}
+
+operation getType(type) {
+	if (type.isTypeOf(UML!Actor)) {
+		return FUML!Actor.all.select(a|type.name.equals(a.name)).first; // TODO: more elaborate selection
+	}
+	
+	if (type.isTypeOf(UML!Component)) {
+		return FUML!Component.all.select(a|type.name.equals(a.name)).first; // TODO: more elaborate selection
+	}
+	
+	throw "Unsuported EClass of Type: " + type;
+	
+}
