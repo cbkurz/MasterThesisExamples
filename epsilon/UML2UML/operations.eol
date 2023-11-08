@@ -1,0 +1,26 @@
+// elem stands for Element
+// elem1 or self- the element of the current model that shall be converted
+// elem2 - the element of the target model.
+operation UML!Element convertToFutureModel(elem2) {
+
+		if (self.name.isDefined()) {
+			elem2.name = self.name;
+    	}
+    	
+    	if (hasPackagedElements(self)) {
+			doPackagedElements(self, elem2);
+    	}
+}
+
+operation doPackagedElements(elem1, elem2) {
+	for (pe1 in elem1.getPackagedElements()) {
+			var pe2 = pe1.equivalent();
+			if (pe2.isDefined()) {
+				elem2.getPackagedElements().add(pe2);
+			}
+	}
+}
+
+operation hasPackagedElements(elem) : Boolean {
+	return elem.packagedElements.isDefined() and elem.packagedElements.size() > 0;
+}
