@@ -10,9 +10,11 @@ operation UML!Element convertToFutureModel(elem2) {
     	if (hasPackagedElements(self)) {
 			doPackagedElements(self, elem2);
     	}
+    	applyStereotype(self, elem2);
 }
 
 operation doPackagedElements(elem1, elem2) {
+elem1.println();
 	for (pe1 in elem1.getPackagedElements()) {
 			var pe2 = pe1.equivalent();
 			if (pe2.isDefined()) {
@@ -73,14 +75,69 @@ operation getComponent(name) {
 }
 
 operation getType(type) {
+	
+	var fuml = null;
+	var typeName = null;
+
 	if (type.isTypeOf(UML!Actor)) {
-		return FUML!Actor.all.select(a|type.name.equals(a.name)).first; // TODO: more elaborate selection
+		typeName = "Actor";
+		fuml = FUML!Actor.all.select(a|type.name.equals(a.name));
 	}
 	
 	if (type.isTypeOf(UML!Component)) {
-		return FUML!Component.all.select(a|type.name.equals(a.name)).first; // TODO: more elaborate selection
+		typeName = "Component";
+		fuml = FUML!Component.all.select(a|type.name.equals(a.name));
 	}
 	
-	throw "Unsuported EClass of Type: " + type;
+	if (type.isTypeOf(UML!UseCase)) {
+		typeName = "UseCase";
+		fuml = FUML!UseCase.all.select(a|type.name.equals(a.name));
+	}
 	
+	if (typeName == null) {
+		throw "Unsupported Type of Element: " + type;
+	}
+	
+	if (not (fuml.size() == 1)) {
+		throw "Unsuspected amount of " + typeName + " '" + fuml.size() + "', required is exatly one: " + fuml;
+	}
+	
+	return fuml.first;
+}
+
+operation applyStereotype(elem1, elem2) {
+	for (anno1 in elem1.getEAnnotations()) {
+		var anno2 = elem2.getEAnnotation(anno1.source);
+		if (not anno2.isDefined()) {
+			anno2 = elem2.createEAnnotation(anno1.source);
+		}
+		var anno2 = elem2.getEAnnotation(anno1.source);
+		for (entry1 in anno1.details) {
+			anno2.getDetails().put(entry1.key, entry1.value);
+		}
+	}
+}
+
+
+operation getElementByQualitativeName(elem1, ignoreElements: Sequence) {
+	var splitSec = elem1.qualifiedName.split("::");
+	splitSec.removeAll(ignoreElements);
+	var elem2 = FUML!NamedElement.all.stream()
+		.filter(e|e.eClass().equals(elem1.eClass()))
+		.filter(e|e.qualifiedName.isDefined())
+		.filter(e| e.qualifiedName.split("::").includesAll(splitSec))
+		.collect(Native("java.util.stream.Collectors").toList());
+	if (not (elem2.size() == 1)) {
+		throw "Unsuspected amount of element " + elem2.size() + "', required is exatly one: " + elem2;
+	}
+	return elem2.first;
+}
+
+operation getMos(mos1: UML!MessageOccurrenceSpecification) : UML!MessageOccurrenceSpecification {
+	var name = mos1.name;
+	var mos2List = FUML!MessageOccurrenceSpecification.all.stream()
+		.filter(f|name.equals(f.name))
+		.collect(Native("java.util.stream.Collectors").toList());
+	
+	return mos2List.get(mos2List.size() - 1);	
 }

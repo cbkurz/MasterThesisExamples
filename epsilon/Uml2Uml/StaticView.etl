@@ -14,7 +14,7 @@ rule Component
 			var if2 = getInterfaceFromClientDependency(cd1);
 			comp2.createInterfaceRealization(cd1.name, if2);
 		}
-
+		applyStereotype(comp1, comp2);
 	}
 
 @lazy
@@ -48,5 +48,6 @@ rule Usage
 	
 		usage2.getSuppliers().add(suppl2);
 		usage2.getClients().add(client2);
+		applyStereotype(usage1, usage2);
 	}
 
