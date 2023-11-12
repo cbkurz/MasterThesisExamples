@@ -24,8 +24,8 @@ operation UML!NamedElement getArtifacts(): Collection {
 		
 	}
 	
-	("Searched artifacts for element: " + self.name).println();
-	("Number of artifacts found: " + output.size()).println();
+	// ("Searched artifacts for element: " + self.name).println();
+	// ("Number of artifacts found: " + output.size()).println();
 		
 	return output;	
 }
@@ -42,7 +42,7 @@ operation UML!NamedElement isInteracting(): Boolean {
 	var interacting = lifelines.select(i | i.isInteracting());
 	var artifacts = self.getArtifacts().flatten;
 	var deployments = artifacts.collect(i | i.getDeployments()).flatten;
-	(self.name + " is interacting: " + interacting.notEmpty()).println();
+	// (self.name + " is interacting: " + interacting.notEmpty()).println();
 	return interacting.notEmpty();
 }
 
@@ -213,4 +213,3 @@ operation UML!UseCase hasInteraction() : Boolean {
 	}
 	return false;
 }
-

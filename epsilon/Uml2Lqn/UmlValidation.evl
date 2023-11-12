@@ -67,9 +67,17 @@ context UML!UseCase {
 
 context UML!Interaction {
 	
+/*
+Currently not supported since it is impossible to access the enum "AggregationKind" to create a fully correct association
 	constraint InteractionHasLifelineWithActor {
-		check : self.isDefined()
-		message : "Each Interaction is expected to have exactly one Lifeline that represents an Actor."
+		check : self.getLifelines().stream().filter(lf|lf.getRepresents().isTypeOf(UML!Actor)).count() == 1
+		message : "Exactly one lifeline was expected to be connected to an actor, found where the following: " + self.getLifelines().stream().filter(lf|lf.getRepresents().isTypeOf(UML!Actor)).collect(Native("java.util.stream.Collectors").toList())
+	}
+*/
+
+	constraint InteractionHasLifelineEntry {
+		check : self.getLifeline("'Entry'").isDefined()
+		message : "Lifeline with name 'Entry' was expected, but not found."
 	}
 	
 	
@@ -83,7 +91,6 @@ context UML!Lifeline {
 	}
 	
 	constraint BehaviorExecutionSpecificationIsSet {
-		guard : not "Entry".isSubstringOf(self.name) and self.name.length <= 7 // checks that the lifeline is not the "'Entry'" lifeline from kieker.
 		check  {
 			var covered = self.getCoveredBys();
 			for (c : UML!BehaviorExecutionSpecification in covered ) {
@@ -94,22 +101,53 @@ context UML!Lifeline {
 		message : "The lifeline '" + self.name + "' has no BehaviorExecutionSpecification"
 	}
 	
+	constraint EntryHasThreeCoveredBy {
+		guard : self.name == "'Entry'"
+		check : self.getCoveredBys().size() == 3
+	}
+	
+	constraint EntryHasOneBehaviorExecutionSpecification {
+		guard : self.name == "'Entry'"
+		check : self.getCoveredBys().stream().filter(c|c.isTypeOf(UML!BehaviorExecutionSpecification)).count() == 1
+	}
+	
 }
 
 context UML!Message {
 	
-	constraint HasEdges {
-		check : self.isDefined()
+	constraint HasSendEvent {
+		check : self.getSendEvent().isDefined()
+	}
+
+	constraint HasReceiveEvent {
+		check : self.getReceiveEvent().isDefined()
+	}
+	
+	constraint HasMessageSort {
+		check : self.getMessageSort().isDefined()
 	}
 	
 }
 
 context UML!BehaviorExecutionSpecification {
 	
-	constraint SendIsSet {
-		check : self.getSend().isDefined()
-		message : "My Message"
+	
+	constraint ExactlyOneCovered {
+		check : self.getCovereds().size() == 1
 	}
+	
+	constraint CoveredIsLifeline {
+		check : self.getCovereds().get(0).isTypeOf(UML!Lifeline)
+	}
+	
+	constraint StartIsSet {
+		check : self.getStart().isDefined()
+	}
+
+	constraint FinishIsSet {
+		check : self.getFinish().isDefined()
+	}
+	
 }
 
 context UML!MessageOccurrenceSpecification {
@@ -123,6 +161,18 @@ context UML!MessageOccurrenceSpecification {
 					+ Node.all.select( n | n.number == self.number).size()
 					+ " times." ;
 			}
+	}
+	
+	constraint MessageIsDefined {
+		check : self.getMessage().isDefined()
+	}
+	
+	constraint ExactlyOneCovered {
+		check : self.getCovereds().size() == 1
+	}
+	
+	constraint CoveredIsLifeline {
+		check : self.getCovereds().get(0).isTypeOf(UML!Lifeline)
 	}
 }
 

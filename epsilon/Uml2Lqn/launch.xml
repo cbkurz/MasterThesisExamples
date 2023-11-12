@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <project name="UML_2_LQN" basedir="." default="LoadModels"> 
 	<target name="LoadModels">
-		<epsilon.emf.loadModel name="UML" modelFile="../model-input/MyModel.uml" 
+		<epsilon.emf.loadModel name="UML" modelFile="../output/FutureUml.uml" 
 			metamodelUri="http://www.eclipse.org/uml2/5.0.0/UML" read="true" store="false"/>
 
 		<epsilon.emf.loadXmlModel name="LQN" modelFile="../output/LQN.xml" xsdFile="lqnxsd/lqn.xsd" read="false" store="true"/>
 
-		<epsilon.etl src="uml2lqn.etl">
+		<epsilon.etl src="Uml2Lqn.etl">
 			<model ref="UML"/>
 			<model ref="LQN"/>
 		</epsilon.etl>
@@ -16,7 +16,7 @@
 	
 	<target name="ChangeRoot" depends="LoadModels">
 		<epsilon.xml.loadModel name="PlainLQN" file="../output/LQN.xml" read="true" store="true"/>
-		<epsilon.eol src="changeRoot.eol">
+		<epsilon.eol src="ChangeRoot.eol">
 			<model ref="PlainLQN"/>
 		</epsilon.eol>
 		
