@@ -313,4 +313,13 @@ public class Kieker2UmlUtil {
             return getModel(owner);
         }
     }
+
+    static boolean isAssociateWith(final Element from, final Element to) {
+        requireNonNull(from, "from");
+        requireNonNull(to, "to");
+        return from.getRelationships().stream()
+                .filter(r -> r instanceof Association)
+                .map(r -> (Association) r)
+                .anyMatch(a -> a.getEndTypes().contains(to));
+    }
 }
