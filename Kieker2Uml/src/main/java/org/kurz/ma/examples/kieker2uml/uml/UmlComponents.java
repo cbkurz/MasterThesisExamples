@@ -31,7 +31,7 @@ public class UmlComponents {
     private static List<MessageTrace> traces = new ArrayList<>();
 
 
-    static void addComponents(final Model model, final MessageTrace messageTrace) {
+    static void addComponentsAndDeployment(final Model model, final MessageTrace messageTrace) {
         requireNonNull(model, "model");
         requireNonNull(messageTrace, "messageTrace");
 

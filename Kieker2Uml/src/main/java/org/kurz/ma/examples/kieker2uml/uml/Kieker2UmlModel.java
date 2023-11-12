@@ -28,10 +28,10 @@ public class Kieker2UmlModel {
         Kieker2UmlUtil.saveModel(m, Paths.get("Kieker2Uml/input-data/uml/SequenceDiagrams2.uml"));
     }
 
-    public static void addInteractionToUseCase(final Model model, final MessageTrace messageTrace, final String useCaseName) {
-        final UseCase useCase = UmlUseCases.getUseCase(model, useCaseName);
-        MarteSupport.applyGaScenario(useCase);
+    public static void addBehaviour(final Model model, final MessageTrace messageTrace, final String useCaseName) {
         final String traceRepresentation = getTraceRepresentation(messageTrace);
+        final UseCase useCase = UmlUseCases.getUseCase(model, useCaseName, traceRepresentation);
+        MarteSupport.applyGaScenario(useCase);
 
         final Optional<Interaction> interaction = getInteraction(useCase, traceRepresentation);
         if (interaction.isEmpty()) { // create Interaction
@@ -48,9 +48,9 @@ public class Kieker2UmlModel {
         }
     }
 
-    public static void addStaticViewToModel(final Model model, final MessageTrace trace) {
+    public static void addStaticView(final Model model, final MessageTrace trace) {
         UmlClasses.addClasses(model, trace);
-        UmlComponents.addComponents(model, trace);
+        UmlComponents.addComponentsAndDeployment(model, trace);
         final List<Node> nodeList = model.allOwnedElements().stream().filter(pe -> pe instanceof Node).map(pe -> (Node) pe).toList();
         MarteSupport.applyPerformanceStereotypesToNodes(nodeList);
     }

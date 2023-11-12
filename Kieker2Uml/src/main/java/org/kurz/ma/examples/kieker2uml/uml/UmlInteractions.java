@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -47,7 +48,7 @@ class UmlInteractions {
         final Interaction interaction = UMLFactory.eINSTANCE.createInteraction();
 
         interaction.setName(interactionName);
-        addLifelines(interaction, messageTrace.getSequenceAsVector()); // adds lifelines and messages
+        addLifelines(interaction, messageTrace.getSequenceAsVector());
         Kieker2UmlUtil.addTraceId(interaction, messageTrace);
         setRepresentation(interaction, Kieker2UmlUtil.getTraceRepresentation(messageTrace));
 
@@ -82,6 +83,8 @@ class UmlInteractions {
     }
 
     /**
+     * Adds Lifelines and Messages
+     * Note: The First Lifeline needs special treatment since no {@link org.eclipse.uml2.uml.BehaviorExecutionSpecification} will be created for it.
      * Creates the following Types in the UML2 Model:
      * * {@link org.eclipse.uml2.uml.Lifeline} - The Lifelines represent the different objects that are interaction within the Trace of the application
      * * {@link org.eclipse.uml2.uml.Message} - The Messages represent the calls that the objects in the application are making to each other
@@ -119,19 +122,19 @@ class UmlInteractions {
                 .filter(c -> c instanceof MessageOccurrenceSpecification)
                 .map(c -> (MessageOccurrenceSpecification) c)
                 .toList();
-        final MessageOccurrenceSpecification openMos = mosList.get(0);
-        final MessageOccurrenceSpecification closeMos = mosList.get(mosList.size() - 1);
+        final MessageOccurrenceSpecification startMos = mosList.get(0);
+        final MessageOccurrenceSpecification finishMos = mosList.get(mosList.size() - 1);
 
-        // open MOS
-        final BehaviorExecutionSpecification besOpen = openBehaviourSpecification(interaction, lifeline, openMos);
-        setRepresentation(besOpen, Kieker2UmlUtil.getBESRepresentation(messageId));
-        setRepresentationCount(besOpen, 0);
-        setReferenceAnnotation(besOpen, "OpenMessage", messageId);
+        // open BES
+        final BehaviorExecutionSpecification startBes = startBehaviourSpecification(interaction, lifeline, startMos);
+        setRepresentation(startBes, Kieker2UmlUtil.getBESRepresentation(messageId));
+        setRepresentationCount(startBes, 0);
+        setReferenceAnnotation(startBes, "OpenMessage", messageId);
 
-        // close MOS
-        final BehaviorExecutionSpecification besClose = closeBehaviourSpecification(lifeline, closeMos);
-        setReferenceAnnotation(besClose, "CloseMessage", messageId);
-        setReferenceAnnotation(besClose, "CloseMessageCount",  finalCount + "");
+        // close BES
+        final BehaviorExecutionSpecification finishBes = finishBehaviourSpecification(lifeline, finishMos);
+        setReferenceAnnotation(finishBes, "CloseMessage", messageId);
+        setReferenceAnnotation(finishBes, "CloseMessageCount",  finalCount + "");
     }
 
     private static void createMessage(final Interaction interaction, final AbstractMessage message, final Lifeline senderLifeline, final Lifeline receiverLifeline, final String messageId, final int count) {
@@ -152,13 +155,13 @@ class UmlInteractions {
         umlMessage.setReceiveEvent(messageOccurrenceReceive);
 
         if (messageSort.equals(MessageSort.SYNCH_CALL_LITERAL)) {
-            final BehaviorExecutionSpecification bes = openBehaviourSpecification(interaction, receiverLifeline, messageOccurrenceReceive);
+            final BehaviorExecutionSpecification bes = startBehaviourSpecification(interaction, receiverLifeline, messageOccurrenceReceive);
             setRepresentation(bes, Kieker2UmlUtil.getBESRepresentation(messageId));
             setRepresentationCount(bes, count);
             setReferenceAnnotation(bes, "OpenMessage", messageId);
         }
         if (messageSort.equals(MessageSort.REPLY_LITERAL)) {
-            final BehaviorExecutionSpecification bes = closeBehaviourSpecification(senderLifeline, messageOccurrenceSend);
+            final BehaviorExecutionSpecification bes = finishBehaviourSpecification(senderLifeline, messageOccurrenceSend);
             setReferenceAnnotation(bes, "CloseMessage", messageId);
             setReferenceAnnotation(bes, "CloseMessageCount", count + "");
         }
@@ -178,7 +181,7 @@ class UmlInteractions {
         setReferenceAnnotations(messageOccurrenceReceive, message.getReceivingExecution());
     }
 
-    private static BehaviorExecutionSpecification closeBehaviourSpecification(final Lifeline senderLifeline, final MessageOccurrenceSpecification messageOccurrenceSend) {
+    private static BehaviorExecutionSpecification finishBehaviourSpecification(final Lifeline senderLifeline, final MessageOccurrenceSpecification messageOccurrenceSend) {
         final List<BehaviorExecutionSpecification> list = senderLifeline.getCoveredBys().stream()
                 .filter(cb -> cb instanceof BehaviorExecutionSpecification)
                 .map(cb -> (BehaviorExecutionSpecification) cb)
@@ -194,11 +197,11 @@ class UmlInteractions {
     }
 
 
-    private static BehaviorExecutionSpecification openBehaviourSpecification(final Interaction interaction, final Lifeline umlLifeline, final MessageOccurrenceSpecification messageOccurrenceReceive) {
+    private static BehaviorExecutionSpecification startBehaviourSpecification(final Interaction interaction, final Lifeline umlLifeline, final MessageOccurrenceSpecification messageOccurrenceReceive) {
         final long amountOfBes = umlLifeline.getCoveredBys().stream()
                 .filter(c -> c instanceof BehaviorExecutionSpecification)
                 .count();
-        final BehaviorExecutionSpecification behaviour = (BehaviorExecutionSpecification) interaction.createFragment(BES_PREFIX + umlLifeline.getLabel() + "-" + amountOfBes + "-" + interaction.getName() , BEHAVIOUR_EXECUTION_E_CLASS);
+        final BehaviorExecutionSpecification behaviour = (BehaviorExecutionSpecification) interaction.createFragment(BES_PREFIX + umlLifeline.getLabel() + "-" + amountOfBes + "-" + UUID.randomUUID(), BEHAVIOUR_EXECUTION_E_CLASS);
         behaviour.getCovereds().add(umlLifeline);
 
         behaviour.setStart(messageOccurrenceReceive);
@@ -216,8 +219,8 @@ class UmlInteractions {
     static void connectEntryLifelineToActor(final UseCase useCase) {
         final Model model = getModel(useCase);
         final Package dynamicView = getDynamicView(model);
-        final Actor actor = getActor(dynamicView);
-        setGaWorkloadEvent(actor, "closed:2");;
+        final Actor actor = getActor(dynamicView, useCase);
+        setGaWorkloadEvent(actor, "closed:2");
 
         useCase.getOwnedBehaviors().stream()
                 .filter(b -> b instanceof Interaction)
