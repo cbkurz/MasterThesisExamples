@@ -23,9 +23,11 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="NullTransformation" eSuperTypes="#//TransformationRule"/>
   <eClassifiers xsi:type="ecore:EClass" name="IncreaseMessageTime" eSuperTypes="#//TransformationRule">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="timeUnit" eType="#//TimeUnit"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageName" lowerBound="1"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="timeUnit" lowerBound="1"
+        eType="#//TimeUnit"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="TimeUnit">
     <eLiterals name="NANO"/>

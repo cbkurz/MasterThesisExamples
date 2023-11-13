@@ -93,7 +93,25 @@ rule Association
     
     	guard {
     		var pName = actorAss1.getPackage().name;
-    		return FUML!Package.all.stream().filter(p|p.name.equals(pName)).findFirst().isPresent();
+    		var isInPackage: Boolean = FUML!Package.all.stream().filter(p|p.name.equals(pName)).findFirst().isPresent();
+    		
+    		var bothEndsInFutureModel = true;
+    		
+  		
+   			var excludeSeq = new Sequence();
+			var modelName = UML!Model.all.first.name;
+			excludeSeq.add(modelName);
+			var type1_1 = actorAss1.getEndTypes().get(0);
+			var type1_2 = actorAss1.getEndTypes().get(1);
+	
+			var type2_1 = getElementByQualitativeName(type1_1, excludeSeq);
+   			var type2_2 = getElementByQualitativeName(type1_2, excludeSeq);
+    		
+    		if (not type2_1.isDefined() or not type2_2.isDefined()) {
+	   			bothEndsInFutureModel = false;
+    		}
+    		
+    		return isInPackage and bothEndsInFutureModel;
     	}
     	// TODO: Associations are incomplete, it is as of now impossible to get a "AggregationKind" Enum
     	if (not (actorAss1.getEndTypes().size() == 2)) {

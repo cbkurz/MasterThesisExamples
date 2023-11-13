@@ -25,7 +25,7 @@ class NullTransformation extends TransformationRule { // This Transformation doe
 }
 
 class IncreaseMessageTime extends TransformationRule { // This Transformation adds time to a Message within an interaction
-	attr String[1] messageName;
+	attr String[+] messageName;
 	attr Integer[1] time;
 	attr TimeUnit[1] timeUnit;
 }
