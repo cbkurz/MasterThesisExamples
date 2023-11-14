@@ -1,20 +1,19 @@
 package de.kurz.ma.epsilon.runner;
 
 import org.eclipse.epsilon.emc.emf.EmfModel;
+import org.eclipse.epsilon.eol.EolModule;
 import org.eclipse.epsilon.etl.launch.EtlRunConfiguration;
-
-import java.nio.file.Path;
 
 
 public class EpsilonRunner {
     public static void main(String[] args) throws Exception {
-        final Path models = Util.getResource("models");
-        final Path scripts = Util.getResource("epsilon");
-        final EmfModel sourceModel = getSource(models);
-        final EmfModel targetModel = getTarget(models);
+        final EmfModel sourceModel = getSource();
+        final EmfModel targetModel = getTarget();
 
+        final EolModule module = new EolModule();
+        module.parse(Util.getEolScript("Operations.eol"));
         final EtlRunConfiguration runConfig = EtlRunConfiguration.Builder()
-                .withScript(scripts.resolve("Transformation.etl"))
+                .withScript(Util.getEtlScript("Transformation.etl"))
                 .withModel(sourceModel)
                 .withModel(targetModel)
                 .withParameter("parameterPassedFromJava", "Hello from java")
@@ -24,7 +23,7 @@ public class EpsilonRunner {
         runConfig.run();
     }
 
-    private static EmfModel getSource(final Path models) {
+    private static EmfModel getSource() {
         return EmfModelBuilder.getInstance()
                 .setName("Source")
                 .setMetaModel("Tree.ecore")
@@ -32,7 +31,7 @@ public class EpsilonRunner {
                 .build();
     }
 
-    private static EmfModel getTarget(final Path models)  {
+    private static EmfModel getTarget()  {
         return EmfModelBuilder.getInstance()
                 .setName("Target")
                 .setMetaModel("Tree.ecore")
