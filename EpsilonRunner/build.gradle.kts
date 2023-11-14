@@ -12,8 +12,10 @@ repositories {
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+
     implementation("org.eclipse.epsilon:org.eclipse.epsilon.emc.emf:2.4.0")
     implementation("org.eclipse.epsilon:org.eclipse.epsilon.eol.engine:2.4.0")
+    implementation("org.eclipse.epsilon:org.eclipse.epsilon.etl.engine:2.4.0")
 }
 
 tasks.test {

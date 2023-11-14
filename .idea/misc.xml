@@ -1,9 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$/Bookstore" />
     <file type="web" url="file://$PROJECT_DIR$/DotToXML" />
     <file type="web" url="file://$PROJECT_DIR$/EclipseEcoreUml2" />
+    <file type="web" url="file://$PROJECT_DIR$/EpsilonRunner" />
     <file type="web" url="file://$PROJECT_DIR$/Kieker2Uml" />
     <file type="web" url="file://$PROJECT_DIR$/SimpleEpsilonUMLExample" />
     <file type="web" url="file://$PROJECT_DIR$/TeaStore" />
