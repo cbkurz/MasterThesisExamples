@@ -7,7 +7,6 @@ import java.nio.file.Path;
 
 
 public class EpsilonRunner {
-    final static Path metaModels = Util.getResource("metamodels");
     public static void main(String[] args) throws Exception {
         final Path models = Util.getResource("models");
         final Path scripts = Util.getResource("epsilon");
@@ -28,16 +27,16 @@ public class EpsilonRunner {
     private static EmfModel getSource(final Path models) {
         return EmfModelBuilder.getInstance()
                 .setName("Source")
-                .setMetaModel(metaModels.resolve("Tree.ecore"))
-                .setModel(models.resolve("Tree.xmi"))
+                .setMetaModel("Tree.ecore")
+                .setModel("Tree.xmi")
                 .build();
     }
 
     private static EmfModel getTarget(final Path models)  {
         return EmfModelBuilder.getInstance()
                 .setName("Target")
-                .setMetaModel(metaModels.resolve("Tree.ecore"))
-                .setModel(models.resolve("Copy.xmi"))
+                .setMetaModel("Tree.ecore")
+                .setModel("Copy.xmi")
                 .setReadOnLoad(false)
                 .build();
     }

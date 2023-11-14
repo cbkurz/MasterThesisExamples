@@ -9,6 +9,9 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 public class EmfModelBuilder {
+    private static final Path MODELS = Util.getResource("models");
+    private final static Path META_MODELS = Util.getResource("metamodels");
+
     private final StringProperties properties;
 
     private EmfModelBuilder() {
@@ -58,6 +61,10 @@ public class EmfModelBuilder {
         this.properties.setProperty(EmfModel.PROPERTY_FILE_BASED_METAMODEL_URI, metaModel.toAbsolutePath().toUri().toString());
         return this;
     }
+    public EmfModelBuilder setMetaModel(final String metaModel) {
+        this.properties.setProperty(EmfModel.PROPERTY_FILE_BASED_METAMODEL_URI, META_MODELS.resolve(metaModel).toAbsolutePath().toUri().toString());
+        return this;
+    }
     public EmfModelBuilder setReuseMetaModel(final boolean reuseMetaModel) {
         this.properties.setProperty(EmfModel.PROPERTY_REUSE_UNMODIFIED_FILE_BASED_METAMODELS, Boolean.toString(reuseMetaModel));
         return this;
@@ -65,6 +72,10 @@ public class EmfModelBuilder {
 
     public EmfModelBuilder setModel(final Path model) {
         this.properties.setProperty(EmfModel.PROPERTY_MODEL_URI, model.toAbsolutePath().toUri().toString());
+        return this;
+    }
+    public EmfModelBuilder setModel(final String model) {
+        this.properties.setProperty(EmfModel.PROPERTY_MODEL_URI, MODELS.resolve(model).toAbsolutePath().toUri().toString());
         return this;
     }
 
