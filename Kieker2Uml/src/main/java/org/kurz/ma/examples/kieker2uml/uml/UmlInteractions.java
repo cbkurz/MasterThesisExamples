@@ -220,7 +220,6 @@ class UmlInteractions {
         final Model model = getModel(useCase);
         final Package dynamicView = getDynamicView(model);
         final Actor actor = getActor(dynamicView, useCase);
-        setGaWorkloadEvent(actor, "closed:2");
 
         useCase.getOwnedBehaviors().stream()
                 .filter(b -> b instanceof Interaction)
