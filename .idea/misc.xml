@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration">
-    <file type="web" url="file://$PROJECT_DIR$/Bookstore" />
+    <file type="web" url="file://$PROJECT_DIR$/BookstoreParallel" />
     <file type="web" url="file://$PROJECT_DIR$/DotToXML" />
     <file type="web" url="file://$PROJECT_DIR$/EclipseEcoreUml2" />
     <file type="web" url="file://$PROJECT_DIR$/EpsilonRunner" />
