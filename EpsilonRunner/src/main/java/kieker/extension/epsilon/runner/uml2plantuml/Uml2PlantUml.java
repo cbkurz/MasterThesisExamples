@@ -2,13 +2,13 @@ package kieker.extension.epsilon.runner.uml2plantuml;
 
 import kieker.extension.epsilon.runner.EmfModelBuilder;
 import kieker.extension.epsilon.runner.Util;
-import org.eclipse.epsilon.egl.EglFileGeneratingTemplateFactory;
-import org.eclipse.epsilon.egl.EglTemplateFactoryModuleAdapter;
+import org.eclipse.epsilon.egl.launch.EgxRunConfiguration;
 import org.eclipse.epsilon.emc.emf.EmfModel;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Uml2PlantUml implements Runnable {
 
@@ -17,7 +17,7 @@ public class Uml2PlantUml implements Runnable {
 
     public Uml2PlantUml(final Path umlModel) {
         this.umlModel = getUmlModel(umlModel);
-        this.driver = Util.getResource("uml2plantUml/Driver.egl");
+        this.driver = Util.getResource("uml2plantUml/Driver.egx");
     }
 
     private EmfModel getUmlModel(final Path umlModel) {
@@ -36,14 +36,12 @@ public class Uml2PlantUml implements Runnable {
 
     @Override
     public void run() {
-        final EglTemplateFactoryModuleAdapter module = new EglTemplateFactoryModuleAdapter(new EglFileGeneratingTemplateFactory());
-        try {
-            module.parse(driver.toUri());
-            module.getContext().getModelRepository().addModel(umlModel);
-            module.getContext().setProfilingEnabled(true);
-            module.execute();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        final EgxRunConfiguration runConfiguration = EgxRunConfiguration.Builder()
+                .withScript(driver)
+                .withModel(umlModel)
+                .withOutputRoot(Paths.get("egxOutput"))
+                .withProfiling()
+                .build();
+        runConfiguration.run();
     }
 }
