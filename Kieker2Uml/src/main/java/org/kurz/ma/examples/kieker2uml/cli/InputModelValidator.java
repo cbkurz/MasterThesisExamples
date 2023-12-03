@@ -43,7 +43,7 @@ public class InputModelValidator implements IParameterValidator {
         try {
             loadModel(path);
         } catch (Exception e) {
-            LOGGER.error("An Error Occured while loading", e);
+            LOGGER.error("An Error occurred while loading", e);
             throw new ParameterException("Unable to load model: " + value, e);
         }
     }
