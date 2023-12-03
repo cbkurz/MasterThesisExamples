@@ -1,4 +1,4 @@
-package de.kurz.ma.epsilon.runner;
+package kieker.extension.epsilon.runner;
 
 import java.net.URISyntaxException;
 import java.nio.file.Path;

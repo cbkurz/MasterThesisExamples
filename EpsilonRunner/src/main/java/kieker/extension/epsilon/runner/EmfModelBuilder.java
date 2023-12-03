@@ -1,4 +1,4 @@
-package de.kurz.ma.epsilon.runner;
+package kieker.extension.epsilon.runner;
 
 import org.eclipse.epsilon.common.util.StringProperties;
 import org.eclipse.epsilon.emc.emf.EmfModel;
@@ -41,7 +41,7 @@ public class EmfModelBuilder {
         return this;
     }
     public EmfModelBuilder setAlias(final String alias) {
-        this.properties.setProperty(EmfModel.PROPERTY_NAME, alias);
+        this.properties.setProperty(EmfModel.PROPERTY_ALIASES, alias);
         return this;
     }
     public EmfModelBuilder setReadOnly(final boolean readOnly) {
@@ -82,7 +82,7 @@ public class EmfModelBuilder {
 
     public EmfModel build() {
         checkRequired();
-        final EmfModel emfModel = new EmfModel();
+        final EmfModel emfModel = new UmlModel();
         try {
             emfModel.load(this.properties);
         } catch (EolModelLoadingException e) {
@@ -92,8 +92,8 @@ public class EmfModelBuilder {
     }
 
     private void checkRequired() {
-        Objects.requireNonNull(this.properties.get(EmfModel.PROPERTY_NAME));
-        Objects.requireNonNull(this.properties.get(EmfModel.PROPERTY_FILE_BASED_METAMODEL_URI));
+        Objects.requireNonNull(this.properties.get(EmfModel.PROPERTY_NAME), "A name for the model is required.");
+//        Objects.requireNonNull(this.properties.get(EmfModel.PROPERTY_FILE_BASED_METAMODEL_URI), "A meta-model is required.");
         Objects.requireNonNull(this.properties.get(EmfModel.PROPERTY_MODEL_URI));
     }
 }

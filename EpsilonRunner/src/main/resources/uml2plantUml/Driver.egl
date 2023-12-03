@@ -1,0 +1,39 @@
+[%
+	import "Operations.eol";
+    // variables, containing the templates required for PlantUML
+    var classesTemplate : Template = TemplateFactory.load("StaticView-Classes.egl");
+    var componentsTemplate : Template = TemplateFactory.load("StaticView-Components.egl");
+    var deploymentTemplate : Template = TemplateFactory.load("DeploymentView.egl");
+    
+  
+    // generates a new file or overwrites the file and begins from scratch, every other call simply appends their output
+    var interactions = uml!Interaction.all;
+    
+    interactions.println();
+    
+    for (i in uml!Interaction.all) {
+	    var interactionTemplate : Template = TemplateFactory.load("Interactions.egl");
+	    i.println();
+    	interactionTemplate.populate("interaction", i);
+	    interactionTemplate.generate(i.name + ".txt");
+    }
+    
+    // Classes
+	var classesView = uml!PackageableElement.all.selectOne(p|"staticView-classes".equals(p.name));
+	classesView.println();
+	classesTemplate.populate("classesView", classesView);
+    classesTemplate.generate("StaticView-Classes.txt");
+    
+    // Components
+    var componentsView = uml!PackageableElement.all.selectOne(p|"staticView-components".equals(p.name));
+    componentsView.println();
+	componentsTemplate.populate("componentsView", componentsView);
+    componentsTemplate.generate("StaticView-Components.txt");
+    
+    // Deployment
+    var deploymentView = uml!PackageableElement.all.selectOne(p|"deploymentView".equals(p.name));
+    deploymentView.println();
+	deploymentTemplate.populate("deploymentView", deploymentView);
+	deploymentTemplate.populate("componentView", componentsView);
+    deploymentTemplate.generate("DeploymentView.txt");
+%]
