@@ -30,8 +30,8 @@ public class EpsilonRunner {
 
         System.out.println("Command: " + parsedCommand);
         switch (parsedCommand) {
-            case "uml2plantUml":
-                new Uml2PlantUml(uml2PlantUmlCli.getUmlPath()).run();
+            case "Uml2PlantUml":
+                new Uml2PlantUml(uml2PlantUmlCli.getUmlPath(), uml2PlantUmlCli.getOutputPath()).run();
                 break;
             default:
                 throw new RuntimeException("Unknown command: " + parsedCommand);
