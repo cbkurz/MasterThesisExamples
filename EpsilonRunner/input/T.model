@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uml2uml:Root xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:uml2uml="org.kurz.ma.model.umltransformation" xmi:id="_gUZ2cJHeEe6i6qnPmCCSsQ">
+  <useCases xmi:id="_hVW9IJHeEe6i6qnPmCCSsQ" name="TransformUC">
+    <umlUseCases>BookstoreUnparalellUC</umlUseCases>
+    <transformationRules xsi:type="uml2uml:NullTransformation" xmi:id="_jg0vIJHeEe6i6qnPmCCSsQ"/>
+  </useCases>
+</uml2uml:Root>
