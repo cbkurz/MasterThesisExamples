@@ -1,4 +1,4 @@
-package org.kurz.ma.examples.kieker2uml.uml;
+package kieker.extension.performanceanalysis.kieker2uml.uml;
 
 import kieker.model.system.model.AbstractMessage;
 import kieker.model.system.model.Execution;
@@ -20,11 +20,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.addTraceId;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.getMessageRepresentation;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.getRepresentation;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.getRepresentationCount;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.getTraceRepresentation;
+import static kieker.extension.performanceanalysis.kieker2uml.uml.Kieker2UmlUtil.addTraceId;
+import static kieker.extension.performanceanalysis.kieker2uml.uml.Kieker2UmlUtil.getMessageRepresentation;
+import static kieker.extension.performanceanalysis.kieker2uml.uml.Kieker2UmlUtil.getRepresentation;
+import static kieker.extension.performanceanalysis.kieker2uml.uml.Kieker2UmlUtil.getRepresentationCount;
+import static kieker.extension.performanceanalysis.kieker2uml.uml.Kieker2UmlUtil.getTraceRepresentation;
 
 public class MarteSupport {
 

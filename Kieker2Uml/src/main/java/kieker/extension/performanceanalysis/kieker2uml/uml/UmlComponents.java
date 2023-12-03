@@ -1,4 +1,4 @@
-package org.kurz.ma.examples.kieker2uml.uml;
+package kieker.extension.performanceanalysis.kieker2uml.uml;
 
 import kieker.model.system.model.AbstractMessage;
 import kieker.model.system.model.MessageTrace;
@@ -22,8 +22,6 @@ import java.util.Optional;
 
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.getMessageSort;
-import static org.kurz.ma.examples.kieker2uml.uml.UmlUseCases.KIEKER_ENTRY_NAME;
 
 public class UmlComponents {
 
@@ -42,7 +40,7 @@ public class UmlComponents {
 
         for (final AbstractMessage message : messageTrace.getSequenceAsVector()) {
 
-            if (getMessageSort(message).equals(MessageSort.REPLY_LITERAL)) {
+            if (Kieker2UmlUtil.getMessageSort(message).equals(MessageSort.REPLY_LITERAL)) {
                 continue;
             }
 
@@ -102,7 +100,7 @@ public class UmlComponents {
                 .filter(e -> UMLPackage.Literals.LIFELINE.equals(e.eClass()))
                 .map(e -> (Lifeline) e)
                 .filter(l -> l.getName().equals(component.getName()))
-                .filter(l -> !KIEKER_ENTRY_NAME.equals(l.getName()))
+                .filter(l -> !UmlUseCases.KIEKER_ENTRY_NAME.equals(l.getName()))
                 .toList();
 
         lifelines.stream()

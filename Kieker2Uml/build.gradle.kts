@@ -3,11 +3,11 @@ plugins {
     id ("java")
 }
 
-group = "org.kurz.ma.examples.kieker2uml"
+group = "kieker.extension.performanceanalysis"
 version = "1.0-SNAPSHOT"
 
 // Simplify the JAR's file name
-var archivesBaseName = "Kieker2Uml"
+var archivesBaseName = "kieker.extension.performanceanalysis"
 version = "0.0.1"
 
 repositories {

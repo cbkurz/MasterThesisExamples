@@ -1,4 +1,4 @@
-package org.kurz.ma.examples.kieker2uml.cli;
+package kieker.extension.performanceanalysis.kieker2uml.cli;
 
 import com.beust.jcommander.Parameter;
 
@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CliParameters {
+public class Kieker2UmlCli {
 
     @Parameter(names = {"-m", "--model"},
             description = "The model which is worked on. " +

@@ -1,4 +1,4 @@
-package org.kurz.ma.examples.kieker2uml.cli;
+package kieker.extension.performanceanalysis.kieker2uml.cli;
 
 import com.beust.jcommander.IParameterValidator;
 import com.beust.jcommander.ParameterException;
@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.createModel;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.loadModel;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.saveModel;
+import static kieker.extension.performanceanalysis.kieker2uml.uml.Kieker2UmlUtil.createModel;
+import static kieker.extension.performanceanalysis.kieker2uml.uml.Kieker2UmlUtil.loadModel;
+import static kieker.extension.performanceanalysis.kieker2uml.uml.Kieker2UmlUtil.saveModel;
 
 public class InputModelValidator implements IParameterValidator {
 

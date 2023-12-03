@@ -1,4 +1,4 @@
-package org.kurz.ma.examples.kieker2uml.uml;
+package kieker.extension.performanceanalysis.kieker2uml.uml;
 
 import kieker.model.system.model.AbstractMessage;
 import kieker.model.system.model.MessageTrace;
@@ -13,9 +13,9 @@ import org.eclipse.uml2.uml.UMLFactory;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.setReferenceAnnotations;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.getMessageSort;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.setAnnotationDetail;
+import static kieker.extension.performanceanalysis.kieker2uml.uml.Kieker2UmlUtil.setReferenceAnnotations;
+import static kieker.extension.performanceanalysis.kieker2uml.uml.Kieker2UmlUtil.getMessageSort;
+import static kieker.extension.performanceanalysis.kieker2uml.uml.Kieker2UmlUtil.setAnnotationDetail;
 
 public class UmlClasses {
 

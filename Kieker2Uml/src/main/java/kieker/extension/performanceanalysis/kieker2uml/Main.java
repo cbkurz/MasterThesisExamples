@@ -1,12 +1,12 @@
-package org.kurz.ma.examples.kieker2uml;
+package kieker.extension.performanceanalysis.kieker2uml;
 
-import org.kurz.ma.examples.kieker2uml.teetime.Kieker2UmlTeeTimeService;
+import kieker.extension.performanceanalysis.kieker2uml.teetime.Kieker2UmlTeeTimeService;
 
 import java.io.IOException;
 
-public class Kieker2UmlMain {
+public class Main {
 
-    private Kieker2UmlMain() {
+    private Main() {
     }
 
     public static void main(final String[] args) throws IOException {

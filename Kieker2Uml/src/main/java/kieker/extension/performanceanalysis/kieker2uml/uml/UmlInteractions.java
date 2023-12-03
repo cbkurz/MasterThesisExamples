@@ -1,4 +1,4 @@
-package org.kurz.ma.examples.kieker2uml.uml;
+package kieker.extension.performanceanalysis.kieker2uml.uml;
 
 import kieker.model.system.model.AbstractMessage;
 import kieker.model.system.model.AssemblyComponent;
@@ -25,17 +25,16 @@ import java.util.UUID;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.createAssociation;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.getModel;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.getRepresentation;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.setReferenceAnnotation;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.setReferenceAnnotations;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.setRepresentation;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.setRepresentationCount;
-import static org.kurz.ma.examples.kieker2uml.uml.MarteSupport.setGaWorkloadEvent;
-import static org.kurz.ma.examples.kieker2uml.uml.UmlUseCases.KIEKER_ENTRY_NAME;
-import static org.kurz.ma.examples.kieker2uml.uml.UmlUseCases.getActor;
-import static org.kurz.ma.examples.kieker2uml.uml.UmlUseCases.getDynamicView;
+import static kieker.extension.performanceanalysis.kieker2uml.uml.Kieker2UmlUtil.createAssociation;
+import static kieker.extension.performanceanalysis.kieker2uml.uml.Kieker2UmlUtil.getModel;
+import static kieker.extension.performanceanalysis.kieker2uml.uml.Kieker2UmlUtil.getRepresentation;
+import static kieker.extension.performanceanalysis.kieker2uml.uml.Kieker2UmlUtil.setReferenceAnnotation;
+import static kieker.extension.performanceanalysis.kieker2uml.uml.Kieker2UmlUtil.setReferenceAnnotations;
+import static kieker.extension.performanceanalysis.kieker2uml.uml.Kieker2UmlUtil.setRepresentation;
+import static kieker.extension.performanceanalysis.kieker2uml.uml.Kieker2UmlUtil.setRepresentationCount;
+import static kieker.extension.performanceanalysis.kieker2uml.uml.UmlUseCases.KIEKER_ENTRY_NAME;
+import static kieker.extension.performanceanalysis.kieker2uml.uml.UmlUseCases.getActor;
+import static kieker.extension.performanceanalysis.kieker2uml.uml.UmlUseCases.getDynamicView;
 
 class UmlInteractions {
     private static final Logger LOGGER = LoggerFactory.getLogger(UmlInteractions.class);
@@ -228,7 +227,7 @@ class UmlInteractions {
                 .forEach(i -> {
                     final Lifeline lifeline = i.getLifeline(KIEKER_ENTRY_NAME);
                     lifeline.setRepresents(createAssociation(actor, i).getMemberEnd(actor.getName(), null));
-                    setGaWorkloadEvent(lifeline, "closed:1");
+                    MarteSupport.setGaWorkloadEvent(lifeline, "closed:1");
                 });
 
 

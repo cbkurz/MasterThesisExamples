@@ -1,4 +1,4 @@
-package org.kurz.ma.examples.kieker2uml.filter;
+package kieker.extension.performanceanalysis.kieker2uml.teetime.filter;
 
 import kieker.analysis.plugin.trace.AbstractMessageTraceProcessingFilter;
 import kieker.model.repository.SystemModelRepository;
@@ -10,10 +10,10 @@ import org.slf4j.LoggerFactory;
 import java.nio.file.Path;
 
 import static java.lang.String.format;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlModel.addBehaviour;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlModel.addStaticView;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.loadModel;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.saveModel;
+import static kieker.extension.performanceanalysis.kieker2uml.uml.Kieker2UmlModel.addBehaviour;
+import static kieker.extension.performanceanalysis.kieker2uml.uml.Kieker2UmlModel.addStaticView;
+import static kieker.extension.performanceanalysis.kieker2uml.uml.Kieker2UmlUtil.loadModel;
+import static kieker.extension.performanceanalysis.kieker2uml.uml.Kieker2UmlUtil.saveModel;
 
 public class SequenceDiagrammFilter extends AbstractMessageTraceProcessingFilter {
 

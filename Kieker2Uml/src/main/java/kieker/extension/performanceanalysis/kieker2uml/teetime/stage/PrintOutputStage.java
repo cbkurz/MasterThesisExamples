@@ -1,4 +1,4 @@
-package org.kurz.ma.examples.kieker2uml.stage;
+package kieker.extension.performanceanalysis.kieker2uml.teetime.stage;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package org.kurz.ma.examples.kieker2uml.uml;
+package kieker.extension.performanceanalysis.kieker2uml.uml;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.uml2.uml.Actor;
@@ -11,9 +11,6 @@ import org.eclipse.uml2.uml.UseCase;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.createAssociation;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.getRepresentation;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.setRepresentation;
 
 public class UmlUseCases {
 
@@ -24,7 +21,7 @@ public class UmlUseCases {
         final Package dynamicView = getDynamicView(model);
         final UseCase useCase = getUseCase(useCaseName, dynamicView, traceRepresentation);
         final Actor actor = getActor(dynamicView, useCase);
-        createAssociation(useCase, actor);
+        Kieker2UmlUtil.createAssociation(useCase, actor);
         return useCase;
     }
 
@@ -36,11 +33,11 @@ public class UmlUseCases {
                 .toList();
 
         return ucList.stream()
-                .filter(uc -> getRepresentation(uc).map(r -> r.equals(traceRepresentation)).orElse(false))
+                .filter(uc -> Kieker2UmlUtil.getRepresentation(uc).map(r -> r.equals(traceRepresentation)).orElse(false))
                 .findFirst()
                 .orElseGet(() -> {
                     final UseCase useCase = (UseCase) dynamicView.createPackagedElement(useCaseName + "-" + ucList.size(), USE_CASE_E_CLASS);
-                    setRepresentation(useCase, traceRepresentation);
+                    Kieker2UmlUtil.setRepresentation(useCase, traceRepresentation);
                     return useCase;
                 });
     }

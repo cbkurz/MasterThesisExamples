@@ -1,4 +1,4 @@
-package org.kurz.ma.examples.kieker2uml.cli;
+package kieker.extension.performanceanalysis.kieker2uml.cli;
 
 import com.beust.jcommander.IStringConverter;
 

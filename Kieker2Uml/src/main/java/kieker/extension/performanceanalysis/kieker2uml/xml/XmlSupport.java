@@ -1,4 +1,4 @@
-package org.kurz.ma.examples.kieker2uml.xml;
+package kieker.extension.performanceanalysis.kieker2uml.xml;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;

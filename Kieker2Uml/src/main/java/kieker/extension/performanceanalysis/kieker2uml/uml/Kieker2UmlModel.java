@@ -1,4 +1,4 @@
-package org.kurz.ma.examples.kieker2uml.uml;
+package kieker.extension.performanceanalysis.kieker2uml.uml;
 
 import kieker.model.system.model.MessageTrace;
 import org.eclipse.uml2.uml.Interaction;
@@ -12,12 +12,6 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.getTraceRepresentation;
-import static org.kurz.ma.examples.kieker2uml.uml.Kieker2UmlUtil.isTraceApplied;
-import static org.kurz.ma.examples.kieker2uml.uml.UmlInteractions.createInteraction;
-import static org.kurz.ma.examples.kieker2uml.uml.UmlInteractions.getInteraction;
-import static org.kurz.ma.examples.kieker2uml.uml.UmlInteractions.getInteractionName;
-
 public class Kieker2UmlModel {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Kieker2UmlModel.class);
@@ -29,18 +23,18 @@ public class Kieker2UmlModel {
     }
 
     public static void addBehaviour(final Model model, final MessageTrace messageTrace, final String useCaseName) {
-        final String traceRepresentation = getTraceRepresentation(messageTrace);
+        final String traceRepresentation = Kieker2UmlUtil.getTraceRepresentation(messageTrace);
         final UseCase useCase = UmlUseCases.getUseCase(model, useCaseName, traceRepresentation);
         MarteSupport.applyGaScenario(useCase);
 
-        final Optional<Interaction> interaction = getInteraction(useCase, traceRepresentation);
+        final Optional<Interaction> interaction = UmlInteractions.getInteraction(useCase, traceRepresentation);
         if (interaction.isEmpty()) { // create Interaction
             LOGGER.info("Creating interaction for Trace: " + messageTrace.getTraceId());
-            final Interaction newInteraction = createInteraction(getInteractionName(useCase), messageTrace);
+            final Interaction newInteraction = UmlInteractions.createInteraction(UmlInteractions.getInteractionName(useCase), messageTrace);
             MarteSupport.applyPerformanceStereotypesToInteraction(newInteraction, messageTrace);
             useCase.getOwnedBehaviors().add(newInteraction);
             UmlInteractions.connectEntryLifelineToActor(useCase);
-        } else if (isTraceApplied(interaction.get(), messageTrace.getTraceId())) { // update Interaction
+        } else if (Kieker2UmlUtil.isTraceApplied(interaction.get(), messageTrace.getTraceId())) { // update Interaction
             LOGGER.info("Interaction was created before, performance information will now be added to Trace with id: " + messageTrace.getTraceId());
             MarteSupport.applyPerformanceStereotypesToInteraction(interaction.get(), messageTrace);
         } else {

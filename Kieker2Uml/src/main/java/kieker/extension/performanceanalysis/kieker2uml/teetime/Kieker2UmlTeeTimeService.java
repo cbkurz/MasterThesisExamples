@@ -1,19 +1,19 @@
-package org.kurz.ma.examples.kieker2uml.teetime;
+package kieker.extension.performanceanalysis.kieker2uml.teetime;
 
 import com.beust.jcommander.JCommander;
 import io.vavr.control.Try;
 import kieker.common.configuration.Configuration;
 import kieker.common.exception.ConfigurationException;
 import kieker.tools.common.AbstractService;
-import org.kurz.ma.examples.kieker2uml.cli.CliParameters;
+import kieker.extension.performanceanalysis.kieker2uml.cli.Kieker2UmlCli;
 
 import java.nio.file.Path;
 
 import static java.lang.Boolean.FALSE;
 
-public class Kieker2UmlTeeTimeService extends AbstractService<TeeTimeConfiguration, CliParameters> {
+public class Kieker2UmlTeeTimeService extends AbstractService<TeeTimeConfiguration, Kieker2UmlCli> {
 
-    private final CliParameters cliParameters = new CliParameters();
+    private final Kieker2UmlCli kieker2UmlCli = new Kieker2UmlCli();
     private Kieker2UmlTeeTimeService() {
     }
 
@@ -23,19 +23,19 @@ public class Kieker2UmlTeeTimeService extends AbstractService<TeeTimeConfigurati
 
     @Override
     protected TeeTimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
-        return new TeeTimeConfiguration(this.cliParameters);
+        return new TeeTimeConfiguration(this.kieker2UmlCli);
     }
 
     /**
      * This method shall check the parameters to their correctness.
      * However, this is not necessary since this can be implemented directly into JCommander
-     * For details check the {@link org.kurz.ma.examples.kieker2uml.cli.CliParameters} class.
+     * For details check the {@link Kieker2UmlCli} class.
      * </p>
      * the help parameter has to be read out and is handled by {@link kieker.tools.common.AbstractLegacyTool#run(String, String, String[], Object)} correctly.
      */
     @Override
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
-        this.help = Try.ofSupplier(cliParameters::isHelp).getOrElseGet((t) -> FALSE);
+        this.help = Try.ofSupplier(kieker2UmlCli::isHelp).getOrElseGet((t) -> FALSE);
         return true;
     }
 
@@ -54,7 +54,7 @@ public class Kieker2UmlTeeTimeService extends AbstractService<TeeTimeConfigurati
         // nothing special to shutdown
     }
 
-    public CliParameters getParameters() {
-        return cliParameters;
+    public Kieker2UmlCli getParameters() {
+        return kieker2UmlCli;
     }
 }
