@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module version="4">
+  <component name="AdditionalModuleElements">
+    <content url="file://$MODULE_DIR$/TeaStore" dumb="true">
+      <excludeFolder url="file://$MODULE_DIR$/TeaStore/output/dot" />
+      <excludeFolder url="file://$MODULE_DIR$/TeaStore/output/pic" />
+      <excludeFolder url="file://$MODULE_DIR$/TeaStore/output/trace-analysis" />
+    </content>
+  </component>
+</module>

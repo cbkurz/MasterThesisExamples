@@ -1,0 +1,4 @@
+# Ignore the content from the build, .gradle and output directories
+**/build/*
+**/.gradle/*
+**/output/*
