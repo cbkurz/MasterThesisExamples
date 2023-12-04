@@ -8,7 +8,6 @@ import org.eclipse.epsilon.emc.emf.EmfModel;
 import java.nio.file.Path;
 
 import static java.util.Objects.requireNonNull;
-import static kieker.extension.performanceanalysis.epsilon.Util.getUmlUri;
 
 public class Uml2PlantUml implements Runnable {
 
@@ -20,9 +19,9 @@ public class Uml2PlantUml implements Runnable {
         requireNonNull(umlModel, "umlModel");
         requireNonNull(output, "output");
         this.umlModel = EmfModelBuilder.getInstance()
-                .setName("UML")
-                .setMetaModel(getUmlUri())
-                .setModel(umlModel)
+                .umlModel()
+                .modelName("UML")
+                .modelPath(umlModel)
                 .build();
         this.driver = Util.getResource("Uml2PlantUml/Driver.egx");
         this.output = output;

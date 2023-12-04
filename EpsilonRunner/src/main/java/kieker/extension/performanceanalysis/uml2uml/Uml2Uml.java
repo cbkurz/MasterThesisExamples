@@ -16,8 +16,6 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
 
-import static kieker.extension.performanceanalysis.epsilon.Util.getUmlUri;
-
 public class Uml2Uml implements Runnable {
 
     private final EmfModel umlSourceModel;
@@ -35,30 +33,31 @@ public class Uml2Uml implements Runnable {
 
     private static EmfModel getSourceUml(final Path umlSourceModel) {
         return EmfModelBuilder.getInstance()
-                .setName("UML")
-                .setMetaModel(getUmlUri())
-                .setModel(umlSourceModel)
-                .setReadOnly(true)
+                .umlModel()
+                .modelName("UML")
+                .modelPath(umlSourceModel)
+                .readOnly(true)
                 .build();
     }
 
     private static EmfModel getFuml(final Path umlFutureModel) {
         return EmfModelBuilder.getInstance()
-                .setName("FUML")
-                .setMetaModel(getUmlUri())
-                .setModel(umlFutureModel)
-                .setReadOnLoad(false)
-                .setStoreOnDisposal(true)
+                .umlModel()
+                .modelName("FUML")
+                .modelPath(umlFutureModel)
+                .readOnLoad(false)
+                .storeOnDisposal(true)
                 .build();
     }
 
     private static EmfModel getTransformationModel(final Path transformationModel) {
         return EmfModelBuilder.getInstance()
-                .setName("UmlTransformation")
-                .setAlias("UT")
-                .setMetaModel("UmlTransformation.ecore")
-                .setModel(transformationModel)
-                .setReadOnly(true)
+                .emfModel()
+                .modelName("UmlTransformation")
+                .modelAlias("UT")
+                .metaModel("UmlTransformation.ecore")
+                .modelPath(transformationModel)
+                .readOnly(true)
                 .build();
     }
 

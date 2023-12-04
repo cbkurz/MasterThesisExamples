@@ -7,8 +7,6 @@ import org.eclipse.epsilon.etl.launch.EtlRunConfiguration;
 
 import java.nio.file.Path;
 
-import static kieker.extension.performanceanalysis.epsilon.Util.getUmlUri;
-
 public class Uml2Lqn implements Runnable {
 
     private final Path script;
@@ -23,21 +21,21 @@ public class Uml2Lqn implements Runnable {
 
     private EmfModel getLqnModel(final Path lqnModel) {
         return EmfModelBuilder.getInstance()
-                .setName("LQN")
-                .setMetaModel("lqn.ecore")
-                .setModel(lqnModel)
-                .setReadOnLoad(false)
-                .setStoreOnDisposal(true)
+                .xmlModel("lqn.xsd")
+                .modelName("LQN")
+                .modelPath(lqnModel)
+                .readOnLoad(false)
+                .storeOnDisposal(true)
                 .build();
     }
 
     private EmfModel getUmlModel(final Path umlModel) {
         return EmfModelBuilder.getInstance()
-                .setName("UML")
-                .setMetaModel(getUmlUri())
-                .setModel(umlModel)
-                .setReadOnly(true)
-                .setStoreOnDisposal(false)
+                .umlModel()
+                .modelName("UML")
+                .modelPath(umlModel)
+                .readOnly(true)
+                .storeOnDisposal(false)
                 .build();
     }
 

@@ -1,8 +1,5 @@
 package kieker.extension.performanceanalysis.epsilon;
 
-import org.eclipse.epsilon.emc.emf.EmfModel;
-
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,22 +22,4 @@ public class Util {
         return getResource("epsilon").resolve("eol").resolve(path);
     }
 
-    public static EmfModel getUmlModel(final Path umlModel, final String name, final boolean readOnly) {
-        return EmfModelBuilder.getInstance()
-                .setName(name)
-                .setMetaModel(getUmlUri())
-                .setModel(umlModel)
-                .setReadOnly(readOnly)
-                .build();
-    }
-
-    public static URI getUmlUri() {
-        final URI metaModel;
-        try {
-            metaModel = new URI("http://www.eclipse.org/uml2/5.0.0/UML");
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-        return metaModel;
-    }
 }
