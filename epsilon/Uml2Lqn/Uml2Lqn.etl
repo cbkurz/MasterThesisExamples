@@ -107,6 +107,8 @@ rule UseCase2Task
 	    var workload = lifeline.getWorkload();
 	    task.name = interaction.getOwner().getName() + "_job_class_" ;
 	    task.entry ::= beses; // the ::= has the meaning of calling equivalent
+	    interaction.println();
+	    ("workload is " + workload).println();
 	    if(workload[0] = "closed"){
 	    	task.scheduling = LQN!TaskSchedulingType#ref;
 	    	task.multiplicity = workload[1];

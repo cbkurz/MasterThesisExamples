@@ -100,7 +100,7 @@ operation Message getMessageType() : String {
 }
 
 operation Message getActivation() : String {
-		var type = self.getMessageSort().name;
+	var type = self.getMessageSort().name;
 	if (type == "synchCall") {
 		return "activate " + self.getReceiverName(); 
 	}

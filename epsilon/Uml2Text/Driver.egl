@@ -1,5 +1,5 @@
 [%
-	import "operations.eol";
+	import "Operations.eol";
     // variables, containing the templates required for PlantUML
     var classesTemplate : Template = TemplateFactory.load("StaticView-Classes.egl");
     var componentsTemplate : Template = TemplateFactory.load("StaticView-Components.egl");

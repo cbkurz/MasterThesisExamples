@@ -113,7 +113,7 @@ rule Association
     		
     		return isInPackage and bothEndsInFutureModel;
     	}
-    	// TODO: Associations are incomplete, it is as of now impossible to get a "AggregationKind" Enum
+    	// TODO: Associations are incomplete, it is as of now impossible to get an "AggregationKind" Enum
     	if (not (actorAss1.getEndTypes().size() == 2)) {
     		throw "unnsuported amount '" + actorAss1.getEndTypes().size() + "' of types in association: " + actorAss1;
     	}
