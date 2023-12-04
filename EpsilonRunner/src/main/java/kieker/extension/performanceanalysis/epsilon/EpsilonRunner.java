@@ -5,6 +5,7 @@ import com.beust.jcommander.Strings;
 import kieker.extension.performanceanalysis.cli.Uml2LqnCli;
 import kieker.extension.performanceanalysis.cli.Uml2PlantUmlCli;
 import kieker.extension.performanceanalysis.cli.Uml2UmlCli;
+import kieker.extension.performanceanalysis.uml2lqn.Uml2Lqn;
 import kieker.extension.performanceanalysis.uml2plantuml.Uml2PlantUml;
 import kieker.extension.performanceanalysis.uml2uml.Uml2Uml;
 
@@ -43,6 +44,9 @@ public class EpsilonRunner {
                 break;
             case "Uml2Uml":
                 new Uml2Uml(uml2UmlCli.getUmlPath(), uml2UmlCli.getTransformationPath(), uml2UmlCli.getUmlOutput()).run();
+                break;
+            case "Uml2Lqn":
+                new Uml2Lqn(uml2LqnCli.getUmlPath(), uml2LqnCli.getLqnPath()).run();
                 break;
             default:
                 throw new RuntimeException("Unknown command: " + parsedCommand);
