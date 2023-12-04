@@ -6,6 +6,7 @@ import org.eclipse.epsilon.emc.plainxml.PlainXmlModel;
 import org.eclipse.epsilon.eol.launch.EolRunConfiguration;
 import org.eclipse.epsilon.eol.models.Model;
 import org.eclipse.epsilon.etl.launch.EtlRunConfiguration;
+import org.eclipse.epsilon.evl.launch.EvlRunConfiguration;
 
 import java.nio.file.Path;
 
@@ -17,9 +18,11 @@ public class Uml2Lqn implements Runnable {
     private final Model umlModel;
     private final Model lqnModel;
     private final Path lqnModelPath;
+    private final Path umlValidationScript;
 
     public Uml2Lqn(final Path umlModel, final Path lqnModel) {
         this.uml2LqnScript = Util.getResource("Uml2Lqn/Uml2Lqn.etl");
+        this.umlValidationScript = Util.getResource("Uml2Lqn/UmlValidation.evl");
         this.changeRootScript = Util.getResource("Uml2Lqn/ChangeRoot.eol");
         this.umlModel = getUmlModel(umlModel);
         this.lqnModel = getLqnModel(lqnModel);
@@ -48,12 +51,19 @@ public class Uml2Lqn implements Runnable {
 
     @Override
     public void run() {
+
+        final EvlRunConfiguration validationConfig = EvlRunConfiguration.Builder()
+                .withScript(umlValidationScript)
+                .withModel(umlModel)
+                .withProfiling()
+                .build();
         final EtlRunConfiguration uml2qn = EtlRunConfiguration.Builder()
                 .withScript(uml2LqnScript)
                 .withModel(umlModel)
                 .withModel(lqnModel)
                 .withProfiling()
                 .build();
+        Util.validate(validationConfig);
         uml2qn.run();
         lqnModel.dispose();
 
