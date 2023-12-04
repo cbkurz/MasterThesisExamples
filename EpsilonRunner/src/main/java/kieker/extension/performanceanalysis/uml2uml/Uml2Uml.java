@@ -16,8 +16,7 @@ public class Uml2Uml implements Runnable {
 
     public Uml2Uml(final Path umlSourceModel, final Path transformationModel, final Path umlFutureModel) {
         this.script = Util.getResource("Uml2Uml/Uml2Uml.etl");
-//        this.umlSourceModel = Util.getUmlModel(umlSourceModel, "UML", true);
-        this.umlSourceModel = getSourceUml(umlSourceModel);;
+        this.umlSourceModel = getSourceUml(umlSourceModel);
         this.transformationModel = getTransformationModel(transformationModel);
         this.umlFutureModel = getFuml(umlFutureModel);
     }
