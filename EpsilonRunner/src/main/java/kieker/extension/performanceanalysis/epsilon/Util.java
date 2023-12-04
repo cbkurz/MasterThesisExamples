@@ -1,4 +1,4 @@
-package kieker.extension.epsilon.runner;
+package kieker.extension.performanceanalysis.epsilon;
 
 import org.eclipse.epsilon.emc.emf.EmfModel;
 
@@ -25,7 +25,7 @@ public class Util {
         return getResource("epsilon").resolve("eol").resolve(path);
     }
 
-    public static EmfModel getUmlModel(final Path umlModel, final String name) {
+    public static EmfModel getUmlModel(final Path umlModel, final String name, final boolean readOnly) {
         final URI metaModel;
         try {
             metaModel = new URI("http://www.eclipse.org/uml2/5.0.0/UML");
@@ -36,6 +36,7 @@ public class Util {
                 .setName(name)
                 .setMetaModel(metaModel)
                 .setModel(umlModel)
+                .setReadOnly(readOnly)
                 .build();
     }
 }

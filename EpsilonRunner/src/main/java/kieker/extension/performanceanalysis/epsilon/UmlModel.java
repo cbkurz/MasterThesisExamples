@@ -1,4 +1,4 @@
-package kieker.extension.epsilon.runner;
+package kieker.extension.performanceanalysis.epsilon;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.epsilon.emc.emf.EmfModel;

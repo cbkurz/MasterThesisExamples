@@ -4,7 +4,7 @@ public final class Main {
 
 	private Main() {}
 
-	public static void main(final String[] args) throws InterruptedException {
+	public static void main(final String[] args) {
 		final Bookstore bookstore = new Bookstore();
 		bookstore.searchBook();
 	}

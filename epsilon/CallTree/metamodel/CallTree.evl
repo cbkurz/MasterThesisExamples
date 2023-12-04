@@ -25,7 +25,7 @@ context Graph {
 	}
 	
 	constraint HasExactlyOneRootNode {
-		check : (self.nodes.select(n | not n.incoming.isDefined() ).size() == 1)
+		check : (self.nodes.nMatch(n | not n.incoming.isDefined(), 1 ))
 		message { 
 			var nodes = self.nodes.select( n | not n.incoming.isDefined() );
 			return "There are " + nodes.size() + " root nodes in Graph: " +  nodes

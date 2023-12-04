@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Main" type="Application" factoryName="Application" nameIsGenerated="true">
+    <option name="ALTERNATIVE_JRE_PATH" value="corretto-17" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <option name="MAIN_CLASS_NAME" value="kieker.extension.performanceanalysis.kieker2uml.Main" />
+    <module name="kieker.extension.performanceanalysis.main" />
+    <option name="PROGRAM_PARAMETERS" value="-m Kieker2Uml/output/MyModel.uml -uc BookstoreUnparalellUC -d Kieker2Uml/input-data/Bookstore/kieker-monitoring" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

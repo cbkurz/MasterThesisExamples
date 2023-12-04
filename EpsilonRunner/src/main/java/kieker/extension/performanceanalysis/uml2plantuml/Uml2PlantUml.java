@@ -1,6 +1,6 @@
-package kieker.extension.epsilon.runner.uml2plantuml;
+package kieker.extension.performanceanalysis.uml2plantuml;
 
-import kieker.extension.epsilon.runner.Util;
+import kieker.extension.performanceanalysis.epsilon.Util;
 import org.eclipse.epsilon.egl.launch.EgxRunConfiguration;
 import org.eclipse.epsilon.emc.emf.EmfModel;
 
@@ -17,7 +17,7 @@ public class Uml2PlantUml implements Runnable {
     public Uml2PlantUml(final Path umlModel, final Path output) {
         requireNonNull(umlModel, "umlModel");
         requireNonNull(output, "output");
-        this.umlModel = Util.getUmlModel(umlModel, "uml");
+        this.umlModel = Util.getUmlModel(umlModel, "uml", false);
         this.driver = Util.getResource("Uml2PlantUml/Driver.egx");
         this.output = output;
     }

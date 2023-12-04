@@ -1,4 +1,4 @@
-package kieker.extension.epsilon.runner.cli;
+package kieker.extension.performanceanalysis.cli;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
@@ -11,7 +11,7 @@ import java.nio.file.Paths;
                 "Input is a UML model and the output is produced in PlantUml syntax.")
 public class Uml2PlantUmlCli {
 
-    @Parameter(names = {"--file", "-f"},
+    @Parameter(names = {"--model", "-m"},
             required = true,
             description = "The path to the UML2 file that shall be transformed.")
     private Path umlPath;

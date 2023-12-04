@@ -1,4 +1,4 @@
-package kieker.extension.epsilon.runner;
+package kieker.extension.performanceanalysis.epsilon;
 
 import org.eclipse.epsilon.common.util.StringProperties;
 import org.eclipse.epsilon.emc.emf.EmfModel;
@@ -7,6 +7,8 @@ import org.eclipse.epsilon.eol.exceptions.models.EolModelLoadingException;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.Objects;
+
+import static java.util.Objects.isNull;
 
 public class EmfModelBuilder {
     private static final Path MODELS = Util.getResource("models");
@@ -93,7 +95,10 @@ public class EmfModelBuilder {
 
     private void checkRequired() {
         Objects.requireNonNull(this.properties.get(EmfModel.PROPERTY_NAME), "A name for the model is required.");
-//        Objects.requireNonNull(this.properties.get(EmfModel.PROPERTY_FILE_BASED_METAMODEL_URI), "A meta-model is required.");
+        if (isNull(this.properties.get(EmfModel.PROPERTY_FILE_BASED_METAMODEL_URI))
+                && isNull(this.properties.get(EmfModel.PROPERTY_METAMODEL_URI))) {
+            throw new NullPointerException("A meta-model is required.");
+        }
         Objects.requireNonNull(this.properties.get(EmfModel.PROPERTY_MODEL_URI));
     }
 }
