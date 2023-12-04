@@ -17,7 +17,7 @@ public class Uml2PlantUml implements Runnable {
     public Uml2PlantUml(final Path umlModel, final Path output) {
         requireNonNull(umlModel, "umlModel");
         requireNonNull(output, "output");
-        this.umlModel = Util.getUmlModel(umlModel, "uml", false);
+        this.umlModel = Util.getUmlModel(umlModel, "UML", false);
         this.driver = Util.getResource("Uml2PlantUml/Driver.egx");
         this.output = output;
     }

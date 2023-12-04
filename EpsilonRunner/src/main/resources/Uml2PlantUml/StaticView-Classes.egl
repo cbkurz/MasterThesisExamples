@@ -4,7 +4,7 @@
 [%=getStandardInformation()%]
 
 [% var classes = classesView.getPackagedElements(); %]
-[% for (c : uml!Class in classes) { %]
+[% for (c : UML!Class in classes) { %]
 class [%=sanitize(c.name)%] {
 [% for (op in c.getOwnedOperations()) { %]
     {method} [%=op.name%]
@@ -12,7 +12,7 @@ class [%=sanitize(c.name)%] {
 }
 [% } %]
 
-[% for (a in uml!Association.all) { %]
+[% for (a in UML!Association.all) { %]
 [% if (a.getMemberEnds().get(0).getClass_().isDefined()) { %]
 [%=sanitize(a.getMemberEnds().get(0).getClass_().name)%] -- [%=sanitize(a.getMemberEnds().get(1).getClass_().name)%]
 [% } %]

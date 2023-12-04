@@ -7,28 +7,28 @@
     
   
     // generates a new file or overwrites the file and begins from scratch, every other call simply appends their output
-    var interactions = uml!Interaction.all;
+    var interactions = UML!Interaction.all;
     
     interactions.println();
     
-    for (i in uml!Interaction.all) {
+    for (i in UML!Interaction.all) {
 	    var interactionTemplate : Template = TemplateFactory.load("Interactions.egl");
     	interactionTemplate.populate("interaction", i);
 	    interactionTemplate.generate("../output/" + i.name + ".txt");
     }
     
     // Classes
-	var classesView = uml!PackageableElement.all.selectOne(p|"staticView-classes".equals(p.name));
+	var classesView = UML!PackageableElement.all.selectOne(p|"staticView-classes".equals(p.name));
 	classesTemplate.populate("classesView", classesView);
     classesTemplate.generate("../output/StaticView-Classes.txt");
     
     // Components
-    var componentsView = uml!PackageableElement.all.selectOne(p|"staticView-components".equals(p.name));
+    var componentsView = UML!PackageableElement.all.selectOne(p|"staticView-components".equals(p.name));
 	componentsTemplate.populate("componentsView", componentsView);
     componentsTemplate.generate("../output/StaticView-Components.txt");
     
     // Deployment
-    var deploymentView = uml!PackageableElement.all.selectOne(p|"deploymentView".equals(p.name));
+    var deploymentView = UML!PackageableElement.all.selectOne(p|"deploymentView".equals(p.name));
 	deploymentTemplate.populate("deploymentView", deploymentView);
 	deploymentTemplate.populate("componentView", componentsView);
     deploymentTemplate.generate("../output/DeploymentView.txt");

@@ -1,4 +1,4 @@
-import "operations.eol";
+import "Operations.eol";
 
 pre {
 	var lifelines = UML!Lifeline.all;

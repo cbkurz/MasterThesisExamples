@@ -7,32 +7,32 @@
 [% var components = componentView.getPackagedElements(); %]
 
 
-[% for (n : uml!Node in deployments) { %]
+[% for (n : UML!Node in deployments) { %]
 [% if ("'Entry'".equals(n.name)) { continue; } %]
 node "[%=n.name%]" as [%=sanitize(n.name)%]
 [% } %]
 
-[% for (a : uml!Artifact in deployments) { %]
+[% for (a : UML!Artifact in deployments) { %]
 [% if ("'Entry'".equals(a.name)) { continue; } %]
 artifact "[%=a.name%]" as [%=sanitize(a.name)%]
 [% } %]
 
-[% for (c : uml!Component in components) { %]
+[% for (c : UML!Component in components) { %]
 [% if ("'Entry'".equals(c.name)) { continue; } %]
 component "[%=c.name%]" as [%=sanitize(c.name)%]
 [% } %]
 
 
-[% for (n : uml!Node in deployments) { %]
+[% for (n : UML!Node in deployments) { %]
 [% if ("'Entry'".equals(n.name)) { continue; } %]
-[% for (da : uml!DeployedArtifact in n.getDeployments().get(0).getDeployedArtifacts()) { %]
+[% for (da : UML!DeployedArtifact in n.getDeployments().get(0).getDeployedArtifacts()) { %]
 [%=sanitize(da.name)%] -up-> [%=sanitize(n.name)%] : deployed in
 [% } %]
 [% } %]
 
-[% for (a : uml!Artifact in deployments) { %]
+[% for (a : UML!Artifact in deployments) { %]
 [% if ("'Entry'".equals(a.name)) { continue; } %]
-[% for (m : uml!Manifestation in a.getManifestations()) { %]
+[% for (m : UML!Manifestation in a.getManifestations()) { %]
 [%=sanitize(m.getUtilizedElement().name)%] -up-> [%=sanitize(a.name)%] : manifested in
 [% } %]
 [% } %]
