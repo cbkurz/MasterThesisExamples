@@ -1,26 +1,33 @@
 package kieker.extension.performanceanalysis.uml2lqn;
 
-import kieker.extension.performanceanalysis.epsilon.EmfModelBuilder;
+import kieker.extension.performanceanalysis.epsilon.EpsilonModelBuilder;
 import kieker.extension.performanceanalysis.epsilon.Util;
-import org.eclipse.epsilon.emc.emf.EmfModel;
+import org.eclipse.epsilon.emc.plainxml.PlainXmlModel;
+import org.eclipse.epsilon.eol.launch.EolRunConfiguration;
+import org.eclipse.epsilon.eol.models.Model;
 import org.eclipse.epsilon.etl.launch.EtlRunConfiguration;
 
 import java.nio.file.Path;
 
 public class Uml2Lqn implements Runnable {
 
-    private final Path script;
+    private final Path uml2LqnScript;
+    private final Path changeRootScript;
 
-    private final EmfModel umlModel;
-    private final EmfModel lqnModel;
+    private final Model umlModel;
+    private final Model lqnModel;
+    private final Path lqnModelPath;
+
     public Uml2Lqn(final Path umlModel, final Path lqnModel) {
-        this.script = Util.getResource("Uml2Lqn/Uml2Lqn.etl");
+        this.uml2LqnScript = Util.getResource("Uml2Lqn/Uml2Lqn.etl");
+        this.changeRootScript = Util.getResource("Uml2Lqn/ChangeRoot.eol");
         this.umlModel = getUmlModel(umlModel);
         this.lqnModel = getLqnModel(lqnModel);
+        this.lqnModelPath = lqnModel;
     }
 
-    private EmfModel getLqnModel(final Path lqnModel) {
-        return EmfModelBuilder.getInstance()
+    private Model getLqnModel(final Path lqnModel) {
+        return EpsilonModelBuilder.getInstance()
                 .xmlModel("lqn.xsd")
                 .modelName("LQN")
                 .modelPath(lqnModel)
@@ -29,8 +36,8 @@ public class Uml2Lqn implements Runnable {
                 .build();
     }
 
-    private EmfModel getUmlModel(final Path umlModel) {
-        return EmfModelBuilder.getInstance()
+    private Model getUmlModel(final Path umlModel) {
+        return EpsilonModelBuilder.getInstance()
                 .umlModel()
                 .modelName("UML")
                 .modelPath(umlModel)
@@ -41,14 +48,32 @@ public class Uml2Lqn implements Runnable {
 
     @Override
     public void run() {
-        final EtlRunConfiguration runConfiguration = EtlRunConfiguration.Builder()
-                .withScript(script)
+        final EtlRunConfiguration uml2qn = EtlRunConfiguration.Builder()
+                .withScript(uml2LqnScript)
                 .withModel(umlModel)
                 .withModel(lqnModel)
                 .withProfiling()
                 .build();
-        runConfiguration.run();
+        uml2qn.run();
         lqnModel.dispose();
 
+        final PlainXmlModel plainLqnModel = getPlainLqnModel();
+
+        final EolRunConfiguration changeRoot = EolRunConfiguration.Builder()
+                .withScript(changeRootScript)
+                .withModel(plainLqnModel)
+                .withProfiling()
+                .build();
+        changeRoot.run();
+        plainLqnModel.dispose();
+    }
+
+    private PlainXmlModel getPlainLqnModel() {
+        final PlainXmlModel plainLqnModel = new PlainXmlModel();
+        plainLqnModel.setName("PlainLQN");
+        plainLqnModel.setFile(lqnModelPath.toFile());
+        plainLqnModel.setStoredOnDisposal(true);
+        plainLqnModel.setReadOnLoad(true);
+        return plainLqnModel;
     }
 }
