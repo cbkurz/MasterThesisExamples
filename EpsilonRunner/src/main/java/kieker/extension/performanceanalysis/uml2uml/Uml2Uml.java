@@ -1,6 +1,5 @@
 package kieker.extension.performanceanalysis.uml2uml;
 
-import com.beust.jcommander.ParameterException;
 import kieker.extension.performanceanalysis.epsilon.EmfModelBuilder;
 import kieker.extension.performanceanalysis.epsilon.Util;
 import org.eclipse.emf.common.util.URI;
@@ -11,12 +10,13 @@ import org.eclipse.epsilon.emc.emf.EmfModel;
 import org.eclipse.epsilon.etl.launch.EtlRunConfiguration;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.UMLFactory;
-import org.eclipse.uml2.uml.resource.UMLResource;
 import org.eclipse.uml2.uml.resources.util.UMLResourcesUtil;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
+
+import static kieker.extension.performanceanalysis.epsilon.Util.getUmlUri;
 
 public class Uml2Uml implements Runnable {
 
@@ -27,34 +27,35 @@ public class Uml2Uml implements Runnable {
 
     public Uml2Uml(final Path umlSourceModel, final Path transformationModel, final Path umlFutureModel) {
         this.script = Util.getResource("Uml2Uml/Uml2Uml.etl");
-        this.umlSourceModel = Util.getUmlModel(umlSourceModel, "UML", true);
+//        this.umlSourceModel = Util.getUmlModel(umlSourceModel, "UML", true);
+        this.umlSourceModel = getSourceUml(umlSourceModel);;
         this.transformationModel = getTransformationModel(transformationModel);
         this.umlFutureModel = getFuml(umlFutureModel);
     }
 
+    private static EmfModel getSourceUml(final Path umlSourceModel) {
+        return EmfModelBuilder.getInstance()
+                .setName("UML")
+                .setMetaModel(getUmlUri())
+                .setModel(umlSourceModel)
+                .setReadOnly(true)
+                .build();
+    }
+
     private static EmfModel getFuml(final Path umlFutureModel) {
-        if (!umlFutureModel.toString().endsWith(UMLResource.FILE_EXTENSION)) {
-            throw new ParameterException("File does not follow the UML convention to end with '.uml': " + umlFutureModel);
-        }
-
-
-        if (!umlFutureModel.toFile().exists()) {
-            try {
-                final Model model = createModel(umlFutureModel.getFileName().toString());
-                saveModel(model, umlFutureModel);
-            } catch (Exception e) {
-                final String message = "File does not exist for paramter '" + umlFutureModel + "' " +
-                        "and creating the respective model has failed: " + umlFutureModel;
-                throw new ParameterException(message, e);
-            }
-        }
-
-        return Util.getUmlModel(umlFutureModel, "FUML", false);
+        return EmfModelBuilder.getInstance()
+                .setName("FUML")
+                .setMetaModel(getUmlUri())
+                .setModel(umlFutureModel)
+                .setReadOnLoad(false)
+                .setStoreOnDisposal(true)
+                .build();
     }
 
     private static EmfModel getTransformationModel(final Path transformationModel) {
         return EmfModelBuilder.getInstance()
-                .setName("UT")
+                .setName("UmlTransformation")
+                .setAlias("UT")
                 .setMetaModel("UmlTransformation.ecore")
                 .setModel(transformationModel)
                 .setReadOnly(true)
@@ -71,6 +72,7 @@ public class Uml2Uml implements Runnable {
                 .withProfiling()
                 .build();
         runConfiguration.run();
+        umlFutureModel.dispose();
     }
 
     private static Model createModel(final String name) {

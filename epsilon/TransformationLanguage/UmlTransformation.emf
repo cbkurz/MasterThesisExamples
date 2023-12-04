@@ -1,9 +1,5 @@
-@namespace(uri="org.kurz.ma.model.umltransformation", prefix="uml2uml")
-package org.kurz.ma.model.umltransformation;
-
-class Root {
-	val UseCase[+] useCases;
-}
+@namespace(uri="kieker.extension.umltransformation", prefix="umlTransform")
+package kieker.extension.umltransformation;
 
 class UseCase {
 	attr String[1] name;
@@ -27,16 +23,4 @@ class NullTransformation extends TransformationRule { // This Transformation doe
 class IncreaseMessageTime extends TransformationRule { // This Transformation adds time to a Message within an interaction
 	attr String[+] messageName;
 	attr Integer[1] time;
-	attr TimeUnit[1] timeUnit;
-}
-
-// Misc
-enum TimeUnit {
-	NANO;
-	MICRO;
-	MILLI;
-	SECOND;
-	MINUTE;
-	HOUR;
-	DAY; 
 }

@@ -23,6 +23,12 @@ dependencies {
     implementation ("com.beust", "jcommander", "1.82")
 }
 
+java {
+    // AspectJ uses reflections which are no longer allowed after Java version 11
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
 tasks.test {
     useJUnitPlatform()
 }

@@ -43,6 +43,7 @@ public class EpsilonRunner {
                 break;
             case "Uml2Uml":
                 new Uml2Uml(uml2UmlCli.getUmlPath(), uml2UmlCli.getTransformationPath(), uml2UmlCli.getUmlOutput()).run();
+                break;
             default:
                 throw new RuntimeException("Unknown command: " + parsedCommand);
         }
