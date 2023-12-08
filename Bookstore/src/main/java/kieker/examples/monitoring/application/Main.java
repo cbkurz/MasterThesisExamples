@@ -8,6 +8,4 @@ public final class Main {
 		final Bookstore bookstore = new Bookstore();
 		bookstore.searchBook();
 	}
-
-
 }
