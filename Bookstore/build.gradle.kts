@@ -6,7 +6,7 @@ group = "kieker.examples.monitoring.application"
 version = "1.0-SNAPSHOT"
 
 val kiekerVersion = "1.15.2"
-var mainClassName = "kieker.examples.monitoring.application.Main"
+var mainClassName = "de.loadtest.Driver"
 
 repositories {
     mavenCentral()

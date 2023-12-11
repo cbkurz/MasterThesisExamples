@@ -1,6 +1,6 @@
 package de.loadtest;
 
-import kieker.examples.monitoring.application.Bookstore;
+import kieker.examples.monitoring.application.Main;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -16,7 +16,6 @@ public class Driver {
 
     private static void bookstoreExecution() {
         System.out.println("Starting the Bookstore");
-        final Bookstore bookstore = new Bookstore();
-        bookstore.searchBook();
+        Main.main(new String[0]);
     }
 }
