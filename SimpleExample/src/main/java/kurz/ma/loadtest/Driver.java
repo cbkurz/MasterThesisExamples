@@ -2,7 +2,6 @@ package kurz.ma.loadtest;
 
 import kurz.ma.examples.simple.Main;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.Executors;
@@ -30,13 +29,9 @@ public class Driver {
     public static void busyWait(final int waitTimeMillies) {
         final Instant start = Instant.now();
         final Instant targetTime = start.plus(waitTimeMillies, ChronoUnit.MILLIS);
-        System.out.println("Started at: " + start);
-        Instant end;
-        while (true) {
+        Instant end = Instant.now();
+        while (end.isBefore(targetTime)) {
             end = Instant.now();
-            if (end.isAfter(targetTime)) break;
         }
-        System.out.println("Finnished at: " + end);
-        System.out.println("Time spent: " + Duration.between(start, end));
     }
 }
