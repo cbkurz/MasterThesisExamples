@@ -2,7 +2,7 @@ plugins {
     id("java")
 }
 
-group = "org.kurz.ma.examples.simple"
+group = "kurz.ma.examples.simple"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -24,7 +24,8 @@ java {
     targetCompatibility = JavaVersion.VERSION_11
 }
 
-var mainClassName = "org.kurz.ma.examples.simple.Main"
+//var mainClassName = "kurz.ma.examples.simple.Main"
+var mainClassName = "kurz.ma.loadtest.Driver"
 
 tasks.withType<Jar> {
     manifest {
@@ -40,7 +41,7 @@ tasks.register("runMonitoring", JavaExec::class) {
          * kieker.monitoring.properties - for more configurations properties like the time config and where logs are written to
          * aop.xml - For the used aspect configurations and the included/excluded packages for monitoring.
     */
-    jvmArgs = listOf("-javaagent:../Bookstore/libs/kieker-1.15.2-aspectj.jar",
+    jvmArgs = listOf("-javaagent:libs/kieker-1.15.2-aspectj.jar",
             "-Dorg.aspectj.weaver.showWeaveInfo=true",
             "-Daj.weaving.verbose=true")
 }
