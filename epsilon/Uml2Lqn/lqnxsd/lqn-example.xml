@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lqn-model xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation = "./lqn.xsd" >
+    <solver-params comment=""/>
+    <processor name="UmlNode" multiplicity="1">
+        <task name="UmlComponent">
+            <entry name="BES-UmlLifeline" type="PH1PH2">
+                <entry-phase-activities>
+                    <activity name="UmlMessageName" host-demand-mean="0.45" phase="1">
+                        <synch-call dest="OtherEntry" calls-mean="1" />
+                    </activity>
+                </entry-phase-activities>
+            </entry>
+            <entry name="OtherEntry" type="PH1PH2">
+                <entry-phase-activities>
+                    <activity name="Activity" host-demand-mean="0.45" phase="1" />
+                </entry-phase-activities>
+            </entry>
+        </task>
+    </processor>
+    <processor name="UmlActor">
+        <task name="UmlActor_job-class_">
+            <entry name="BES-UmlLifelineAssociatedToActor" open-arrival-rate="0.1" type="PH1PH2">
+                <entry-phase-activities>
+                    <activity name="UmlMessage" host-demand-mean="1E-10" phase="1">
+                        <synch-call dest="BES-UmlLifeline" calls-mean="1" />
+                    </activity>
+                </entry-phase-activities>
+            </entry>
+        </task>
+    </processor>
+</lqn-model>

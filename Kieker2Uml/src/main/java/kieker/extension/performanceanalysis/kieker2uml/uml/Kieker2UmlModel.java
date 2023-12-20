@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class Kieker2UmlModel {
 
@@ -45,7 +46,7 @@ public class Kieker2UmlModel {
     public static void addStaticView(final Model model, final MessageTrace trace) {
         UmlClasses.addClasses(model, trace);
         UmlComponents.addComponentsAndDeployment(model, trace);
-        final List<Node> nodeList = model.allOwnedElements().stream().filter(pe -> pe instanceof Node).map(pe -> (Node) pe).toList();
+        final List<Node> nodeList = model.allOwnedElements().stream().filter(pe -> pe instanceof Node).map(pe -> (Node) pe).collect(Collectors.toList());
         MarteSupport.applyPerformanceStereotypesToNodes(nodeList);
     }
 

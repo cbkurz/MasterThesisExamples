@@ -64,11 +64,10 @@
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/SimpleExample" />
-        <option name="gradleHome" value="$PROJECT_DIR$/../../../../Gradle/gradle-7.6" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/SimpleEvaluationExample" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/SimpleExample" />
+            <option value="$PROJECT_DIR$/SimpleEvaluationExample" />
           </set>
         </option>
       </GradleProjectSettings>

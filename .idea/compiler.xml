@@ -10,6 +10,9 @@
       <module name="org.kurz.ma.examples.SimpleEpsilonUMLExample" target="11" />
       <module name="SimpleEpsilonUMLExample.main" target="11" />
       <module name="SimpleEpsilonUMLExample.test" target="11" />
+      <module name="SimpleExample" target="11" />
+      <module name="SimpleExample.main" target="11" />
+      <module name="SimpleExample.test" target="11" />
       <module name="Uml2PlantUml" target="17" />
       <module name="Uml2PlantUml.main" target="17" />
       <module name="Uml2PlantUml.test" target="17" />

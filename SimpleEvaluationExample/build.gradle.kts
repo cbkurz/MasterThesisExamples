@@ -42,6 +42,12 @@ tasks.register("runMonitoring", JavaExec::class) {
          * aop.xml - For the used aspect configurations and the included/excluded packages for monitoring.
     */
     jvmArgs = listOf("-javaagent:libs/kieker-1.15.2-aspectj.jar",
-            "-Dorg.aspectj.weaver.showWeaveInfo=true",
-            "-Daj.weaving.verbose=true")
+//            "-Dorg.aspectj.weaver.showWeaveInfo=true",
+//            "-Daj.weaving.verbose=true"
+    )
+    /*
+        This sets the arguments of the main method.
+        See kurz.ma.loadtest.Driver#main for required arguments.
+     */
+    args = listOf("1")
 }
