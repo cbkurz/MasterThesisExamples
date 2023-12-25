@@ -1,0 +1,18 @@
+Lifelines
+[% for (l in UML!Lifeline.all) { %]
+[%=l.name%]
+[% } %]
+
+---
+
+Messages:
+[% for (m in UML!Message.all) { %]
+[%=m.name%]
+[% } %]
+
+---
+
+BehaviorExecutionSpecification
+[% for (bes in UML!BehaviorExecutionSpecification.all) { %]
+[%=bes.name%]
+[% } %]
