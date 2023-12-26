@@ -1,8 +1,10 @@
 package kurz.ma.loadtest;
 
+import kurz.ma.examples.simple.Main4Loop;
 import kurz.ma.examples.simple.Main;
 import kurz.ma.examples.simple.Main2;
 import kurz.ma.examples.simple.Main3;
+import kurz.ma.examples.simple.Main5Recursion;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -29,6 +31,12 @@ public class Driver {
                 return Driver::exec2;
             case "3":
                 return Driver::exec3;
+            case "4":
+            case "loop":
+                return Driver::exec4Loop;
+            case "5":
+            case "recursion":
+                return Driver::exec5Recursion;
             default:
                 throw new RuntimeException("Unknown input: " + arg);
         }
@@ -46,10 +54,18 @@ public class Driver {
         System.out.println("Processes start: " + ++processesStarted);
         Main3.main(new String[0]);
     }
+    private static void exec4Loop() {
+        System.out.println("Processes start: " + ++processesStarted);
+        Main4Loop.main(new String[0]);
+    }
+    private static void exec5Recursion() {
+        System.out.println("Processes start: " + ++processesStarted);
+        Main5Recursion.main(new String[0]);
+    }
 
-    public static void busyWait(final int waitTimeMillies) {
+    public static void busyWait(final int waitTimeMillis) {
         final Instant start = Instant.now();
-        final Instant targetTime = start.plus(waitTimeMillies, ChronoUnit.MILLIS);
+        final Instant targetTime = start.plus(waitTimeMillis, ChronoUnit.MILLIS);
         Instant end = Instant.now();
         while (end.isBefore(targetTime)) {
             end = Instant.now();

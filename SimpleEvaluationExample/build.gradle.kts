@@ -49,5 +49,5 @@ tasks.register("runMonitoring", JavaExec::class) {
         This sets the arguments of the main method.
         See kurz.ma.loadtest.Driver#main for required arguments.
      */
-    args = listOf("1")
+    args = listOf("recursion")
 }
