@@ -1,14 +1,18 @@
 package kurz.ma.examples.simple;
 
-import kurz.ma.loadtest.Driver;
+import static kurz.ma.loadtest.Driver.busyWait;
 
 public class Worker {
 
     public static void work2() {
-        Driver.busyWait(500);
+        busyWait(500);
     }
     public static void work3() {
-        Driver.busyWait(200);
+        busyWait(200);
         Main3.doSomething();
+    }
+
+    public static void work6(final int millis) {
+        busyWait(millis);
     }
 }

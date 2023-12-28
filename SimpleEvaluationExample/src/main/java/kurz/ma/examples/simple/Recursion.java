@@ -10,4 +10,14 @@ public class Recursion {
             recursion(iterator - 1, millis);
         }
     }
+    public void recursion6(final int iterator, final int millis) {
+        if (iterator - 1 > 0) {
+            busyWait(millis);
+            recursion6(iterator - 1, millis);
+        } else {
+            if (millis == 50) {
+                Worker.work6(50);
+            }
+        }
+    }
 }

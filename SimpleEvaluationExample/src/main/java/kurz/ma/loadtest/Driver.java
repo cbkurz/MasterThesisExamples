@@ -5,6 +5,8 @@ import kurz.ma.examples.simple.Main;
 import kurz.ma.examples.simple.Main2;
 import kurz.ma.examples.simple.Main3;
 import kurz.ma.examples.simple.Main5Recursion;
+import kurz.ma.examples.simple.Main6Full;
+import kurz.ma.examples.simple.Main7DoubleScenario;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -37,6 +39,12 @@ public class Driver {
             case "5":
             case "recursion":
                 return Driver::exec5Recursion;
+            case "6":
+            case "full":
+                return Driver::exec6Full;
+            case "7":
+            case "double":
+                return Driver::exec7DoubleScenario;
             default:
                 throw new RuntimeException("Unknown input: " + arg);
         }
@@ -61,6 +69,15 @@ public class Driver {
     private static void exec5Recursion() {
         System.out.println("Processes start: " + ++processesStarted);
         Main5Recursion.main(new String[0]);
+    }
+    private static void exec6Full() {
+        System.out.println("Processes start: " + ++processesStarted);
+        Main6Full.main(new String[0]);
+    }
+    private static void exec7DoubleScenario() {
+        System.out.println("Processes start: " + ++processesStarted);
+        Main7DoubleScenario.main(new String[0]);
+        Main7DoubleScenario.main2(new String[0]);
     }
 
     public static void busyWait(final int waitTimeMillis) {
